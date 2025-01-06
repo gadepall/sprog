@@ -22,7 +22,7 @@ h=0.005
 # Theoretical plot
 x=np.linspace(1,1.5,500)
 y=2*x/(1-np.log(x))
-plt.plot(x, y, label="Theoretical Plot",linewidth=2, color='blue')
+plt.plot(x, y, label="Theory",linewidth=2, color='blue')
 
 # Simulated points using the finite difference method
 for i in range(100):
@@ -31,7 +31,7 @@ for i in range(100):
     plt.plot(x_0,y_0,'ko',markersize=2)
 
 # Labels, grid, and legend
-plt.plot(x_0,y_0,'ko',label='Simulation Plot')
+plt.plot(x_0,y_0,'ko',label='Sim')
 plt.xlabel("x")
 plt.ylabel("y")
 plt.grid(True)
