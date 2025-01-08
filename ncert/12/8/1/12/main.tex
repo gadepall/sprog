@@ -1,0 +1,145 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{12.8.1.12}
+\author{EE24BTECH11030 - KEDARANANDA}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+\textbf{Question:}
+ Area lying in the first quadrant and bounded by the circle $x^{2} + y^{2} = 4$ and the lines.x = 0 and x = 2 is\\
+
+\textbf{Solution:}\\\\
+\begin{table}[H]
+    \centering
+    \input{tables/table.tex}
+    \caption{Variables used}
+\end{table} 
+The point of intersection of the line with the circle is 
+\begin{align}
+    x_i = h + k_i m
+\end{align}
+where, $k_i$ is a constant and is calculated as follows:\\
+\begin{align}
+k_i = \frac{1}{m^\top Vm} \brak{-m^\top \brak{Vh + u} \pm \sqrt{\sbrak{m^\top \brak{Vh + u}}^2 - g\brak{h}\brak{m^\top Vm}}}.
+\end{align}
+Substituting the input parameters into $k_i$,\\
+
+\begin{multline}
+k_i = \frac{1}{\myvec{1 & 0} \myvec{1 & 0 \\ 0 & 1} \myvec{1 \\ 0}}
+\brak{-\myvec{1 & 0} \brak{\myvec{1 & 0 \\ 0 & 1} \myvec{2 \\ 0} + \myvec{0 \\ 0}}} \pm \\
+\sqrt{\sbrak{\myvec{1 & 0} \brak{\myvec{1 & 0 \\ 0 & 1} \myvec{2 \\ 0} + \myvec{0 \\ 0}}}^2 - g\brak{h}\brak{\myvec{1 & 0} \myvec{1 & 0 \\ 0 & 1} \myvec{1 \\ 0}}}.
+\end{multline}
+
+We get,\\
+$k_i = 0, -4$.
+
+Substituting $k_i$ into $x_i = h + k_i m$, we get\\
+
+\begin{align}
+x_1 &= \myvec{2 \\ 0} + \brak{0} \myvec{1 \\ 0} \\
+&\implies x_1 = \myvec{2 \\ 0}, \\
+x_2 &= \myvec{2 \\ 0} + \brak{-4} \myvec{1 \\ 0} \\
+&\implies x_2 = \myvec{2 \\ 0} + \myvec{-4 \\ 0} \\
+&\implies x_2 = \myvec{-2 \\ 0}.
+\end{align}
+
+The area of the region bounded by the circle $x^2 + y^2 = 4$, the line $x = 0$, and $x = 2$ in the first quadrant is:
+$\text{Area} = \int_0^2 \sqrt{4 - x^2} \, dx$.
+
+Using trigonometric substitution, we calculate:
+\begin{align}
+\text{Area} &= \int_0^2 \sqrt{4 - x^2} \, dx \\
+&= \left[\frac{x}{2} \sqrt{4 - x^2} + 2 \sin^{-1}\brak{\frac{x}{2}}\right]_0^2 \\
+&= \brak{\frac{2}{2} \sqrt{4 - 2^2} + 2 \sin^{-1}\brak{\frac{2}{2}}} - \brak{\frac{0}{2} \sqrt{4 - 0^2} + 2 \sin^{-1}\brak{\frac{0}{2}}} \\
+&= \brak{0 + 2 \cdot \frac{\pi}{2}} - \brak{0 + 0} \\
+&= \pi.
+\end{align}
+
+Thus, the area of the region is:
+$\pi$.\\
+\textbf{Computational Solution:}\\
+Taking trapezoid-shaped strips of small area and adding them all up. Say we have to find the area of $y_{x}$ from $x=x_0$ to $x=x_n$, discretize the points on the $x$ axis $x_0, x_1, x_2, \dots, x_n$ such that they are equally spaced with the step size $h$. \\
+Sum of all trapezoidal areas is given by,
+\begin{align}
+  A&=\frac{1}{2}h\brak{y\brak{x_1}+y\brak{x_0}}+ \frac{1}{2}h\brak{y\brak{x_2}+y\brak{x_1}}+\dots+\frac{1}{2}h\brak{y\brak{x_n}+y\brak{x_{n-1}}}\\
+  &=h\sbrak{\frac{1}{2}\brak{y\brak{x_0}+y\brak{x_n}}+ y\brak{x_1}+\dots+y\brak{x_{n-1}}}
+\end{align}
+Let $A\brak{x_n}$ be the area enclosed by the curve $y\brak{x}$ from $x=x_0$ to $x=x_n$, $\brak{x_0, x_1, \dots x_n}$ be equidistant points with step-size $h$.
+\begin{align}
+  A\brak{x_n+h}=A\brak{x_n}+\frac{1}{2}h\brak{y\brak{x_n+h}+y\brak{x_n}}
+\end{align}
+We can repeat this till we get required area.\\
+Discretizing the steps, making $A\brak{x_n}=A_n, y\brak{x_n}=y_n$ we get,
+\begin{align}
+ A_{n+1}=A_n+\frac{1}{2}h\brak{y_{n+1}+y_n}
+\end{align}
+We can write $y_{n+1}$ in terms of $y_n$ using first principle of derivative. $y_{n+1}=y_n+hy^{\prime}_n$
+\begin{align}
+  A_{n+1}&=A_n+\frac{1}{2}h\brak{\brak{y_{n}+hy^{\prime}_n}+y_n}\\
+  A_{n+1}&=A_n+\frac{1}{2}h\brak{2y_n+hy^{\prime}_n}\\
+  A_{n+1}&=A_n+hy_n+\frac{1}{2}h^2y^{\prime}_n\\
+  x_{n+1}&=x_n+h
+\end{align}
+In the given question, $y_n=\sqrt{4-x_n^2}$ and $y^{\prime}_n= \frac{-x_n}{\brak{\sqrt{4-x_n^2}}}$\\
+The general difference equation will be given by
+\begin{align}
+  A_{n+1}&=A_n+hy_n+\frac{1}{2}h^2y^{\prime}_n\\
+  A_{n+1}&=A_n+h\brak{\sqrt{4-x_n^2}}+\frac{1}{2}h^2\brak{\frac{-x_n}{\brak{\sqrt{4-x_n^2}}}}\\
+  x_{n+1}&=x_n+h
+\end{align}
+Iterating till we reach $x_n=2$ will return required area. \\
+Area obtained computationally: $3.1416$ sq. units\\
+Area obtained theoretically: $\pi$ sq. units = 3.1416 sq.unis
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=1\columnwidth]{figs/Fig.png}
+\end{figure}
+\end{document}
+
