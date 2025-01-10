@@ -1,0 +1,123 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[article]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}                                       
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+% Marks the beginning of the document
+\begin{document}
+\bibliographystyle{IEEEtran}
+\title{NCERT-9.4.10}
+\author{EE24BTECH11039 - MANDALA RANJITH}
+{\let\newpage\relax\maketitle}
+\noindent\textbf{Question: }  
+Solve the differential equation:  
+\begin{align}
+e^x \tan y \, dx + (1 - e^x) \sec^2 y \, dy = 0.
+\end{align}
+
+\noindent\textbf{Solution:}  
+Rewriting the equation:  
+\begin{align}
+\frac{e^x \tan y}{1 - e^x} \, dx + \sec^2 y \, dy = 0.
+\end{align}
+
+\noindent Rearranging terms:  
+\begin{align}
+\frac{e^x}{1 - e^x} \, dx = -\frac{\sec^2 y}{\tan y} \, dy.
+\end{align}
+where C is the constant of integration.Let us assume it as 1.\\
+\begin{align}
+(1-e^x)(\tan y)=1
+\end{align}
+\noindent Final solution:  
+\begin{align}
+y=\tan^{-1}\brak{\frac{1}{1-e^x}}
+\end{align}
+
+\noindent\textbf{Numerical Approach:}\\1. I used a for loop for finding the $y$ values as the loop proceeds with iterative formula given below. I took some initial value of $x$ and as loop proceeds I assigned it the value as $x+h$. where $h$ is the step size, representing the rate of change. 
+\\2. Assigned the values of $y$ for different $x$-values using a for loop. \\ 
+\\ \textbf{Using the Method of Finite Differences}\\
+The Method of Finite Differences is a numerical technique used to approximate solutions to differential equations. 
+
+We know that:
+\begin{align}
+   \lim_{h \to 0} \frac{x(y+h) - x(y)}{h} = \frac{dx}{dy} 
+\end{align}
+For the given differential equation,
+\begin{align}
+    \frac{dx}{dy}=\frac{(e^x-1) \sec^2y}{(e^x) tany}
+\end{align}
+we approximate:
+\begin{align}
+\frac{x_{n+1} - x_n}{h} &\approx \frac{(e^{x_n}-1) \sec^2y_n}{e^{x_n} \tan{y_n}}
+\end{align}
+this implies:
+\begin{align}
+    {x_{n+1}}= {x_n + \frac{(e^{x_n}-1) \sec^2y_n}{e^{x_n} \tan{y_n}}}h
+\end{align}
+Here, $h$ is the step size, $y_n$ is the approximation of $y(x)$ at the $n$-th step, and $x_n$ is the corresponding $x$-value at the $n$-th step.
+
+\noindent The iterative formula for updating $x$-values is:  
+\begin{align}
+    x_n = x_{n-1} + \left(\frac{dx}{dy}\right) h,
+\end{align}
+The iterative formula for updating $y$-values is: 
+\begin{align}
+    y_n=y_{n-1}+h
+\end{align} 
+
+\noindent\textbf{Initial Conditions:}  
+\begin{itemize}
+    \item $x = 0.693$  
+    \item $y = 1.107$  
+    \item $h = 0.0001$  
+\end{itemize}
+
+Using Matplotlib, I plotted the computed points and the graph of the exact solution to verify that they approximately match.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\columnwidth]{figs/fig1.png}
+	\caption{verifying through graph of sim and theory values}
+	\label{}
+\end{figure}	
+\end{document}
