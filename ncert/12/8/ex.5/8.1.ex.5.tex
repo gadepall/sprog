@@ -107,15 +107,16 @@ Under trapezoidal rule,Area $A$ is approximated by,
 \begin{align}
     J = \int_a^b f(x)\,dx \approx h\brak{\frac{1}{2}f(a) + f(x_1) + f(x_2) + ..... + f(x_{n-1} + \frac{1}{2}f(b)}
 \end{align}
-Where $h$ is assumed to be the distance between parallel sides of trapezium and its value is close to zero.
+Where $h$ is assumed to be the distance between parallel sides of trapezium and its value is taken close to zero.\\
+so we the number of trapeziums the required area is broken into can be written as,
 \begin{align}
-    h = \frac{b - a}{2}
+    n = \frac{b - a}{h}
 \end{align}
 and,
-On observing equation $\brak{0.12}$, we can see that,\\
+On observing equation $\brak{0.11}$, we can see that,\\
 If $A\brak{x_n}$ is area enclosed by the curve $f\brak{x}$, from $x=x_0$ to $x=x_n$,then,
 \begin{align}
-    A\brak{x_n} = A\brak{x_{n-1}} + \frac{1}{2}h\brak{f\brak{x_{n-1}} + f\brak{n}}
+    A\brak{x_n} = A\brak{x_{n-1}} + \frac{1}{2}h\brak{f\brak{x_{n-1}} + f\brak{x_n}}
 \end{align}
 From the method of finite differences , we know that,
 \begin{align}
@@ -124,7 +125,7 @@ From the method of finite differences , we know that,
 \begin{align}
     y_{n} = y_{n-1} + h\brak{\frac{dy}{dx}|_{x=x_{n-1}}}
 \end{align}
-On differentiating equation $\brak{0.7}$, and substituting the expression for $\frac{dy}{dx}$ in equation $\brak{0.16}$, we get the difference equation for the curve which is,
+On differentiating equation $\brak{as}$, and substituting the expression for $\frac{dy}{dx}$ in equation $\brak{a}$, we get the difference equation for the curve which is,
 \begin{align}
      y_{n} = y_{n-1} + h\brak{\frac{-bx}{a\sqrt{a^2 - x^2}}}
 \end{align}
@@ -144,18 +145,30 @@ We know that,
     x_0 = a\\
     x_n = ae
 \end{align}
-On assuming a value for $h$,close to zero and substituting in equation and on iterating till we reach $x_n=ae$ will return an area.\\
+On changing different values of $h$, we will observe that,as value for $h$ approaches zero,the area calculated using trapezoidal rule approaches the area calculated theoretically.
+On assuming a value fro $h$ close to zero and substituting in equation and on iterating till we reach $x_n=ae$ will return an area.\\
 $\therefore$ our required area is twice the returned area.\\
-For our plot, let us take $a = 4$,$e = \frac{\sqrt{7}}{4}$ and $h = 0.01$.\\
-In this case we get, \\
-Theoretical area = 14.625751423656318\\
-Area calculated by using the trapezoidal rule = 14.644422362727173
+
+For example,\\
+let us take $a = 4$,$e = \frac{\sqrt{7}}{4}$ and observe for different $h$ values.
+\begin{enumerate}
+    \item  $h = 0.1$\\
+    In this case we get, \\
+Theoretical area is:  14.625751423656318\\
+Area using trapezoidal rule:  14.870164029287624\\
+\item $h = 0.01$\\
+Theoretical area is:  14.625751423656318\\
+Area using trapezoidal rule:  14.644880662091099\\
+\item $h = 0.001$
+Theoretical area is:  14.625751423656318\\
+Area using trapezoidal rule:  14.626870703450807\\
+\end{enumerate}
+
+For our plot , Let , $a = 4$,$b = 3$,$h = 0.001$
 \begin{figure}[h!]
    \centering
    \includegraphics[width=0.75\columnwidth]{figures/Figure_1.png}
 \end{figure}
-
-
 
 \end{document}
 
