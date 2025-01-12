@@ -1,0 +1,160 @@
+%iffalse
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal,12pt,onecolumn]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+\usepackage{gvv}                                        
+%\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{subcaption}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}{Example}[section]
+\newtheorem{definition}[problem]{Definition}
+\newcommand{\BEQA}{\begin{eqnarray}}
+\newcommand{\EEQA}{\end{eqnarray}}
+\newcommand{\define}{\stackrel{\triangle}{=}}
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}
+
+
+% Marks the beginning of the document
+\begin{document}
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{NCERT-12.9.Ex.14}
+\author{S. Sai Akshita - EE24BTECH11054}
+\newpage
+\maketitle
+\bigskip
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Question:} In a bank, principal increases continuously at the rate of $5\%$ per year. In how many years Rs 1000 double itself?\\
+\textbf{Theoretical Solution:}Let $P$ be the principle at any time $t$. According to the given problem,
+\begin{align}
+    \frac{dp}{dt}&=\brak{\frac{5}{100}}\times P\\
+\frac{dp}{dt}&=\frac{P}{20} \label{eq.1}
+\end{align}
+separating the variables in \ref{eq.1}, we get
+\begin{align}
+    \frac{dp}{P}=\frac{dt}{20}\label{eq.2}
+\end{align}
+Integrating on both sides of \ref{eq.2}, we get
+\begin{align}
+    \log P&=\frac{t}{20} + C_1\\
+    P&=e^{\frac{t}{20}}\times e^{C_1}\\
+    P&= Ce^{\frac{t}{20}} \label{eq.3}
+\end{align}
+Now, when $t=0$, $P=1000$.\\ Substituting the values of $P$ and $t$ in \ref{eq.3}, we get $C=1000$. Therefore, \ref{eq.3} gives
+\begin{align}
+    P=1000e^{\frac{t}{20}}
+\end{align}
+Let $t$ years be the time required to double the principal. Then
+\begin{align}
+    2000&=1000e^{\frac{t}{20}}\\
+    t&=20\ln 2 \approx 13.86
+\end{align}
+\textbf{Solution Using Trapezoid Rule:}
+Formula of Trapezoidal rule over an interval $\brak{a,b}$ divided into $n$ equal subintervals is:
+\begin{align}
+    \int_a^b f\brak{x} \, dx \approx \frac{h}{2} \sbrak{ f\brak{x_0} + 2f\brak{x_1} + 2f\brak{x_2} + \dots + 2f\brak{x_{n-1}} + f\brak{x_n} }
+\end{align}
+If we do it for one subinterval:
+\begin{align}
+    \int_{a+nh}^{a+\brak{n+1}h} f\brak{x} \, dx \approx \frac{h}{2}  \sbrak{ f\brak{a+nh} + f\brak{a+\brak{n+1}h} }\label{eq.4}
+\end{align}
+To obtain difference equation using Trapezoidal rule, we need to integrate \ref{eq.2} for one subinterval.
+\begin{align}
+    \int_{P\brak{t_n}}^{P\brak{t_{n+1}}} dp &= \int_{t_n}^{t_{n+1}} \frac{Pdt}{20}
+\end{align}
+from \ref{eq.4}
+\begin{align}
+     \sbrak { P\brak{t_{n+1}} -P\brak{t_n}}=\frac{h}{2}\sbrak{\frac{P\brak{t_n}+P\brak{t_{n+1}}}{20}}\label{t.r}
+\end{align}
+Here, $h=t_{n+1}-t_n$, Which gives
+\begin{align}
+   \sbrak { P\brak{t_{n+1}} -P\brak{t_n}}&=\frac{t_{n+1}-t_n}{2}\sbrak{\frac{P\brak{t_n}+P\brak{t_{n+1}}}{20}} \\ 
+   P_{n+1}&=P_n\sbrak{\frac{40+t_{n+1}-t_n}{40-t_{n+1}+t_n}} \label{eq.5} \\
+   P_{n+1}&=P_n\sbrak{\frac{40+h}{40-h} }\label{eq.6}
+\end{align}
+Depending upon the length of subinterval we choose, the accuracy of the result is determined.
+By considering one subinterval has $1$ year time gap, and $P_0=1000$, $P_n=2000$, $t_0=0$, and using \ref{eq.5} in recursion, we can find $n$, which indicates the time required to double the principal amount. The smaller the value of $h$, the more accurate the estimated time will be.\\
+Choosing $h=1yr$,
+\begin{align}
+    P_{n+1}&=P_n\sbrak{\frac{41}{39} }\\
+    P_{1}&=P_0\sbrak{\frac{41}{39} }\\
+    P_{2}&=P_1\sbrak{\frac{41}{39} }\\
+    \vdots \\
+    P_{n}&=P_0\sbrak{\frac{41}{39} }^{n} \label{eq.7}
+\end{align}
+Substituting $P_0=1000$ and $P_n=2000$ in \ref{eq.7}, we get $n\approx 13.86$,which means $P_{13}<2000<P_{14}.$
+\textbf{Usage of Bilinear transform:}
+For the equation \ref{eq.1} take the Laplace of the RHS to be  $X\brak{s}$.
+\begin{align}
+    \frac{dp}{dt}&=h\brak{t}\\
+    h\brak{t}&= \frac{p}{20}
+\end{align}
+Applying Laplace Transform on both sides and using Laplace properties, we get
+\begin{align}
+    sY\brak{s}=X\brak{s}
+\end{align}
+Substituting in the Transfer Function,
+\begin{align}
+    H\brak{s}&=\frac{Y\brak{s}}{X\brak{s}}\\
+    H\brak{s}&=\frac{1}{s}\label{eq.8}
+\end{align}
+Now, we have to apply Bilinear Transform on both sides of \ref{eq.8}, which is conversion of $s$-domain to $z$-domain.
+\begin{align}
+    s&=\frac{2}{h}\frac{1-\frac{1}{z}}{1+\frac{1}{z}}\\
+    H\brak{z}&=\frac{h}{2}\frac{1+\frac{1}{z}}{1-\frac{1}{z}}\\
+    \frac{Y\brak{z}}{X\brak{z}}&=\frac{h}{2}\frac{1+\frac{1}{z}}{1-\frac{1}{z}}\\
+    \brak{1-\frac{1}{z}}Y\brak{z}&=\frac{h}{2}\brak{1+\frac{1}{z}}X\brak{z}\label{eq.9}
+\end{align}
+Apply Inverse z-transform on both sides of \ref{eq.9},
+\begin{align}
+    P_{n+1}-P_{n}&=\frac{h}{2}\brak{h\brak{t_n}+h\brak{t_{n+1}}}\\
+    P_{n+1}&=P_{n}+\frac{h}{2}\brak{h\brak{t_n}+h\brak{t_{n+1}}}\\
+    P_{n+1}&=P_{n}+\frac{h}{2}\brak{\frac{P\brak{t_n}+P\brak{t_{n+1}}}{20}}
+\end{align}
+which is same as \ref{t.r}.
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{principal.jpeg} 
+\end{figure}
+
+   
+\end{document}
