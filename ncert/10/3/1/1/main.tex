@@ -1,0 +1,124 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{10.3.1.1}
+\author{EE24BTECH11001 - Aditya Tripathy}
+ \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+
+\textbf{Question}:\\
+Find the roots of the equation $2x^2 - 3x + 5 = 0$
+\\
+\textbf{Solution: }\\
+Below are two methods to find the solutions of this quadratic equation,
+
+Fixed Point Iterations:
+Take an initial guess $x_0$. The update difference equation will use the following function:
+\begin{align}
+    x = g\brak{x}
+\end{align}
+For our problem,
+\begin{align}
+    g\brak{x} = \frac{2}{3}x^2 + \frac{5}{3}
+\end{align}
+Now the update equation will be,
+\begin{align}
+    x_{n+1} = g\brak{x_n} 
+\end{align}
+When we try to run the iterations however, we realize that whatever be the initial guess, 
+the subsequent updated values grow without bound. This is becaue of the following theorem\\
+\begin{align}
+    \textbf{Theorem: }
+\end{align}
+    Let $x = s$ be a solution of $x = g\brak{x}$ and suppose that $g$ has a continuous
+    derivative in some interval $J$ containing $s$. Then if $\abs{g^{\prime}} \le K < 1$ in $J$,
+    the iteration process defined  above converges for any $x_0$ in $J$. The limit of the sequence
+    $\sbrak{x_n}$ is s\\
+\newline
+Since there is no solution (evident by quadratic formula) there exists no interval J for which
+the process converges to a point.\\
+\newline
+The same behaviour is shown by the Newton-Raphson Method,\\
+Start with an initial guess $x_0$, and then run the following logical loop,
+\begin{align}
+    x_{n+1} = x_n - \frac{f\brak{x_n}}{f^{\prime}\brak{x_n}} 
+\end{align}
+where ,
+\begin{align}
+    f\brak{x} = 2x^2 - 3x + 5\\
+    f^{\prime}\brak{x} = 4x-3
+\end{align}
+\newline
+The behaviour shown here is that regardless of which guess we take, it reaches a point of 
+extrema(derivative $\approx$ 0) and then the process halts, or the updated point grow with bound.\\
+To get the complex solutions, however , we can Just take the initial guess point to be a 
+random complex number.\\
+The ouput of a program written to find roots is shown below:
+\begin{verbatim}
+Running Newton iterations:
+x got too big
+Trying fixed point iterations:
+x got too big
+Trying complex Newton's iterations:
+Solution = 0.750000 + -1.391941 i
+\end{verbatim}
+And on a second run, 
+\begin{verbatim}
+Running Newton iterations:
+Failure
+Trying fixed point iterations:
+x got too big
+Trying complex Newton's iterations:
+Solution = 0.750000 + 1.391941 i
+\end{verbatim}
+\end{document}
