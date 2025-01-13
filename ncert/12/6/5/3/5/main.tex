@@ -1,0 +1,123 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}  % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{6.5.3.5}
+\author{EE24BTECH11021 - Eshan Ray}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+\textbf{Question:}\\
+Find the local maximum and minimum value of the function $f\brak{x} = x^3 - 6x^2 + 9x + 15$\\
+\solution{
+For the function,
+\begin{align}
+    y\brak{x} &= x^3 - 6x^2 + 9x + 15\\
+    y\prime\brak{x} &= 3x^2-12x+9\\
+    y\prime\prime\brak{x} &= 6x-12
+\end{align}
+For critical points,
+\begin{align}
+    y\prime\brak{x} &= 0\\
+    \implies    3x^2-12x+9&=0\\
+    \implies    x &= 1,3
+\end{align}
+For, critical points to be local minimum or local maximum, it should follow the following:-
+\begin{align}
+    \text{Local Minimum:}\, y\prime\prime\brak{x}&\textgreater 0\\
+    \text{Local Maximum:}\, y\prime\prime\brak{x} &\textless 0
+\end{align}
+For,$x=1$ we get,
+\begin{align}
+    y\prime\prime\brak{1} &= 6\brak{1}-12\\
+    y\prime\prime\brak{1} &= -6\,\textless0
+\end{align}
+So, $x=1$ is a point of local maxima.\\ \\
+For, $x=3$ we get,
+\begin{align}
+    y\prime\prime\brak{3} &= 6\brak{3} -12\\
+    y\prime\prime\brak{3} &= 6\,\textgreater 0
+\end{align}
+So, $x=3$ is a point of local minima.\\
+\textbf{Computational Solution:}\\
+Finding the Local Maxima using Gradient Ascent we get,
+\begin{align}
+    x_{n+1} &= x_n + \alpha f\prime\brak{x_n}\\
+    x_{n+1} &= x_n + \alpha\brak{3x^2-12x+9}
+\end{align}
+Finding the Local Minima using Gradient Decent we get,
+\begin{align}
+    x_{n+1} &= x_n - \alpha f\prime\brak{x_n}\\
+    x_{n+1} &= x_n - \alpha\brak{3x^2-12x+9}
+\end{align}
+Taking the following conditions, we have
+\begin{align}
+    x_0 &= 0\\
+    y_0 &= 15\\
+    h &= 0.01\\
+    \alpha &=0.01
+\end{align}
+After computing we get,
+\begin{align}
+    \text{Local maxima:}\, x&=1.0000153989160618,\,f\brak{x} = 18.999999999288626\\
+    \text{Local Minima:}\, x&=2.9999846010839377,\,f\brak{x} = 15.00000000071137
+\end{align}
+
+
+
+}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{plots/plot.png}
+    \caption{Maxima and Minima points of the given function}
+    \label{fig:Plot1}
+    \end{figure}
+
+\end{document}
