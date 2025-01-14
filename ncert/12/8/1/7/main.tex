@@ -1,0 +1,117 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\usepackage{multicol}
+
+% Marks the beginning of the document
+\begin{document}
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{12.8.1.7}
+\author{EE24BTECH11018 - Durgi Swaraj Sharma}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt}
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{Exercise 8.1.7} Find the area of the smaller part of the circle $x^2+y^2=a^2$ cut off by the line $x=\frac{a}{\sqrt{2}}$.\\
+\textbf{Theroretical solution}
+\begin{align}
+	x^2+y^2=a^2\\
+	y^2=a^2-x^2
+\end{align}
+Taking square root on both sides,
+\begin{align}
+	y = \pm\sqrt{a^2-x^2}\\
+\end{align}
+Exploiting symmetry of our problem along the $x$-axis,
+\begin{align}
+	y = \sqrt{a^2-x^2} \label{eq1}
+\end{align}
+The smaller part of the circle cut by $x=\frac{a}{\sqrt{2}}$ is the region between $x=\frac{a}{\sqrt{2}} and x = a$. So we find the area of this region as follows.
+\begin{align}
+	\text{New area}\, &= \cdot\int\limits_{\frac{a}{\sqrt{2}}}^{a} \sqrt{a^2-x^2}
+\end{align}
+Changing to polar coordinates,
+\begin{align}
+	x = a \cos\theta\\
+	dx = - a \sin\theta d\theta\\
+	\text{Plugging into our integral,}\, &\int\limits_{\frac{\pi}{4}}^{0} \sqrt{a^2-a^2 \cos^2\theta} \brak{-a \sin\theta} d\theta\\
+	&= \int\limits_{\frac{\pi}{4}}^{0} \sqrt{a^2 \sin^2\theta} \brak{-a \sin\theta} d\theta\\
+	&= \int\limits_{\frac{\pi}{4}}^{0} a \sin\theta \brak{-a \sin\theta} d\theta
+\end{align}
+\begin{align}
+	&= -\int\limits_{\frac{\pi}{4}}^{0} a^2 \sin^2\theta d\theta\\
+	&= -a^2\sbrak{\frac{x}{2}-\frac{\sin2x}{4}}_{\frac{\pi}{4}}^{0}\\
+	&= -a^2\sbrak{0 -\frac{\pi}{8} - 0 + \frac{1}{4}}\\
+	\text{Required area}\, &= 2\cdot\text{New area} \, = 2\cdot a^2\cdot\frac{\pi-2}{8} = a^2\cdot\frac{\pi-2}{4}
+\end{align}
+We have theoretically found the area of the smaller part of the circle cut by the line to be $a^2 \frac{\pi-2}{4}$.\\
+\textbf{Computational Solution}\\
+To find the desired area computationally, we'll be utilising the Trapezoidal Rule.\\
+Following from \ref{eq1}
+\begin{align}
+	y &= \sqrt{a^2-x^2} \nonumber\\
+	\int\limits_{x_n}^{x_{n+1}} y \, dx &= \int\limits_{x_n}^{x_{n+1}} \sqrt{a^2-x^2} dx
+\end{align}
+We can solve the integral on the R.H.S. using the Trapezoidal Rule as follows.
+\begin{align}
+	A_{n+1}-A_{n} = 	\int\limits_{x_n}^{x_{n+1}} y \, dx &= h\sbrak{\frac{\sqrt{a^2-x_{n+1}^2} + \sqrt{a^2-x_n^2}}{2}}
+\end{align}
+Where $n$ is the number of iterations we want to calculate in, $h = \frac{a-\frac{a}{\sqrt{2}}}{n}$, $A_{n}$ is the area calculated till the $n^{th}$ iteration, and $x_0 = \frac{a}{\sqrt{2}}$.
+The update equation for our area will be:
+\begin{align}
+	A_{n+1} = A_{n} +  h\sbrak{\frac{\sqrt{a^2-x_{n+1}^2} + \sqrt{a^2-x_n^2}}{2}}
+\end{align}
+The smaller our step-size, $h$, is, the more accurate our area calulation will be.\\
+And the required area is twice of the calculated area, as the calculated region reflects about the $x$-axis in the total region.
+\begin{align*}
+	\text{Area calulcated when}\, a=13 \,\text{from:}\\
+	\text{Theoretical Solution is}\, 48.232289\\
+	\text{Computational Solution is}\, 48.232288
+\end{align*}
+\end{document}
