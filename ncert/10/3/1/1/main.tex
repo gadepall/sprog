@@ -57,68 +57,66 @@
 
 
 \textbf{Question}:\\
-Find the roots of the equation $2x^2 - 3x + 5 = 0$
+Aftab tells his daughter, "Seven years ago, I was seven times as old as you were then.
+Also, three years from now, I shall be three times as old as you will be.". Represent
+this situation algebraically and graphically.
 \\
 \textbf{Solution: }\\
-Below are two methods to find the solutions of this quadratic equation,
+Let Aftab's present age be denoted by $x$ and his daughter's present age be denoted as $y$.
+Now the problem can be represented algebraically as follows :
+\begin{align}
+    \brak{x-7} = 7\brak{y-7}\\
+    \brak{x+3} = 3\brak{y+3}
+\end{align}
+Simplifying and using matrix notation,
+\begin{align}
+    x -7y = -42\\
+    x - 3y = 6\\
+    \myvec{
+        1 & -7\\
+        1 & -3
+    } \myvec{x \\ y}= \myvec{ -42 \\ 6}
+\end{align}
 
-Fixed Point Iterations:
-Take an initial guess $x_0$. The update difference equation will use the following function:
+Any non-sigular matrix can be represented as a product of a lower triangular matrix $L$ and an
+upper triangular matrix $U$
+
 \begin{align}
-    x = g\brak{x}
+    A\vec{x} = LU\vec{x} = \vec{b}
 \end{align}
-For our problem,
+The upper triangular matrix U is found by row reducing A,
 \begin{align}
-    g\brak{x} = \frac{2}{3}x^2 + \frac{5}{3}
+    \myvec{1 & -7 \\ 1 & -3 } \xrightarrow{R_2 -> R_2 - R_1} \myvec{1 & -7 \\ 0 & 4}  
 \end{align}
-Now the update equation will be,
+Let 
 \begin{align}
-    x_{n+1} = g\brak{x_n} 
+    L = \myvec{1 & 0\\ l_{21} & 1}
 \end{align}
-When we try to run the iterations however, we realize that whatever be the initial guess, 
-the subsequent updated values grow without bound. This is becaue of the following theorem\\
-\begin{align}
-    \textbf{Theorem: }
-\end{align}
-    Let $x = s$ be a solution of $x = g\brak{x}$ and suppose that $g$ has a continuous
-    derivative in some interval $J$ containing $s$. Then if $\abs{g^{\prime}} \le K < 1$ in $J$,
-    the iteration process defined  above converges for any $x_0$ in $J$. The limit of the sequence
-    $\sbrak{x_n}$ is s\\
+$l_{21}$ is the multiplier used to zero $a_{21}$, so $l_{21} = 1$.\\
 \newline
-Since there is no solution (evident by quadratic formula) there exists no interval J for which
-the process converges to a point.\\
-\newline
-The same behaviour is shown by the Newton-Raphson Method,\\
-Start with an initial guess $x_0$, and then run the following logical loop,
+Now,
 \begin{align}
-    x_{n+1} = x_n - \frac{f\brak{x_n}}{f^{\prime}\brak{x_n}} 
+    A = \myvec{1 & -7 \\ 1 & -3} = \myvec{1 & 0 \\ 1 & 1}\myvec{1 & -7 \\ 0 & 4}
 \end{align}
-where ,
+Now we can get the solution to our problem by the two step process,
 \begin{align}
-    f\brak{x} = 2x^2 - 3x + 5\\
-    f^{\prime}\brak{x} = 4x-3
+    L\vec{y} = \vec{b}\\
+    U\vec{x} = \vec{y}
 \end{align}
-\newline
-The behaviour shown here is that regardless of which guess we take, it reaches a point of 
-extrema(derivative $\approx$ 0) and then the process halts, or the updated point grow with bound.\\
-To get the complex solutions, however , we can Just take the initial guess point to be a 
-random complex number.\\
-The ouput of a program written to find roots is shown below:
-\begin{verbatim}
-Running Newton iterations:
-x got too big
-Trying fixed point iterations:
-x got too big
-Trying complex Newton's iterations:
-Solution = 0.750000 + -1.391941 i
-\end{verbatim}
-And on a second run, 
-\begin{verbatim}
-Running Newton iterations:
-Failure
-Trying fixed point iterations:
-x got too big
-Trying complex Newton's iterations:
-Solution = 0.750000 + 1.391941 i
-\end{verbatim}
+Using forward substitution to solve the first equation,
+\begin{align}
+    \myvec{1 & 0 \\ 1 & 1}\myvec{y_1 \\ y_2} &= \myvec{-42 \\ 6}\\
+    \xrightarrow{} \myvec{y_1 \\ y_2} &= \myvec{-42 \\ 48} 
+\end{align}
+Now using back-substitution for the second equation,
+\begin{align}
+    \myvec{1 & -7 \\ 0 & 4}\myvec{x_1 \\ x_2} &= \myvec{-42 \\ 48}\\
+    \myvec{x_1 \\ x_2} &= \myvec{42 \\ 12}
+\end{align}
+Therefore Aftab's age is 42 years and 12 years is the age of his daughter.
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/fig.png}
+    \caption{Solution to set of linear equations}
+\end{figure}
 \end{document}
