@@ -138,6 +138,68 @@ This is the original quadratic equation, so the eigenvalues are:
 \begin{align}
     \lambda_1 = 5, \quad \lambda_2 = -2
 \end{align}
+\section*{QR Algorithm for Finding Eigenvalues and Roots of a Quadratic Equation}
+
+Consider the quadratic equation:
+\[
+x^2 - 3x - 10 = 0
+\]
+We aim to find its roots using the QR algorithm, which finds the eigenvalues of the companion matrix of the quadratic polynomial.
+
+\subsection*{1. Companion Matrix of the Polynomial}
+The companion matrix \( \Lambda \) of the polynomial \( x^2 - 3x - 10 \) is given by:
+\[
+\Lambda = \begin{pmatrix} 
+0 & 1 \\
+-\frac{10}{1} & \frac{-3}{1}
+\end{pmatrix}
+= \begin{pmatrix}
+0 & 1 \\
+-10 & -3
+\end{pmatrix}
+\]
+This matrix represents the system that corresponds to the given polynomial.
+
+\subsection*{2. QR Decomposition}
+The QR algorithm starts by performing QR decomposition on the matrix \( \Lambda \). The goal is to decompose \( \Lambda \) into an orthogonal matrix \( Q \) and an upper triangular matrix \( R \), such that:
+\[
+\Lambda = QR
+\]
+where \( Q^T Q = I \), and \( R \) is upper triangular. Then, we form a new matrix \( \Lambda' \) as:
+\[
+\Lambda' = RQ
+\]
+This process is repeated iteratively until \( \Lambda' \) converges to an upper triangular matrix whose diagonal elements are the eigenvalues of \( \Lambda \), which correspond to the roots of the quadratic equation.
+
+\subsection*{3. Iterative Process}
+Let’s outline the iterative steps for the QR algorithm applied to this companion matrix.
+
+\subsubsection*{First Iteration:}
+We start with \( \Lambda_0 = \begin{pmatrix} 0 & 1 \\ -10 & -3 \end{pmatrix} \).
+
+Perform the QR decomposition of \( \Lambda_0 \):
+\[
+\Lambda_0 = QR
+\]
+Let’s calculate \( Q \) and \( R \), then form \( \Lambda_1 = RQ \).
+
+\subsubsection*{Subsequent Iterations:}
+Repeat the QR decomposition on the new matrix \( \Lambda_1 \), then form \( \Lambda_2 = RQ \), and so on, until the matrix \( \Lambda_k \) converges to an upper triangular form. The diagonal elements of this matrix represent the eigenvalues of \( \Lambda_0 \), which are the roots of the quadratic equation.
+
+\subsection*{4. Eigenvalues and Roots}
+After sufficient iterations, the QR algorithm will converge to an upper triangular matrix where the diagonal entries are the eigenvalues. These eigenvalues correspond to the roots of the polynomial. In this case, the eigenvalues of the companion matrix \( \Lambda \) will give us the roots of the quadratic equation \( x^2 - 3x - 10 = 0 \).
+
+Thus, the eigenvalues (roots) are the solutions to the quadratic equation:
+\[
+x = \frac{3 \pm \sqrt{3^2 - 4(1)(-10)}}{2(1)} = \frac{3 \pm \sqrt{9 + 40}}{2} = \frac{3 \pm \sqrt{49}}{2}
+\]
+\[
+x = \frac{3 \pm 7}{2}
+\]
+Hence, the roots are:
+\[
+x_1 = 5, \quad x_2 = -2
+\]
 
 \subsection*{ Solution using Fixed Point Iteration}
 We rewrite the equation as:
