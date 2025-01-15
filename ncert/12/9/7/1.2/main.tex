@@ -90,25 +90,22 @@ Taking $\frac{dy}{dx}=t$, we get
 t^3-4t^2=\sin x-7y\\
 \frac{dt}{dx}=\frac{\cos x-7t}{3t^2-8t}
 \end{align}
-Computing $k_1,k_2,k_3$ and $k_4$ for $\brak{x_1,y_1}$
+We apply RK method for $t^\prime=f\brak{x,t}$ and use $t$ to calculate $y$ by using RK method to solve $y^\prime=t$.
 \begin{align}
-k_1&=hf\brak{x_n,y_n,t_n}\\
-k_2&=hf\brak{x_n+\frac{h}{2},y_n+\frac{k_1}{2},t_n+\frac{k_1}{2}}\\
-k_3&=hf\brak{x_n+\frac{h}{2},y_n+\frac{k_2}{2},t_n+\frac{k_2}{2}}\\
-k_4&=hf\brak{x_0+\frac{h}{2},y_n+k_3,t_n+k_3}\\
+k_1&=hf\brak{t_n}\\
+k_2&=hf\brak{t_n+\frac{k_1}{2}}\\
+k_3&=hf\brak{t_n+\frac{k_2}{2}}\\
+k_4&=hf\brak{t_n+k_3}\\
 y_{n+1}&=y_n+\frac{1}{6}\brak{k_1+2k_2+2k_3+k_4}\\
-t_{n+1}&=t_n+\frac{1}{6}\brak{k_1+2k_2+2k_3+k_4}
 \end{align}
 We take a range \sbrak{x_0,x_{end}} and at each step try to calculate k values for $y$ and $t$.
 \begin{align}
 k_{1y}&= ht_n\\
-k_{1t}&=h\brak{\sin x_n-{t_n}^3+4{t_n}^2-7y_n}\\
+k_{1t}&=h\brak{\frac{\cos x_n-7t_n}{3t_n^2-8t_n}}\\
 k_{2y}&= h\brak{t_n+\frac{k_{1t}}{2}}\\
-k_{2t}&=h\brak{\sin \brak{x_n+\frac{h}{2}}-{t_n+\frac{k_{1t}}{2}}^3+4{t_n+\frac{k_{1t}}{2}}^2-7\brak{y_n+\frac{k_{1y}}{2}}}\\
+k_{2t}&=h\brak{\frac{\cos \brak{x_n+\frac{h}{2}}-7\brak{t_n+\frac{k_{1t}}{2}}}{3\brak{t_n+\frac{k_{1t}}{2}}^2-8\brak{t_n+\frac{k_{1t}}{2}}}}\\
 k_{3y}&= h\brak{t_n+\frac{k_{2t}}{2}}\\
-k_{3t}&=h\brak{\sin \brak{x_n+\frac{h}{2}}-{t_n+\frac{k_{2t}}{2}}^3+4{t_n+\frac{k_{2t}}{2}}^2-7\brak{y_n+\frac{k_{2y}}{2}}}\\
-k_{4y}&=h\brak{t_n+k_{3t}}\\
-k_{4t}&=h\brak{\sin\brak{x_n+h}-\brak{v_n+k_{3t}}^3+4\brak{t_n+k_{3t}}^2-7\brak{y_n+k_{3y}}}
+k_{3t}&=h\brak{\frac{\cos \brak{x_n+\frac{h}{2}}-7\brak{t_n+\frac{k_{2t}}{2}}}{3\brak{t_n+\frac{k_{2t}}{2}}^2-8\brak{t_n+\frac{k_{2t}}{2}}}}
 \end{align}
 Then the next point will be of the form 
 \begin{align}
@@ -119,13 +116,13 @@ we then increment $x_n$ until we reach $x_{end}$\\
 \textbf{Plotting:}
 By taking 
 \begin{align}
-\brak{x_0,y_0,t_0}&=\brak{0,0,0}\\
+\brak{x_0,y_0,t_0}&=\brak{0,0,4}\\
 h&=0.1\\
 x_{end}&=5
 \end{align}
 \begin{figure}[h!]
    \centering
-   \includegraphics[width=1\columnwidth]{Figs/Figure_1.png}
+   \includegraphics[width=1\columnwidth]{Figs/Figs.png}
    \caption{Plot}
 \end{figure}
 \end{document}
