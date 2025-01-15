@@ -8,7 +8,7 @@ double f1(double x, double y, double v) {
 }
 
 double f2(double x, double y, double v) {
-    return (sin(x) - pow(v, 3) + 4 * pow(v, 2) - 7 * y); // dv/dx
+    return (cos(x) -7*v)/(3*v*v-8*v); // dv/dx
 }
 
 // Runge-Kutta function
