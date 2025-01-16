@@ -1,0 +1,161 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Uncomment if needed for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+%\usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{circuitikz}
+\usepackage{standalone} % For including external TikZ files
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{6.5.2.1}
+\author{EE24BTECH11034 - K Teja Vardhan}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Question}:\\
+Find the Maximum and Minimum values of the function \\
+$$y(x) =  \abs{x + 2} -1$$\\
+\textbf{Solution : }\\
+\textbf{Threotical Solution :}\\
+
+As $y(x)$ is modular function, The vertex of the function is at the point where,
+\begin{align}
+    \abs{x + 2} = 0\\
+    x = -2
+\end{align}
+Substitute $x = -2$ in the function, gives :
+\begin{align}
+    y(-2) = -1
+\end{align}
+Hence, the vertex is at $\brak{-2,-1}$, which is the \textbf{minimum} point and it can be explained by ,
+$$y =
+\begin{cases} 
+(x+2) -1 & \text{if } x \geq -2, \\ 
+-(x+2) + -1 & \text{if } x < -2
+\end{cases}
+$$
+The derivative of $y$ is:
+$$
+\frac{dy}{dx} =
+\begin{cases} 
+1 & \text{if } x > -2, \\ 
+-1 & \text{if } x < -2.
+\end{cases}
+$$
+At $x = -2$, the derivative does not exist because of the abrupt change in slope. However, we can observe the behavior of the function:\\
+- For \( x < -2 \), the derivative \( \frac{dy}{dx} = -1 < 0 \), indicating that the function is decreasing.\\
+- For \( x > -2 \), the derivative \( \frac{dy}{dx} = 1 > 0 \), indicating that the function is increasing.\\
+
+Therefore, \textbf{minimum} value of $y(x) = -1$  at $x = -2$ \\
+
+
+Now,\\
+As $x \rightarrow \infty$ or $x \rightarrow -\infty$, the absolute value $\abs{x+2} \rightarrow \infty$, and the positive part of this term dominates. Thus:
+\begin{align}
+    y \rightarrow \infty
+\end{align}
+This means the function increases without bound, so there \textbf{is no maximum value.}\\
+
+
+\textbf{Computational solution :}\\
+Minimum value of the function can be done by \textbf{Gradient Descent} method:
+\begin{itemize}
+    \item \textbf{Choose a starting point} - $x_0$ away from $x = -2$.
+    \item \textbf{Update the position iteratively}:
+    $$x_{n+1} = x_{n} - \eta \cdot \frac{dy}{dx}$$\\
+    Here, $\eta = 0.01$, $\eta$ is learning rate.
+    \item \textbf{Behaviour in each region}:\\
+    \textbf{for $x > -2$}:   $\frac{dy}{dx} = 1$,
+    \begin{align}
+        x_{n+1} = x_{n} - \eta
+    \end{align}
+    This causes $x_n$ to decrease toward $x = -2$.\\
+    \textbf{for} $x < -2$: $\frac{dy}{dx} = -1$,
+    \begin{align}
+        x_{n+1} = x_{n} + \eta
+    \end{align}
+    This causes $x_n$ to decrease toward $x = -2$.\\
+\textbf{At} $x = -2$:  \\
+the gradient changes direction abruptly, and the iteration stops because the function value is minimized at this point.
+\end{itemize}
+Maximum value of the function can be done by \textbf{Gradient ascent} method:\\
+
+Here,
+\begin{align}
+    x_{n+1} = x_{n} + \eta \cdot \frac{dy}{dx}
+\end{align}
+
+\textbf{Similarly finding behaviour in each region}:\\
+\textbf{for} $x>-2$: \\
+\begin{align}
+    x_{n+1} = x_{n} + \eta
+\end{align}
+This causes $x_n$ to increase indefinitely, moving away from $x = -2$.\\
+\textbf{for} $x<-2$: \\
+\begin{align}
+    x_{n+1} = x_{n} - \eta
+\end{align}
+This causes $x_n$ to increase indefinitely, moving away from $x = -2$.\\ 
+
+The function increase without bound as $x \rightarrow \infty$ or $x \rightarrow -\infty$, so \textbf{gradient ascent} will not converge to a maximum. The iteration will continue indefinitely.
+so, \textbf{No maximum exists}\\
+
+\textbf{Computational results :}\\
+-Absolute Minimum
+\begin{align}
+    x \approx -2 , \text{ } y(x) \approx -1  
+\end{align}
+-No Absolute Maximum\\
+
+ \begin{figure}[ht!]
+   \centering
+   \includegraphics[width=\columnwidth]{figs/Figure_1.png}
+\end{figure}
+\end{document}

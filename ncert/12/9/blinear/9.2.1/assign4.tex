@@ -1,0 +1,121 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{textcomp}
+\usetikzlibrary{circuits.ee.IEC, positioning}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{9.2.1}
+\author{Manognya Kundarapu - EE24BTECH11037
+}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Question:} Check if the differential equation $\frac{d^2y}{dx^2}-\frac{dy}{dx}=0$ has a solution $y=e^x+1$ for $y(0)=2$ and $y^\prime\brak{0}=1$.
+
+\begin{enumerate}
+    \item \textbf{Theoretical Solution:}\\ 
+    \begin{align}
+        \text{Taking } \frac{dy}{dx}=t;\\
+        \frac{dt}{dx}-t=0\\
+        \int\frac{1}{t}dt=\int dx\\
+        ln\brak{t}=x+k\\
+        t=Ce^x \text{ but } y^\prime(0)=1 \implies \frac{dy}{dx}=e^x\\
+        \int dy=\int e^x dx\\
+        \implies y = e^x+k\\
+        \text{but } y(0)=2 \implies k=1\\
+        \therefore y =e^x+1 \text{ is the solution under given conditions}.
+    \end{align}
+    \item \textbf{Using Trapezoidal Rule: }\\ 
+    \begin{align}
+        \text{For }\frac{dy}{dx}=f\brak{x,y}\\
+         \int_{y_n}^{y_{n+1}}dy=\int_{x_n}^{x_{n+1}}f\brak{x,y}dx\\
+         y_{n+1}-y_n\approx\frac{h}{2}\brak{f\brak{x_n,y_n}+f\brak{x_{n+1},y_{n+1}}}\\
+         \implies y_{n+1}=y_n+\frac{h}{2}\brak{f\brak{x_n,y_n}+f\brak{x_{n+1},y_{n+1}}}\\
+         \text{where } h=x_{n+1}-x_n
+    \end{align}
+    To solve the differential equation $y^{\prime \prime}-y^\prime=0$ numerically using the trapezoidal rule, we first need to rewrite it as a system of first-order differential equations, let $y^\prime=v \text{ and } v^\prime=v$\\
+    For $y^\prime=v$, applying trapezoidal rule, gives
+    \begin{align}
+        y_{n+1} = y_{n} + \frac{h}{2} \left( v_{n} + v_{n+1} \right)
+    \end{align}
+    For $v^\prime=v$, applying trapezoidal rule, gives
+    \begin{align}
+        v_{n+1} = v_{n} + \frac{h}{2} \left( v_{n} + v_{n+1} \right)\\
+        \implies v_{n+1}=\frac{1+\frac{h}{2}}{1-\frac{h}{2}}v_n\\
+        \therefore \text{The final difference equations are}
+        y_{n+1} = y_{n} + \frac{h}{2} \left( v_{n} + v_{n+1} \right)\\
+        v_{n+1}=\frac{1+\frac{h}{2}}{1-\frac{h}{2}}v_n
+   \end{align}
+   \item \textbf{Using Bilinear Transform:}\\
+   The bilinear transform maps the continuous-time derivative operator $\frac{d}{dt}$ to a discrete time operator in the z-domain as:
+   \begin{align}
+       \frac{d}{dt}\longrightarrow\frac{2}{h}\frac{1-z^{-1}}{1+z^{-1}}\\
+       \text{here, h is the step size and $z^{-1}$ is a delay operator which represents; }\\
+       z^{-1}y[n]=y[n-1]\\
+       \text{For $v^\prime=v$ we get }\frac{2}{h}\frac{1-z^{-1}}{1+z^{-1}}V\brak{z}=V\brak{z}\\
+       \implies z^{-1}=\frac{\frac{2}{h}-1}{\frac{2}{h}+1}\\
+       \text{Thus, the difference equation that we get is }v[n]=\alpha v[n-1]\\
+       \alpha = \frac{\frac{2}{h}-1}{\frac{2}{h}+1}\\
+       \text{Similarly, for $y^\prime=v$; }\frac{2}{h}\frac{1-z^{-1}}{1+z^{-1}}V\brak{z}=Y\brak{z}\\
+       \text{Applying inverse z-transform, we get }y[n+1] = y[n] + \frac{h}{2} \left( v[n] + v[n+1] \right)\\
+      \text{Therefore, the final difference equations are }v[n]=\alpha v[n-1]; \alpha = \frac{\frac{2}{h}-1}{\frac{2}{h}+1}\\
+       y[n+1] = y[n] + \frac{h}{2} \left( v[n] + v[n+1] \right)
+   \end{align}
+    The below graph shows the comparison between the curve that is obtained theoretically and the simulation curve(numerically generated points through iterations).
+\end{enumerate}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/curve.png}
+\end{figure}
+
+\end{document}
