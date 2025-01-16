@@ -1,0 +1,472 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}                                      
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}
+\usepackage{multicol}
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{10.4.1.2.2}
+\author{EE24BTECH11006 - Arnav Mahishi}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+
+\textbf{Question}:\newline
+The product of two consecutive integers is $306$. We need to find the integers.
+\newline
+\begin{table}[h!]    
+  \centering
+  \input{tables/table.tex}
+  \caption{Variables Used}
+  \label{tab1.1.2.2}
+\end{table}
+\newline
+\textbf{Theoretical Solution:}\\
+Lets start by assuming the bigger integer as $x$ and the smaller integer as $\frac{306}{x}$
+\begin{align}
+    \implies x-\frac{306}{x}=1\\
+    \implies x^2-306=x\\
+    \implies x^2-x-306=0
+\end{align}
+Using the quadratic formula:
+\begin{align}
+    x=\frac{1\pm\sqrt{1^2-\brak{4\cdot -306}}}{2}\\
+    x_1=\frac{1+\sqrt{1225}}{2}=18\\
+    x_2=\frac{1-\sqrt{1225}}{2}=-17
+\end{align}
+If $x=18$ the other integer will be $17$ if $x=-17$ the other integer will be $-18$
+\begin{align}
+    p\brak{2}=41-72\brak{-2}-18\brak{-2}^2=113
+\end{align}
+$\therefore$ The integers can be $18,17$ or $-18,-17$\\
+\textbf{Computational Solution:}\\
+Below are three methods to find the solutions of this quadratic equation,\\
+QR decomposition on Hessenberg matrix with Single Shift:\\
+It is a Numerical method for finding eigenvalues of a given matrix\\
+The QR algorithm is as follows:
+\begin{enumerate}
+\item QR decomposition 
+\begin{align}
+A = QR
+\end{align}
+\begin{enumerate}
+    \item $Q$ is an $ m \times n $ orthogonal matrix
+    \item $R$ is an $n \times n$ upper triangular matrix.
+\end{enumerate}
+Given a matrix $ A = [a_1, a_2, \dots, a_n] $, where each $ a_i $ is a column vector of size $ m \times 1 $.
+
+\item Normalize the first column of $A$:
+\begin{align}
+q_1 = \frac{a_1}{\norm{a_1}}
+\end{align}
+
+\item  For each subsequent column $ a_i $, subtract the projections of the previously obtained orthonormal vectors from $ a_i $ :
+\begin{align}
+a_i' = a_i - \sum_{k=1}^{i-1} \langle a_i, q_k \rangle q_k
+\end{align}
+Normalize the result to obtain the next column of \( Q \):
+\begin{align}
+q_i = \frac{a_i'}{\norm{a_i'}}
+\end{align}
+
+Repeat this process for all columns of \( A \).
+
+\item Finding $R$:- \\
+After constructing the ortho-normal columns $ q_1, q_2, \dots, q_n $ of $Q$, we can compute the elements of $R$ by taking the dot product of the original columns of $A$ with the columns of $Q$:
+
+\begin{align}
+    r_{ij} = \langle a_j, q_i \rangle \text{ , for  }  i \leq j 
+\end{align}
+\end{enumerate}
+For the given polynomial equation the companion matrix will be
+\begin{align}
+	\Lambda = \myvec{0 & 1\\306 & 1}
+\end{align}
+This algorithm involves decomposing a given matrix $A$ into two matrices, $Q$ and $R$, where $Q$ is an orthogonal matrix and $R$ is an upper triangular matrix. After performing the decomposition, the matrix is updated as $A' = RQ$. This process is repeated iteratively. In theory, as the number of iterations approaches infinity, $A'$ will converge to an upper triangular matrix with its diagonal elements representing the eigenvalues of $A$. To accelerate the convergence, a shift is introduced into the matrix during the iterations, as described below.\\
+\begin{enumerate}
+\item Initialization \\
+Let $A_0 = A $, where $A$ is the given matrix.
+
+\item QR Decomposition \\
+For each iteration $ k = 0, 1, 2, \dots $:
+\begin{enumerate}
+    \item Compute the QR decomposition of \( A_k \), such that:
+    \begin{align}
+    A_k = Q_k R_k
+    \end{align}
+    where:
+    \begin{enumerate}
+        \item $Q_k $ is an orthogonal matrix ($ Q_k^\top Q_k = I $).
+        \item $ R_k $ is an upper triangular matrix.
+    \end{enumerate}
+    The decomposition ensures $ A_k = Q_k R_k $.
+
+    \item Form the next matrix \( A_{k+1} \) as:
+    \begin{align}
+    A_{k+1} = R_k Q_k
+    \end{align}
+\end{enumerate}
+
+\item Convergence\\
+Repeat Step 2 until $ A_k $ converges to an upper triangular matrix $ T $. The diagonal entries of $T$ are the eigenvalues of $A$.\\
+\item The eigenvalues of matrix will be the roots of the equation.
+
+\end{enumerate}
+This is the basic QR algorithm but we can intorduce a shift to make the convergence faster
+\begin{align}
+\sigma &= 1\\
+\Lambda_{\text{shifted}} &= \myvec{0 & 1\\306& 1} - \sigma I\\
+\Lambda_{\text{shifted}} &= \myvec{-1 & 1\\ 306 & 0}
+\end{align}
+Where $\sigma$ is the last diagonal element. Since $Q$ zeroes out the lower triangular element, which in our case, there is only such element. We will construct an orthogonal matrix such that the element will become 0. Since it is orthogonal
+\begin{align}
+Q &= \myvec{c & s\\-s & c}\\
+\end{align}
+Where
+\begin{align}
+c &= \cos{\phi}\\
+s &= \sin{\phi}
+\end{align}
+Where $\phi$ is the rotation angle. Since it should zero out that one element\\
+\begin{align}
+	\myvec{c & s\\-s & c} \times \myvec{-1 & 1\\306 & 0} &= \myvec{a & b\\ 0 & c}\\
+	c\brak{1} + s\brak{-306} &= 0\\
+	c^2+s^2 &= 1
+\end{align}
+Solving for $c$ and $s$ gives
+\begin{align}
+	c &= \frac{-1}{\sqrt{\brak{1}^2+\brak{306}}^2}\\
+	s &= \frac{306}{\sqrt{\brak{1}^2+\brak{306}}^2}
+\end{align}
+Now, as we got the $Q$ matrix we will do the following
+\begin{align}
+\Lambda_{\text{new}} &= Q\Lambda_{\text{shifted}}Q^\top + \sigma I\\
+\Lambda_{\text{new}} &= \myvec{c & s\\-s & c}\myvec{-1 & 1\\306 & 0}\myvec{c & -s\\s & c} + \sigma I\\
+\Lambda_{\text{new}} &\approx \myvec{-17.4965&-304.9422\\-0.0578&18.4965}
+\end{align}
+As the matrix $A$ is undergoing similarity transformation, the eigenvalues will not change.\\
+Run the same sequence of steps for 19 iterations after which you end up with the following matrix
+\begin{align}
+    \Lambda_{\text{new}} = \myvec{-17&-305\\0&18}
+\end{align}
+Since its an upper triangular matrix, the eigenvalues are same as its diagonal elements\\
+Hence the roots of given equation are -17 and 18\newline \newline
+We will now generalize how to find the eigenvalues of any given matrix. We say a matrix $A$ is in hessenberg form if it is in form shown below
+\begin{align}
+H = 
+\myvec{
+\times & \times & \times & \cdots & \times \\
+\times & \times & \times & \cdots & \times \\
+0      & \times & \times & \cdots & \times \\
+0      & 0      & \times & \cdots & \times \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0      & 0      & 0      & \cdots & \times
+}
+\end{align}
+We will use householder method to reduce any matrix into hessenberg form.\\
+It reduces an $n\times n$ matrix to hessenberg form by $n-2$ orthogonal trasformations. Each transformations annihilates the required part of a whole column at a time rather than element wise elimination. The basic ingredient for a house holder matrix is $P$ which is in the form
+\begin{align}
+	P = I-2\vec{w}\vec{w}^\top
+\end{align}
+where w is a vector with $\abs{w}^2=1$. The matrix $P$ is orthogonal as
+\begin{align}
+P^2 &=\brak{I - 2\vec{w}\vec{w}^\top}\cdot\brak{I - 2\vec{w}\vec{w}^\top}\\
+    &=I-4\vec{w}\vec{w}^\top + 4\vec{w}\cdot\brak{\vec{w}^\top\vec{w}^\top}\cdot\vec{w}^\top\\
+    &=I
+\end{align}
+Therefore, $P=P^{-1}$ but $P = P^\top$, so $P = P^\top$ \\
+We can rewrite $P$ as
+\begin{align}
+	P = I - \frac{\vec{u}\vec{u}^\top}{H}
+\end{align}
+where the scalar $H$ is
+\begin{align}
+H = \frac{1}{2}\abs{\vec{u}}^2
+\end{align}
+Where $\vec{u}$ can be any vector. Suppose $\vec{x}$ is the vector composed of the first column of $A$. Take
+\begin{align}
+	\vec{u} = \vec{x} \mp \abs{\vec{x}}\vec{e}_1
+\end{align}
+Where $\vec{e}_1 = \myvec{1 & 0 & \dots}^\top$, we will take the choice of sign later. Then
+\begin{align}
+	P\cdot\vec{x} &= \vec{x} - \frac{\vec{u}}{H}\cdot\brak{\vec{u}\mp \abs{\vec{x}}\vec{e}_1}^\top\cdot \vec{x}\\
+	              &= \vec{x} - \frac{2\vec{u}\brak{\abs{x}^2\mp \abs{x}x_1}}{2\abs{x}^2\mp \abs{x}x_1}\\
+	              &= \vec{x} - \vec{u}\\
+	              &= \mp\abs{\vec{x}}\vec{e}_1
+\end{align}
+To reduce a matrix $A$ into Hessenberg form, we choose vector $\vec{x}$ for the first householder matrix to be lower $n-1$ elements of the first column, then the lower $n-2$ elements will be zeroed.
+\begin{align}
+P_1\cdot A &= \myvec{
+1 & 0 & 0 & \cdots & 0 \\
+0 & p_{11} & p_{12} & \cdots & p_{1n} \\
+0      & p_{21} & p_{22} & \cdots & p_{2n} \\
+0      & p_{31} & p_{32} & \cdots & p_{3n} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0      & p_{n1} & p_{n2} & \cdots & p_{nn}
+}\myvec{
+a_{00} & \times & \times & \cdots & \times \\
+a_{10} & \times & \times & \cdots & \times \\
+a_{20} & \times & \times & \cdots & \times \\
+a_{30} & \times & \times & \cdots & \times \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+a_{n0} & \times & \times & \cdots & \times
+}\\
+&=\myvec{
+a_{00}^\prime & \times & \times & \cdots & \times \\
+0 & \times & \times & \cdots & \times \\
+0      & \times & \times & \cdots & \times \\
+0      & \times   & \times & \cdots & \times \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0      & \times      & \times      & \cdots & \times
+}
+\end{align}
+Now if we multiply the matrix $P_1A$ with $P_1$, the eigenvalues will be conserved as it is a similarity transformation.\\
+Now we choose the vector $\vec{x}$ for the householder matrix to be the bottom $n-2$ elements of the second column, and from it construct the $P_2$
+\begin{align}
+P_2 = \myvec{
+1 & 0 & 0 & \cdots & 0 \\
+0 & 1 & 0 & \cdots & 0 \\
+0 & 0 & p_{22} & \cdots & p_{2n} \\
+0 & 0 & p_{32} & \cdots & p_{3n} \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & p_{n2} & \cdots & p_{nn}
+}
+\end{align}
+By performing a similarity transformation $PAP$, we can zero out the $n-3$ elements in the second column. Continuing this process systematically results in the Hessenberg form of the matrix $A$. Since our matrix was $2 \times 2$, it was already in Hessenberg form. 
+
+Next, we decompose the matrix in Hessenberg form into two matrices, $Q$ and $R$, where $Q$ is an orthogonal matrix and $R$ is an upper triangular matrix. After this decomposition, the matrix is updated as $A' = RQ$. This process is repeated iteratively. 
+
+Theoretically, as the number of iterations approaches infinity, $A'$ will converge to an upper triangular matrix whose diagonal elements correspond to the eigenvalues of $A$. However, a minor issue arises when the matrix entries are real but the eigenvalues are complex. This issue will be addressed shortly. Importantly, the eigenvalues of $A$ remain unchanged because of the following reasoning:
+
+\begin{align}
+	A &= QR\\
+	R &= Q^\top A\\
+	A^\prime &= RQ\\
+	A^\prime &= Q^\top AQ
+\end{align}
+As the matrix $A$ is undergoing similarity transformation, the eigenvalues will not change.\\
+The rate of covergence of $A$ depends on the ratio of absolute values of the eigenvalues. That is, if the eigenvalues are $\abs{\lambda_1} \geq \abs{\lambda_2} \geq \abs{\lambda_3} \dots \geq \abs{\lambda_n}$ then, the elements of $A_k$ below the diagonal to converge to zero like
+\begin{align}
+    \abs{a_{ij}^{\brak{k}}} = O\brak{\abs{\frac{\lambda_i}{\lambda_j}}^k}\text{    } i > j
+\end{align}
+\\
+We define a rotation matrix $G$, to zero out the elements which are non-diagonal, since the matrix which we are dealing is a Hessenberg matrix, we need to zero out the elements which are just below the diagonal elements.
+\begin{align}
+G = \myvec{
+1 & \cdots & 0 & 0 & \cdots & 0 \\
+\vdots & \ddots & \vdots & \vdots & \reflectbox{$\ddots$} & \vdots \\
+0 & \cdots & c & s & \cdots & 0\\
+0 & \cdots & -s & c & \cdots & 0\\
+\vdots & \reflectbox{$\ddots$} & \vdots & \vdots & \ddots & \vdots\\
+0 & \cdots & 0 & 0 & \cdots & 1
+}
+\end{align}
+Where the value of $c$ and $s$ are
+\begin{align}
+	c = \frac{\overline{x_{i,i}}}{\sqrt{\abs{x_{i,i}}^2+\abs{x_{i,i+1}}^2}}\\
+	s = \frac{\overline{x_{i,i+1}}}{\sqrt{\abs{x_{i,i}}^2+\abs{x_{i,i+1}}^2}}
+\end{align}
+If we multiply $G$ and $A$, we can see easily that it nulls out the element in $\brak{i+1}^{\text{th}}$ row and $i^\text{th}$ column. The following matrix multiplication eliminates all the elements below the diagonal of $A$
+\begin{align}
+	A \implies G_{n-1}G_{n-2}\cdots G_2G_1A
+\end{align}
+Now, we store $G_{n-1}G_{n-2}\cdots G_2G_1$ in $Q$ and then
+\begin{align}
+	A^\prime \implies QAQ^\top\\
+\end{align}
+If we carry out these transformation infinite times, the $A$ will be an upper triangular matrix with diagonal elements as eigenvalues.
+If all the entries in the matrix are real but the eigenvalues are complex, the matrix $A$ will converge to a Quasi-triangular form, that is
+\begin{align}
+	A = \myvec{B_1 & 0 & \cdots & 0 \\
+		   0 & B_2 & \cdots & 0\\
+		   \vdots & \cdots & \ddots & 0\\
+		   0 & 0 & 0 & B_n}
+\end{align}
+Where $B_i$ is a $2 \times 2$ block matrix. These matrices are called Jordan blocks. In this case, the eigenvalues are determined by solving the characteristic equation of the $2 \times 2$ matrix. Since this equation is quadratic, it can be solved easily, and the solutions of the characteristic equation will be the eigenvalues.
+
+The major drawback of the QR decomposition algorithm is that the rate of convergence can sometimes be very slow. The Rayleigh Quotient method addresses this issue by increasing the rate of convergence through the use of a shift. According to the order of convergence provided in equation \brak{0.35}, if the last element satisfies \brak{\lambda_i = 0}, the order of convergence becomes significantly higher. 
+
+To implement this, we shift the Hessenberg matrix by a certain amount, apply the QR decomposition algorithm, and then add the shift back. If the chosen shift exactly matches an eigenvalue, the algorithm completes in very few iterations (in the best case, just one iteration). Since the eigenvalue is not known, we use the last diagonal element as an initial guess for the shift.
+
+\begin{align}
+	H^\prime &= H - \sigma I\\
+	H^\prime &\implies {H^\prime}_{tranformed}\\
+	H_{next} &= {H^\prime}_{tranformed} + \sigma I
+\end{align}
+This method does not change the eigenvalues as
+\begin{align}
+\overline{H} &= Q\brak{H - \lambda I}Q^\top\\
+	&= QHQ^\top - \lambda QIQ^\top\\
+	&= QHQ^\top - \lambda I\\
+\overline{H} +\lambda I &= QHQ^\top
+\end{align}
+which is a similarity tranformation.\\
+Here, once we finding the eigenvalue and it is in the last diagonal element, we will leave it as it is and then focus on smaller matrix block present diagonally above the eigenvalue and then use the same technique to push the next eigenvalue to the next diagonal element. We will continue to do this till all the eigenvalues are present in the diagonal. This is know as deflation.
+\begin{align}
+H  - \lambda I = QR\\
+R = \myvec{\times & \times & \cdots & \times\\
+	0 & \times & \cdots & \times\\
+	\vdots & \vdots & \ddots & \times\\
+	0 & 0 & \cdots & 0}
+\end{align}
+$RQ$ Will also be in the same form
+\begin{align}
+\overline{H} = RQ+\lambda I = \myvec{\overline{H_1} & \vec{h}_1\\0^\top & \lambda}
+\end{align}
+In our case:
+\begin{align}
+    \Lambda=\myvec{0&1\\306&1}\\
+    \implies B=\myvec{a_{11}&a_{12}\\a_{21}&a_{22}}=\myvec{0&1\\306&1}\\
+    \implies d=\frac{a_{11}-a_{22}}{2}=-0.5\\
+\implies shift=a_{22}-sgn\brak{d}\sqrt{d^2+a_{12}a_{21}}=18.5\\
+    \hat{A}_0=A_0-shift\cdot I=\myvec{-18.5&1\\306&-17.5}\\
+    \implies Q_0=\myvec{-0.0603&0.9982\\0.9982&0.0603}\\R_0=\myvec{306.5586&-17.5285\\0&-0.0579}\\
+    \implies A_1=R_0Q_0+shift\cdot I=\myvec{-17.4965&-304.9422\\-0.0578&18.4965}
+\end{align}
+After 19 iterations the matrix converges to
+\begin{align}
+    A_{19}=\myvec{-17&-305\\4.97\times 10^{-11}&18}
+\end{align}
+The sub-diagonal elements are nearly zero confirming convergence and the diagonal elements are the eigenvalues. The eigen values given by the code are
+\begin{align}
+	x_1 = 18.000000000433293,
+	x_2 = -17.000000000043303
+\end{align}
+Theoritically we can solve it using:
+\begin{align}
+    \abs{\Lambda - \lambda I}&=0\\
+    \implies \abs{\myvec{0&1\\306&1}-\lambda\myvec{1&0\\0&1}}&=0\\
+    \implies \abs{\myvec{-\lambda&1\\306&1-\lambda}}&=0\\
+    \implies \lambda^2-\lambda-306&=0\\
+    \lambda&= 18,-17
+\end{align}
+$\therefore$ The roots of the equation are $18$ and $-17$\\
+Fixed Point Iterations:\\
+Take an initial guess $x_0$. The update difference equation will use the following function:
+\begin{align}
+    x = g\brak{x}
+\end{align}
+For our problem,
+\begin{align}
+    g\brak{x} = \sqrt{x^2-306}
+\end{align}
+To get both roots we do two iterations, now the update equations will be
+\begin{align}
+    x_{\alpha,n+1}=g\brak{x_{\alpha,n}}\\
+    x_{\beta,n+1}=g\brak{x_{\beta,n}}\\
+\end{align}
+We take two iniital guesses $x_{\alpha,0}$ and $x_{\beta,0}$ close to each root. Then we continue calculating the each $x_{\alpha,n}$ and $x_{\beta,n}$ until
+\begin{align}
+    \abs{x_{n+1}-x_n}<\epsilon
+\end{align}
+Where $\epsilon$ is the tolerance which we have taken as $1\text{e-}6$. In each of the $\alpha$ series and $\beta$ series we get a root.\\
+\newline
+This is proved by a theorem as follows:\\
+Let $x = s$ be a solution of $x = g\brak{x}$ and suppose that $g$ has a continuous
+derivative in some interval $J$ containing $s$. Then if $\abs{g^{\prime}} \le K < 1$ in $J$,
+the iteration process defined  above converges for any $x_0$ in $J$. The limit of the sequence
+$\sbrak{x_n}$ is s.\\
+\newline
+This can also be solved by the Newton-Raphson Method,\\
+Start with an initial guess $x_0$, and then run the following logical loop. The update equation is as follows
+\begin{align}
+    x_{n+1} = x_n - \frac{f\brak{x_n}}{f^{\prime}\brak{x_n}} 
+\end{align}
+where ,
+\begin{align}
+    f\brak{x} = x^2 - x - 306\\
+    f^{\prime}\brak{x} = 2x-1
+\end{align}
+\newline
+The problem with this method is if the roots are complex but the coeffcients are real, $x_n$ either converges to an extrema or grows continuously without any bound.
+To get the complex solutions, however , we can just take the initial guess point to be a 
+random complex number.\\
+The output of a program written to find roots is shown below:
+\begin{verbatim}
+Fixed-Point Iteration for Positive Root:
+Iteration 1: x = 17.577532, f(x) = -14.607907
+Iteration 2: x = 17.988261, f(x) = -0.410729
+Iteration 3: x = 17.999674, f(x) = -0.011413
+Iteration 4: x = 17.999996, f(x) = -0.000237
+Iteration 5: x = 18.000000, f(x) = -0.000009
+Converged to solution: x = 18.000000
+
+Fixed-Point Iteration for Negative Root:
+Iteration 1: x = -9.767519, f(x) = -200.828057
+Iteration 2: x = -17.211406, f(x) = 7.443887
+Iteration 3: x = -16.993781, f(x) = 0.217625
+Iteration 4: x = -17.001183, f(x) = -0.006402
+Iteration 5: x = -16.999995, f(x) = 0.000018
+Iteration 6: x = -17.000000, f(x) = -0.000000
+Converged to solution: x = -17.000000
+
+Newton-Raphson Iteration for Positive Root:
+Iteration 1: x = 19.448724, f(x) = 52.804159
+Iteration 2: x = 18.055381, f(x) = 1.941406
+Iteration 3: x = 18.000887, f(x) = 0.003057
+Iteration 4: x = 18.000001, f(x) = 0.000007
+Iteration 5: x = 18.000000, f(x) = 0.000000
+Converged to solution: x = 18.000000
+
+Newton-Raphson Iteration for Negative Root:
+Iteration 1: x = -19.809749, f(x) = 106.235914
+Iteration 2: x = -17.194357, f(x) = 6.840276
+Iteration 3: x = -17.007687, f(x) = 0.073361
+Iteration 4: x = -17.000017, f(x) = 0.000307
+Iteration 5: x = -17.000000, f(x) = 0.000000
+Converged to solution: x = -17.000000
+
+Eigenvalues (Roots of the equation):
+Eigenvalue 1: -17.000000 +0.0000000i
+Eigenvalue 2: 18.000000 + 0.0000000i
+\end{verbatim}
+
+\end{document}
+
