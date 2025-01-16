@@ -39,7 +39,7 @@
 \bibliographystyle{IEEEtran}
 \vspace{3cm}
 
-\title{10.3.1.1}
+\title{10.4.1.2}
 \author{EE24BTECH11001 - Aditya Tripathy}
  \maketitle
 % \newpage
@@ -57,7 +57,7 @@
 
 
 \textbf{Question}:\\
-Find the roots of the equation $2x^2 - 3x + 5 = 0$
+Find the roots of the equation $x^2 - 4x + 6 = 0$
 \\
 \textbf{Solution: }\\
 Below are two methods to find the solutions of this quadratic equation,
@@ -69,7 +69,7 @@ Take an initial guess $x_0$. The update difference equation will use the followi
 \end{align}
 For our problem,
 \begin{align}
-    g\brak{x} = \frac{2}{3}x^2 + \frac{5}{3}
+    g\brak{x} = \frac{1}{4}x^2 + \frac{3}{2}
 \end{align}
 Now the update equation will be,
 \begin{align}
@@ -95,8 +95,8 @@ Start with an initial guess $x_0$, and then run the following logical loop,
 \end{align}
 where ,
 \begin{align}
-    f\brak{x} = 2x^2 - 3x + 5\\
-    f^{\prime}\brak{x} = 4x-3
+    f\brak{x} = x^2 - 4x + 6\\
+    f^{\prime}\brak{x} = 2x-4
 \end{align}
 \newline
 The behaviour shown here is that regardless of which guess we take, it reaches a point of 
@@ -110,7 +110,7 @@ x got too big
 Trying fixed point iterations:
 x got too big
 Trying complex Newton's iterations:
-Solution = 0.750000 + -1.391941 i
+Solution = 2.000000 + 1.414214 i
 \end{verbatim}
 And on a second run, 
 \begin{verbatim}
@@ -119,6 +119,6 @@ Failure
 Trying fixed point iterations:
 x got too big
 Trying complex Newton's iterations:
-Solution = 0.750000 + 1.391941 i
+Solution = 2.000000 + -1.414214 i
 \end{verbatim}
 \end{document}
