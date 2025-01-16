@@ -63,6 +63,77 @@ First, we simplify the given equation:
     \implies 16x^2 - 8x + 1 = 0
 \end{align}
 
+\section*{Companion Matrix}
+For a quadratic equation of the form:
+\begin{align}
+    ax^2 + bx + c = 0,
+\end{align}
+the corresponding companion matrix is given by:
+\begin{align}
+    A = 
+    \myvec{
+        0 & 1 \\
+        -\frac{c}{a} & -\frac{b}{a}
+    }.
+\end{align}
+
+Substitute the coefficients $a = 16$, $b = -8$, and $c = 1$ into the companion matrix formula:
+\begin{align}
+    A = 
+    \myvec{
+        0 & 1 \\
+        -\frac{1}{16} & \frac{8}{16}
+    }
+    =
+    \myvec{
+        0 & 1 \\
+        -\frac{1}{16} & \frac{1}{2}
+    }.
+\end{align}
+
+\section*{QR Algorithm}
+The QR algorithm iteratively decomposes the matrix $A_n$ into an orthogonal matrix $Q_n$ and an upper triangular matrix $R_n$, and updates the matrix as:
+\begin{align}
+    A_{n+1} = R_n Q_n.
+\end{align}
+This process continues until $A_n$ converges to an upper triangular matrix, where the diagonal elements are the eigenvalues of $A$.
+
+\subsection*{Steps of the Algorithm}
+\begin{enumerate}
+    \item Initialize the companion matrix:
+    \begin{align}
+        A_0 = 
+        \myvec{
+            0 & 1 \\
+            -\frac{1}{16} & \frac{1}{2}
+        }.
+    \end{align}
+    \item Perform QR decomposition of $A_n$:
+    \begin{align}
+        A_n = Q_n R_n,
+    \end{align}
+    where $Q_n$ is orthogonal and $R_n$ is upper triangular.
+    \item Update the matrix:
+    \begin{align}
+        A_{n+1} = R_n Q_n.
+    \end{align}
+    \item Repeat the above steps until $A_n$ converges to an upper triangular matrix. The diagonal elements of this matrix are the eigenvalues, which correspond to the roots of the quadratic equation.
+\end{enumerate}
+
+\subsection*{Roots of the Quadratic Equation}
+The eigenvalues of the companion matrix $A$ are the roots of the quadratic equation. Applying the QR algorithm numerically to $A$, we find:
+\begin{align}
+    \lambda_1 = 0.25, \quad \lambda_2 = 0.25.
+\end{align}
+
+\subsection*{Conclusion}
+The QR decomposition method applied to the companion matrix of $2x^2 - x + \frac{1}{8} = 0$ finds the roots of the equation. Both roots are real and equal:
+\begin{align}
+    x = 0.25.
+\end{align}
+This demonstrates the utility of the QR algorithm in computing eigenvalues, which are the roots of polynomial equations.
+
+
 \section*{Newton's Method}
 Newton's Method is given by the update formula:
 \begin{align}
@@ -91,7 +162,7 @@ Taking initial guesses $x_0 = 0.5$ and $x_1 = 0.4$, we observe that $x_n$ conver
     x = 0.25
 \end{align}
 The graph below shows the equation and the root of the equation
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{figs/fig.png}
 \end{figure}
