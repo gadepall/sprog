@@ -1,0 +1,262 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{10.4.1.2}
+\author{EE24BTECH11001 - Aditya Tripathy}
+ \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+
+\textbf{Question}:\\
+Find the roots of the equation $x^2 - 2x = \brak{-2}\brak{3-x}$
+\\
+\textbf{Solution: }\\
+On simplification, the equation to solve is,
+\begin{align}
+  x^2 -4x + 6 = 0
+\end{align}
+The motive now is to solve the equation at hand using a matrix based approach.
+\newline
+Recall that for a matrix $A$ of order $n$, the characteristic equation is given by,
+\begin{align}
+  det\brak{A - \lambda I} = a_n \lambda ^n + a_{n-1} \lambda ^{n-1} \cdots + a_0 = 0
+ \end{align}
+ Recall that the solutions to the characteristic polynomial are the eigenvalues of the the matrix
+ A. So if we can somehow construct the corresponding matrix from the characteristic polynomial,
+ our job will be finished, since we can find the eigen values using the QR alogorithm.
+ \newline
+ Companion matrix: A matrix is said to be the companion of a polynomial $f\brak{x}$ if 
+$det\brak{A - \lambda I} = 0 \implies f\brak{x} = 0$. 
+\newline
+For,
+\begin{align}
+  f\brak{x} = c_0 + c_1 x \cdots + x^n
+\end{align}
+The companion matrix is,
+\begin{align}
+  \myvec{
+    0 & 0 & \cdots & 0 & -c_0\\
+    1 & 0 & \cdots & 0 & -c_1\\
+    0 & 1 & \cdots & 0 & -c_2\\
+    \vdots & \vdots & \ddots & \vdots & \vdots\\
+    0 & 0 & \cdots & 1 & -c_{n-1}\\
+  }
+\end{align}
+For the equation at hand, the companion matrix is,
+\begin{align}
+  \myvec{
+    0 & -6\\
+    1 & 4
+  }
+\end{align}
+Using the QR algorithm we can now solve for the eigenvalues and thus the solutions 
+for the given equation.
+\newline
+Understanding QR algorithm,
+\newline
+The basic idea is to use similarity transforms
+\begin{align}
+  B = P^{-1}AP
+\end{align}
+to get the Schur decomposition, 
+\begin{align}
+  A = QUQ^{-1}
+\end{align}
+for some unitary matrix $Q$ (so that the inverse $Q^{-1}$ is also the conjugate transpose $Q^*$ 
+of $Q$), and some upper triangular matrix $U$. The diagonal entries of the $U$ matrix are 
+the eigenvalues.
+\newline
+The steps to solve QR quickly :
+\begin{enumerate}
+  \item Convert original matrix to an intermediate form (hessenberg form)
+  \item Apply givens rotation
+  \item Diagonal elements are eigenvalues
+\end{enumerate}
+Step 1:
+\newline
+Since a 2 $\times$ 2 matrix is always in Hessenberg form, we need not proceed with step 1.
+\newline
+The general method for converting to upper hessenberg is :\\
+\textbf{Definition: }A matrix of the form
+\begin{align}
+    P = I - 2\textbf{uu}^*\\
+\end{align}
+is called a Householder reflector.\\
+\begin{align}
+    P\textbf{x} = \textbf{x} - \textbf{u}(2\textbf{u}^*\textbf{x})\\
+\end{align}
+A task that we repeatedly want to carry out with Householder reflectors is to transform
+a vector \textbf{x} on a multiple of \textbf{$e_1$}
+\begin{align}
+    P\textbf{x} = \textbf{x} - \textbf{u}(2\textbf{u}^*\textbf{x}) = \alpha \textbf{$e_1$}\\
+\end{align}
+Since P is unitary, we must have $\alpha = \rho 
+||\textbf{x}||$, where $\rho \in \mathbb{C}$ has absolute value one. Therefore,
+\begin{align}
+    \textbf{u} = \frac{\textbf{x} - \rho||\textbf{x}||\textbf{$e_1$}}{||\textbf{x} - \rho||\textbf{x}||\textbf{$e_1$}||}
+\end{align}
+We can freely choose $\rho$ provided that $|\rho| = 1$. Let $x_1 = |x_1|e^{i\textbf{$u_k$}^*\phi}$. To avoid numerical
+cancellation we set $\rho = -e^{i\phi}$
+.
+In the real case, one commonly sets $\rho$ = -sign($x_1$). If $x_1 = 0$ we can set $\rho$ in any way.
+\newline 
+To visualize
+\newline
+\begin{align}  
+    P_1 = \begin{bmatrix}
+        1 & 0 & 0 & 0 & 0 \\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+    \end{bmatrix} = \begin{bmatrix}
+        1 & \textbf{0}^{\top}\\
+        \textbf{0} & I_4 - 2u_1u_1^*
+    \end{bmatrix}    
+\end{align}
+\\
+\begin{align}
+    A = \begin{bmatrix}
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+    \end{bmatrix} \xrightarrow[P_1*]{} \begin{bmatrix}
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+    \end{bmatrix} \xrightarrow[*P_1]{}  \begin{bmatrix}
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+    \end{bmatrix}
+\end{align}
+\begin{multline}
+    P_1^*AP_1 = \begin{bmatrix}
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+    \end{bmatrix} \xrightarrow[P_2*/*P_2]{} \begin{bmatrix}
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & 0 & \times& \times& \times\\
+        0 & 0 & \times& \times& \times\\
+    \end{bmatrix} 
+    \xrightarrow[P_3*/*P_3]{} \begin{bmatrix}
+        \times & \times & \times& \times& \times\\
+        \times & \times & \times& \times& \times\\
+        0 & \times & \times& \times& \times\\
+        0 & 0 & \times& \times& \times\\
+        0 & 0 & 0& \times& \times\\
+    \end{bmatrix}\\ = P_3P_2P_1AP_1P_2P_3
+\end{multline}
+Step 2:
+Constructing Givens Rotation Matrix, 
+\begin{align}
+  c_k = \frac{0}{\sqrt{0^2 + 1^2}} = 0\\
+  s_k = \frac{1}{\sqrt{0^2 + 1^2}} = 1\\
+  \myvec{
+    0 & 1\\
+    -1 & 0
+  } \myvec{0 & -6 \\ 1 & 4}\myvec{0 & -1 \\ 1 & 0} = \myvec{4 & -1 \\ 6 & 0}
+\end{align}
+Givens rotations are used to zero specific elements of a vector or matrix by rotating the vector in the plane of two coordinates. A Givens rotation matrix is defined as:
+\begin{align}
+G(i, j, \theta) =
+\myvec{
+  1 & \cdots & 0 & \cdots & 0 & \cdots & 0 \\
+  \vdots & \ddots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+  0 & \cdots & c & \cdots & s & \cdots & 0 \\
+  \vdots & \ddots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+  0 & \cdots & -\overline{s} & \cdots & \overline{c} & \cdots & 0 \\
+  \vdots & \ddots & \vdots & \ddots & \vdots & \ddots & \vdots \\
+  0 & \cdots & 0 & \cdots & 0 & \cdots & 1
+  }
+\end{align}
+  where 
+\begin{align}
+    c_k = \frac{\overline{x_i}}{\sqrt{|x_i|^2 + |x_j|^2}}\\
+    s_k = \frac{\overline{x_j}}{\sqrt{|x_i|^2 + |x_j|^2}}   
+\end{align}
+As eq 3.12 shows, QR algorithm has failed since we did not get a upper triangular block, since the
+eigenvalues are complex and the entries of the matrix are real.
+\newline
+Sometimes the QR algorithm doesn't cleanly converge to upper triangular but has  certain 2$\times$2 blocks
+called Jordan blocks. The rest of the diagonal entries are the real eigenvalues and the complex 
+conjugate pair of eigenvalues is given by manually solving for the Jordan Blocks.
+\begin{align}
+    \begin{bmatrix}
+        a_0 & & & &  \\
+         & a_1 & & &  \\
+         & & a_2 & & \\
+         & &  & a_3 &a_4\\
+         & & & a_5& a_6\\
+    \end{bmatrix}
+\end{align}
+
+On running the code to solve for eigenvalues we get:
+\begin{verbatim}
+  Upper Hessenberg Matrix
+0.000000000 +0.000000000i -6.000000000 +0.000000000i 
+1.000000000 +0.000000000i 4.000000000 +0.000000000i 
+eigenvalue 1: 2.000000 + 1.414214i
+eigenvalue 2: 2.000000 + -1.414214i
+\end{verbatim}
+\end{document}
