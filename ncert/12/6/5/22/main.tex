@@ -1,0 +1,185 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+% Marks the beginning of the document
+\begin{document}
+\bibliographystyle{IEEEtran}
+
+\title{6.5.22}
+\author{EE24BTECH11049 - Patnam Shariq Faraz Muhammed}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\textbf{Question:}\\
+A wire of length 28 m is to be cut into two pieces. One of the pieces is to be made into a square and the other into a circle. What should be the length of the two pieces so that the combined area of the square and the circle is minimum?\\
+\textbf{Solution:}\\
+\begin{table}[!ht]
+    \centering
+    \input{tables/table}
+    \caption{Parameters or Values}
+    \label{tab:my_label}
+\end{table}
+\begin{itemize}
+    \item \textbf{Theoretical Solution:}\\
+    length of the circle is its circumference\\
+    length of the circle = $2\pi x$
+    \begin{align}
+        s &= \frac{28 - 2\pi x}{4}
+    \end{align}
+    The least value of $2\pi x$ can be 0 and the greatest value can be 28
+    \begin{align}
+        x &\in \sbrak{0, \frac{14}{\pi}}\\
+        x_0 &= 0
+    \end{align}
+    \newpage
+    Let $f\brak{x}$ is function of sum of areas of circle and square
+    \begin{align}
+        f\brak{x} &= s^2 + \pi x^2\\
+         &= \brak{7 - \frac{\pi x}{2}}^2 + \pi x^2\\
+         &= 49 - 7\pi x + \brak{\frac{\pi^2}{4} + \pi}x^2\\
+        f\brak{x} &= ax^2 + bx + c \\
+        f^{\prime}\brak{x} &= -7\pi + 2\brak{\frac{\pi^2}{4} + \pi}x\\
+        f^{\prime}\brak{x} &= 2ax + b\\
+        f^{\prime\prime}\brak{x} &= 2\brak{\frac{\pi^2}{4} + \pi}\\
+        a &= \frac{\pi^2}{4} + \pi\\
+        b &= -7\pi\\
+        c &= 49
+    \end{align}
+    Critical points, 
+    \begin{align}
+        f^{\prime} &= 0\\
+        -7\pi + 2\brak{\frac{\pi^2}{4} + \pi}x &= 0\\
+        x &= \frac{14}{\pi + 4} \label{Critical point}
+    \end{align}
+    For
+    \begin{align}
+        \text{Local Minimum } f^{\prime\prime} &> 0\\
+        \text{Local Maximum } f^{\prime\prime} &< 0\\
+        \text{Inflection Point } f^{\prime\prime} &= 0
+    \end{align}
+    Hence \eqref{Critical point} is critical point.
+    \begin{align}
+        \text{Length of circle } &= \frac{28\pi}{\pi + 4}\\
+        \text{Length of square} &= \frac{28}{\pi + 4}
+    \end{align}
+    \item \textbf{Computational Solution:}
+    We use the method of gradient descent to find the minimum/maximum of the given function, since the objective function is convex. Since the coefficient of $x^2 > 0$, we expect to find a local minimum.
+    \begin{align}
+        x_{n + 1} &= x_n - \alpha f^{\prime}\brak{x_n}\\
+        x_{n + 1} &= x_n - \alpha \brak{2ax_n + b}\\
+        x_{n + 1} &= x_n \brak{1 - 2a\alpha} - \alpha b \label{z}
+    \end{align}
+    Applying unilateral z-transform over the equation \eqref{z}
+    \begin{align}
+        zX\brak{z} - zx_0 &= X\brak{z}\brak{1 - 2a\alpha} - \frac{\alpha b}{1 - z^{-1}}\\
+        X\brak{z}\sbrak{z - \brak{1 - 2a\alpha}} &= - \frac{\alpha b}{1 - z^{-1}} \\
+        X\brak{z} &= \frac{-\alpha b}{\sbrak{z - \brak{1 - 2a\alpha}} \sbrak{1 - z^{-1}}}\\
+        X\brak{z} &= \frac{-b}{2a} \sbrak{\frac{1}{1 - z^{-1}} - \frac{1}{1 - \brak{1 - 2a\alpha}z^{-1}}}\\
+        &= \frac{-b}{2a}\sum_{n = -\infty}^{\infty} {\sbrak{1 - \brak{1 - 2a\alpha}^n}z^{-n}}u\brak{n} \label{transform}
+    \end{align}
+    From the equation \eqref{transform}, ROC is 
+    \begin{align}
+        \abs{z} > max\cbrak{1, \abs{1 - 2a\alpha}}\\
+        0 < \abs{1 - 2a\alpha} < 1
+    \end{align}
+    \begin{align}
+        \alpha &\in \brak{0, \frac{1}{a}}\setminus \cbrak{\frac{1}{2a}}\\
+        \alpha &\in \brak{0, \frac{1}{\frac{\pi^2}{4} + \pi}} \setminus \cbrak{\frac{1}{2\brak{\frac{\pi^2}{4} + \pi}}}
+    \end{align}
+    If $\alpha$ satisfies the previous equation then 
+    \begin{align}
+        \lim_{n \to \infty}{\norm{x_{n+1} - x_n}} &= 0\\
+        \lim_{n \to \infty}{\norm{\alpha\brak{2ax_n + b}}} &= 0\\
+        \lim_{n \to \infty}{\norm{2ax_n + b}} &= 0\\
+        \lim_{n \to \infty}{2ax_n} &= -b\\
+        \lim_{n \to \infty}{x_n} &= \frac{-b}{2a}\\
+        x_{min} &= \frac{-b}{2a}\\
+        x_{min} &= \frac{14}{\pi + 4}
+    \end{align}
+    We take the initial guess = 0, step size = 0.01, tolerance = $1e - 6$\\
+    Using the gradient descent algorithm we get
+    \begin{align}
+        x_{min} = 1.9603469573427723, f_{min} = 27.444858522066347
+    \end{align}
+\end{itemize}
+
+\textbf{Alternate Computational Solution: }\\
+
+We can also solve it using $cvxpy$ module in python. On running the code we get,
+\begin{align}
+    f_{min}: 27.444858522066315\\
+    x_{min}: 1.9603470372904506
+\end{align}
+
+\textbf{CVXPY:}
+\begin{itemize}
+    \item expressive syntax
+    \item supports various types of problems including convex and non - convex 
+    \item Optimization variables are defined using the Variable class.
+    \item Constants that can be changed without redefining the problem.
+    \item Defines the goal of the optimization (minimization or maximization).
+    \item Logical conditions imposed on the variables. (constraints)
+    \item Combine the objective and constraints to form an optimization problem.
+\end{itemize}
+
+Using Scipy:\\
+\begin{align}
+    &\text{Minimum value of the function: }27.444858522066315\\
+    &\text{Value of x at the minimum: }1.96034704352491
+\end{align}
+
+\begin{figure}[ht]
+   \centering
+   \includegraphics[width=1\columnwidth]{figs/fig.png}
+   \caption{Minimum of the function}
+\end{figure}
+
+\end{document}

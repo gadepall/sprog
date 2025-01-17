@@ -87,24 +87,22 @@ Applying Laplace transformation
 Let 
 \begin{align}
 \mathcal{L}\brak{\frac{2x^2+x}{x^3+x^2+x+1}}&=X\brak{s}\\
-sY\brak{s}&=X\brak{s}
-\end{align}
-Then transfer function $H\brak{s}=\frac{Y\brak{s}}{X\brak{s}}$
-\begin{align}
-H\brak{s}=\frac{1}{s}\\
-\frac{Y\brak{s}}{X\brak{s}}=\frac{1}{s}\label{eq:1}
+sY\brak{s}-y\brak{0}&=X\brak{s}\\
+sY\brak{s}&=X\brak{s}+1\label{eq:1}
 \end{align}
 From bilinear transformation,
 \begin{align}
-s=\frac{2}{h}\brak{\frac{1+z^{-1}}{1-z^{-1}}}
+s=\frac{2}{h}\brak{\frac{1-z^{-1}}{1+z^{-1}}}
 \end{align}
 Substituting in \eqref{eq:1},
 \begin{align}
-Y\brak{s}-z^{-1}Y\brak{s}=\frac{h}{2}\brak{X\brak{s}-z^{-1}X\brak{s}}
+Y\brak{s}-z^{-1}Y\brak{s}=\frac{h}{2}\brak{X\brak{s}+z^{-1}X\brak{s}+1+z^{-1}}
 \end{align}
 Applying inverse $\mathcal{Z}$-transformation,
 \begin{align}
-y_{n+1}-y_n&=\frac{h}{2}\brak{\frac{2x_{n+1}^2+x_{n+1}}{x_{n+1}^3+x_{n+1}^2+x_{n+1}+1}+\frac{2x_{n}^2+x_{n}}{x_{n}^3+x_{n}^2+x_{n}+1}}\\
+y_{n+1}-y_n&=\frac{h}{2}\brak{\frac{2x_{n+1}^2+x_{n+1}}{x_{n+1}^3+x_{n+1}^2+x_{n+1}+1}+\frac{2x_{n}^2+x_{n}}{x_{n}^3+x_{n}^2+x_{n}+1}+\delta[n+1]
++\delta[n]
+}\\
 x_{n+1}&=x_n+h
 \end{align}
 \textbf{Trapezoidal Rule:}\\

@@ -20,9 +20,9 @@ lib.runge_kutta.argtypes = [
 # Define initial conditions and parameters
 x0 = 0.0
 y0 = 0.0
-v0 = 0.0
+v0 = 4
 x_end = 5.0
-h = 0.1
+h = 0.01
 
 # Prepare pointers to store the results
 x_array_ptr = ctypes.POINTER(ctypes.c_double)()
@@ -47,7 +47,7 @@ x_array = np.ctypeslib.as_array(x_array_ptr, shape=(n,))
 y_array = np.ctypeslib.as_array(y_array_ptr, shape=(n,))
 
 # Plot the results
-plt.plot(x_array, y_array, marker='o', label='sim')
+plt.plot(x_array, y_array, label='sim')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.grid()
