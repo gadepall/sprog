@@ -1,0 +1,332 @@
+
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{tfrupee}
+
+\setlength{\headheight}{1cm}
+\setlength{\headsep}{0mm}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{array}
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{4.3.7}
+\author{EE24BTECH11004 - K Teja Vardhan}
+\maketitle
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt}
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\section*{Problem}
+The difference of squares of two numbers is 180. The square of the smaller number is 8 times the larger number. Find the two numbers.
+
+\section*{Solution}
+Let the larger number be \( x \) and the smaller number be \( y \).
+
+From the problem, we have the following two equations:
+\begin{align}
+x^2 - y^2 &= 180, \tag{1} \\
+y^2 &= 8x. \tag{2}
+\end{align}
+
+Substitute \( y^2 = 8x \) from (2) into (1):
+\begin{align}
+8x - x^2 &= 180. \tag{3}
+\end{align}
+
+Rearranging (3), we get:
+\begin{align}
+x^2 - 8x - 180 &= 0. \tag{4}
+\end{align}
+
+Find the roots of quadratic equation:\
+\begin{align}
+    x^2 - 8x - 180 = 0
+\end{align}
+
+The given equation can be solved using analytical and numerical methods. Let us explore both approaches.
+
+\subsection*{Quadratic Formula}
+The standard quadratic equation is:
+\begin{align}
+    ax^2 + bx + c = 0
+\end{align}
+Here, \( a = 1, b = -8, c = -180 \). The roots are given by:
+\begin{align}
+    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\end{align}
+Substitute the values of \( a, b, \) and \( c \):
+\begin{align}
+    x = \frac{-(-8) \pm \sqrt{(-8)^2 - 4(1)(-180)}}{2(1)} \\
+    x = \frac{8 \pm \sqrt{64 + 720}}{2} \\
+    x = \frac{8 \pm \sqrt{784}}{2}
+\end{align}
+Simplify further:
+\begin{align}
+    x_1 = \frac{8 + 28}{2} = 18, \quad x_2 = \frac{8 - 28}{2} = -10
+\end{align}
+
+Thus, the roots of the equation are:
+\begin{align}
+    x_1 = 18, \quad x_2 = -10
+\end{align}
+
+\subsection*{Matrix-Based Method}
+For a polynomial equation of the form:
+\begin{align}
+    x^n + b_{n-1}x^{n-1} + \cdots + b_2x^2 + b_1x + b_0 = 0
+\end{align}
+we construct a matrix called the \textit{companion matrix}, which is defined as:
+\begin{align}
+    \Lambda =
+    \begin{bmatrix}
+        0 & 1 & 0 & \cdots & 0 \\
+        0 & 0 & 1 & \cdots & 0 \\
+        \vdots & \vdots & \vdots & \ddots & \vdots \\
+        0 & 0 & 0 & \cdots & 1 \\
+        -b_0 & -b_1 & -b_2 & \cdots & -b_{n-1}
+    \end{bmatrix}
+\end{align}
+
+The eigenvalues of this matrix are the roots of the given polynomial equation.
+
+For the quadratic equation \( x^2 - 8x - 180 = 0 \), we can write it as:
+\begin{align}
+    x^2 + (-8)x + (-180) = 0
+\end{align}
+The coefficients are:
+\begin{align*}
+    b_1 = -8, \quad b_0 = -180
+\end{align*}
+
+The companion matrix for this equation is:
+\begin{align}
+    \Lambda =
+    \begin{bmatrix}
+        0 & 1 \\
+        -(-180) & -(-8)
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        0 & 1 \\
+        180 & 8
+    \end{bmatrix}
+\end{align}
+
+
+\subsection*{Eigenvalue Computation}
+The eigenvalues of \( \Lambda \) are obtained by solving:
+\begin{align}
+    \det(\Lambda - \lambda I) = 0
+\end{align}
+Substitute \( \Lambda \):
+\begin{align}
+    \begin{vmatrix}
+        0 - \lambda & 1 \\
+        180 & 8 - \lambda
+    \end{vmatrix}
+    = 0
+\end{align}
+Simplify the determinant:
+\begin{align}
+    (-\lambda)(8 - \lambda) - (180)(1) = 0 \\
+    \lambda^2 - 8\lambda - 180 = 0
+\end{align}
+
+This is the original quadratic equation, so the eigenvalues are:
+\begin{align}
+    \lambda_1 = 18, \quad \lambda_2 = -10
+\end{align}
+\section*{QR Algorithm for Finding Eigenvalues and Roots of a Quadratic Equation}
+
+Consider the quadratic equation:
+\[
+x^2 - 8x - 180 = 0
+\]
+We aim to find its roots using the QR algorithm, which finds the eigenvalues of the companion matrix of the quadratic polynomial.
+
+\subsection*{1. Companion Matrix of the Polynomial}
+The companion matrix for this equation is:
+\begin{align}
+    \Lambda =
+    \begin{bmatrix}
+        0 & 1 \\
+        -(-180) & -(-8)
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        0 & 1 \\
+        180 & 8
+    \end{bmatrix}
+\end{align}
+This matrix represents the system that corresponds to the given polynomial.
+
+\subsection*{2. QR Decomposition}
+The QR algorithm starts by performing QR decomposition on the matrix \( \Lambda \). The goal is to decompose \( \Lambda \) into an orthogonal matrix \( Q \) and an upper triangular matrix \( R \), such that:
+\[
+\Lambda = QR
+\]
+where \( Q^T Q = I \), and \( R \) is upper triangular. Then, we form a new matrix \( \Lambda' \) as:
+\[
+\Lambda' = RQ
+\]
+This process is repeated iteratively until \( \Lambda' \) converges to an upper triangular matrix whose diagonal elements are the eigenvalues of \( \Lambda \), which correspond to the roots of the quadratic equation.
+
+\subsection*{3. Iterative Process}
+Let’s outline the iterative steps for the QR algorithm applied to this companion matrix.
+
+\subsubsection*{First Iteration:}
+We start with \( \Lambda_0 = \begin{pmatrix} 0 & 1 \\ 180 & 8 \end{pmatrix} \).
+
+Perform the QR decomposition of \( \Lambda_0 \):
+\[
+\Lambda_0 = QR
+\]
+Let’s calculate \( Q \) and \( R \), then form \( \Lambda_1 = RQ \).
+
+\subsubsection*{Subsequent Iterations:}
+Repeat the QR decomposition on the new matrix \( \Lambda_1 \), then form \( \Lambda_2 = RQ \), and so on, until the matrix \( \Lambda_k \) converges to an upper triangular form. The diagonal elements of this matrix represent the eigenvalues of \( \Lambda_0 \), which are the roots of the quadratic equation.
+\subsection*{Updated equation:}
+\begin{align}
+    \Lambda_{k+1} &= R_k Q_k,
+\end{align}
+The QR method is an iterative algorithm used to compute the eigenvalues of a square matrix \(\Lambda\). The algorithm works as follows:
+
+\begin{enumerate}
+    \item \textbf{Initialization}\\
+    Let \(A_0 = \Lambda\), where \(\Lambda\) is the given matrix.
+    \item \textbf{QR Decomposition}\\
+    For each iteration \(k = 0, 1, 2, \dots\):
+    \begin{enumerate}
+        \item Compute the QR decomposition of \(A_k\), such that:
+        \begin{align}
+        A_k = Q_k R_k \tag{1.17}
+        \end{align}
+        where:
+        \begin{enumerate}
+            \item \(Q_k\) is an orthogonal matrix (\(Q_k^\top Q_k = I\)).
+            \item \(R_k\) is an upper triangular matrix.
+        \end{enumerate}
+        The decomposition ensures \(\Lambda\ = Q_k R_k\).
+        \item Form the next matrix \(\Lambda_{k+1}\) as:
+        \begin{align}
+        \Lambda_{k+1} = R_k Q_k \tag{1.18}
+        \end{align}
+    \end{enumerate}
+    \item \textbf{Convergence}\\
+    Repeat Step 2 until \(\Lambda_k\) converges to an upper triangular matrix \(T\). The diagonal entries of \(T\) are the eigenvalues of \(\Lambda\).
+\end{enumerate}
+\subsection*{4. Eigenvalues and Roots}
+After sufficient iterations, the QR algorithm will converge to an upper triangular matrix where the diagonal entries are the eigenvalues. These eigenvalues correspond to the roots of the polynomial. In this case, the eigenvalues of the companion matrix \( \Lambda \) will give us the roots of the quadratic equation \( x^2 -8x - 180 = 0 \).
+
+Hence, the roots are:
+\[
+x_1 = 18, \quad x_2 = -10
+\]
+
+\subsection*{ Solution using Fixed Point Iteration}
+We rewrite the equation as:
+\begin{align}
+    x = g(x)
+\end{align}
+A possible choice for \( g(x) \) is:
+\begin{align}
+    g(x) = \sqrt{8x + 180}
+\end{align}
+The iterative update becomes:
+\begin{align}
+    x_{n+1} = \sqrt{8x_n + 180}
+\end{align}
+
+Starting with an initial guess \( x_0 = 2 \), the iterations are as follows:
+\begin{align}
+    x_1 = \sqrt{8(2) + 180} = \sqrt{196} = 14 \\
+    x_2 = \sqrt{8(4) + 180} = \sqrt{212} \approx 14.56 \\
+    x_3 = \sqrt{8(14.56) + 180} \approx 17.21 \\
+    \vdots
+\end{align}
+\textbf{Observation:} The iterations converge to \( x = 18 \), one of the roots of the quation. For \( x_2 = -2 \), a similar setup with \( g(x) = -\sqrt{8x + 180} \) would be used.
+
+\subsection*{ Newton-Raphson Method}
+
+The Newton-Raphson method is defined as:
+\begin{align}
+x_{n+1} &= x_n - \frac{f(x_n)}{f'(x_n)}. \tag{3.8}
+\end{align}
+
+Here:
+\begin{align}
+f(x) &= x^2 - 8x - 180, \nonumber \\
+f'(x) &= 2x - 8. \tag{3.9}
+\end{align}
+
+Substitute into the formula:
+\begin{align}
+x_{n+1} &= x_n - \frac{x_n^2 - 8x_n - 180}{2x_n - 8}. \tag{3.10}
+\end{align}
+
+\subsection*{Example: Starting with an initial guess \( x_0 = 20 \)}
+\begin{align}
+x_1 &= x_0 - \frac{x_0^2 - 8x_0 - 180}{2x_0 - 8} \nonumber \\
+    &= 20 - \frac{20^2 - 8(20) - 180}{2(20) - 8} \nonumber \\
+    &= 20 - \frac{400 - 160 - 180}{40 - 8} \nonumber \\
+    &= 20 - \frac{60}{32} \nonumber \\
+    &\approx 18.125. \tag{3.11}
+\end{align}
+
+\begin{align}
+x_2 &= x_1 - \frac{x_1^2 - 8x_1 - 180}{2x_1 - 8} \nonumber \\
+    &= 18.125 - \frac{18.125^2 - 8(18.125) - 180}{2(18.125) - 8} \nonumber \\
+    &\approx 18.01. \tag{3.12}
+\end{align}
+
+\subsection*{Observation}
+The iterations quickly converge to \( x = 18 \). Similarly, starting with \( x_0 = -2 \), the iterations converge to \( x = -10 \).
+
+\subsection*{Computational Approach}
+The following results were obtained using a computational method:
+
+\textbf{Running Newton-Raphson Method:}  
+Root 1: \( 18 \)  
+Root 2: \( -10 \)
+
+
+\section*{Conclusion}
+The roots of the quadratic equation \( x^2 - 8x - 180 = 0 \) which represent the the values of x and y are:
+\begin{align}
+    x = 18, \quad y = -10
+\end{align}
+Both numerical and analytical methods confirm these results.
+Here are the roots of the Quadratic Equation 
+\begin{align}
+    x^2 - 8x - 180 = 0
+\end{align} in plotted below.\\
+
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/figure_1.png}
+\end{figure}
+
+\end{document}
