@@ -1,0 +1,257 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Uncomment if needed for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+%\usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{circuitikz}
+\usepackage{standalone} % For including external TikZ files
+\usepackage{float}
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{10.4.ex.4}
+\author{EE24BTECH11047 - Niketh Prakash Achanta}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Question}:\\
+
+Find the roots of the quadratic equation $6x^2 - x - 2 = 0$ \\
+
+\textbf{Solution : }\\
+Given equation:
+\begin{align}
+    6x^2 - x - 2 = 0 
+\end{align}
+Checking whether the roots of the equation exist,
+
+\begin{align}
+b^2 - 4ac &\geq 0 \\
+&= (-1)^2 - 4(6)(-2) \\
+&= 1 + 48 \\
+&= 49
+\end{align}
+
+Since \( b^2 - 4ac \geq 0 \), the roots of the equation exist.
+
+The roots are given by
+
+\begin{align}
+x &= \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \\
+&= \frac{-(-1) \pm \sqrt{49}}{2(6)} \\
+&= \frac{1 \pm 7}{12}
+\end{align}
+
+Thus, the roots are
+
+\begin{align}
+x &= \frac{1 - 7}{12}, \frac{1 + 7}{12} \\
+&= \frac{-6}{12}, \frac{8}{12} \\
+&= -\frac{1}{2}, \frac{2}{3}
+\end{align}
+We can solve the above equation using fixed point iterations. First we separate $x$, from the above equation and make an update equation of the below sort.
+\begin{align}
+	x = g\brak{x} \implies x_{n+1} = g\brak{x_n}
+\end{align}
+Applying the above update equation on our equation, we get
+\begin{align}
+	x_{n+1} = 6x^2 - 2
+\end{align}
+Now we take an initial value $x_0$ and iterate the above update equation. But we realize that the updated values always approach infinity for any initial value. \\
+Thus we will alternatively use \textbf{Newton's Method} for solving equations.
+\begin{enumerate}
+\item Update Equation:
+\begin{align}
+ x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}   
+\end{align}
+\item{Steps:}\\
+1. Start with two initial guesses $x_0$  and $x_1$.\\
+2. Define the function $f(x)$.\\
+3. Iterate using:
+   \begin{align}
+   x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}    
+   \end{align}
+   until convergence, i.e.,
+   \begin{align}
+   \abs{x_{n+1} - x_n} < \text{tolerance}.
+   \end{align}
+4. Stop if $ f(x_n) - f(x_{n-1}) $ is close to zero to avoid division by zero.
+
+\item{Convergence Criteria:}
+The method converges superlinearly and does not require the derivative $ f'(x) $.
+\end{enumerate}
+\textbf{Secant Method}
+\begin{enumerate}
+\item{Update Formula:}
+\begin{align}
+x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}    
+\end{align}
+
+
+\item{Steps:}\\
+1. Start with two initial guesses $x_0$  and $x_1$.\\
+2. Define the function $f(x)$.\\
+3. Iterate using:
+   \begin{align}
+   x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}    
+   \end{align}
+   until convergence, i.e.,
+   \begin{align}
+   \abs{x_{n+1} - x_n} < \text{tolerance}.
+   \end{align}
+4. Stop if $ f(x_n) - f(x_{n-1}) $ is close to zero to avoid division by zero.
+
+\item{Convergence Criteria:}
+The method converges superlinearly and does not require the derivative $ f'(x) $.
+
+
+\end{enumerate}
+Newton's method is very powerful but has the disadvantage that the derivative may sometimes be a far more difficult expression than \(f(x)\) itself and its evaluation therefore it may be more computationally expensive. The secant's method is more computationally cheap as the equation of the derivative is avoided by taking 2 starting points.\\ 
+\begin{figure}[H]
+		\centering
+		\includegraphics[width=\columnwidth]{figs/Figure_1.png}
+		\caption{Solution of the given function}
+		\label{stemplot}
+	\end{figure}
+
+Alternatively, \textbf{QR decomposition on Hessenberg matrix:}\\
+The QR decomposition method is a numerical algorithm to compute the eigenvalues of a matrix \( A \). By iteratively factorizing the matrix \( A \) into the product of an orthogonal matrix \( Q \) and an upper triangular matrix \( R \), and then recombining them in a specific order, the process converges to a diagonal matrix whose diagonal entries are the eigenvalues of \( A \).
+
+This document adapts the QR decomposition method specifically for finding the roots of the quadratic equation \( 6x^2 - x - 2 = 0 \).
+
+\section*{QR Decomposition for Quadratic Roots}
+Given the quadratic equation \( 6x^2 - x - 2 = 0 \):
+
+\begin{enumerate}
+    \item Rewrite the equation in matrix form. For a quadratic equation \( ax^2 + bx + c = 0 \), the companion matrix is:
+    \[
+    A = \begin{bmatrix}
+    0 & 1 \\
+    -\frac{c}{a} & -\frac{b}{a}
+    \end{bmatrix}.
+    \]
+    For \( 6x^2 - x - 2 = 0 \), this becomes:
+    \[
+    A = \begin{bmatrix}
+    0 & 1 \\
+    -\brak{\frac{-2}{6}} & -\brak{\frac{-1}{6}}
+    \end{bmatrix} = \begin{bmatrix}
+    0 & 1 \\
+    \frac{1}{3} & \frac{1}{6}
+    \end{bmatrix}.
+    \]\item{Steps:}\\
+1. Start with two initial guesses $x_0$  and $x_1$.\\
+2. Define the function $f(x)$.\\
+3. Iterate using:
+   \begin{align}
+   x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}    
+   \end{align}
+   until convergence, i.e.,
+   \begin{align}
+   \abs{x_{n+1} - x_n} < \text{tolerance}.
+   \end{align}
+4. Stop if $ f(x_n) - f(x_{n-1}) $ is close to zero to avoid division by zero.
+
+\item{Convergence Criteria:}
+The method converges superlinearly and does not require the derivative $ f'(x) $.
+
+    \item Perform the QR decomposition of \( A \): \( A_n = Q_n R_n \), where \( Q_n \) is an orthogonal matrix and \( R_n \) is an upper triangular matrix.
+    \item Update the matrix: \( A_{n+1} = R_n Q_n \).
+    \item Repeat steps 2 and 3 until \( A_n \) converges to an upper triangular matrix.
+\end{enumerate}
+\section*{Mathematical Description}
+At the \(n\)-th iteration, let \( A_n \) be the matrix:
+\[
+A_n = Q_n R_n,
+\]
+where \( Q_n \) and \( R_n \) are obtained via the QR decomposition of \( A_n \). The matrix is updated as:
+\[
+A_{n+1} = R_n Q_n.
+\]
+
+\section*{Update Equation}
+The update equation for the \((n+1)\)-th iteration in terms of the \(n\)-th iteration is:
+\[
+A_{n+1} = Q_n^T A_n Q_n,
+\]
+where \( Q_n \) is the orthogonal matrix from the QR decomposition of \( A_n \), and \( R_n \) is an upper triangular matrix such that \( A_n = Q_n R_n \).
+
+\section*{Roots of the Quadratic Equation}
+The eigenvalues of the companion matrix \( A \) correspond to the roots of the quadratic equation \( 6x^2 - x - 2 = 0 \). As the iterations progress, the diagonal elements of \( A_n \) will converge to the roots of the equation. The algorithm involves the following steps:
+\begin{enumerate}
+    \item Initialize \( A_0 \) as the companion matrix:
+    \[
+    A_0 = \begin{bmatrix}
+    0 & 1 \\
+    \frac{1}{3} & \frac{1}{6}
+    \end{bmatrix}.
+    \]
+    \item Perform the QR decomposition of \( A_n \):
+    \[
+    A_n = Q_n R_n,
+    \]
+    where \( Q_n \) is orthogonal and \( R_n \) is upper triangular.
+    \item Compute \( A_{n+1} \) using the update equation:
+    \[
+    A_{n+1} = R_n Q_n.
+    \]
+    \item Repeat until \( A_n \) converges to an upper triangular matrix. The diagonal elements of this matrix are the eigenvalues, which correspond to the roots of the quadratic equation.
+\end{enumerate}
+
+\section*{Conclusion}
+The QR decomposition method applied to the companion matrix of \( 6x^2 - x - 2 = 0 \) numerically finds the roots of the equation. The iterative process demonstrates how eigenvalue computation can be used effectively to determine the roots without relying on direct formulas.
+
+
+\begin{figure}[!ht]
+		\centering
+		\includegraphics[width=\columnwidth]{figs/Figure_2.png}
+		\caption{Solution of the given function}
+		\label{stemplot}
+	\end{figure}
+\end{document}
