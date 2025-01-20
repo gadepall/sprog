@@ -1,0 +1,90 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{multicol}
+
+% Marks the beginning of the document
+\begin{document}
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{12.6.6.13}
+\author{EE24BTECH11018 - Durgi Swaraj Sharma}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt}
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{6.6.13} Find the points at which the function $f$ given by $f\brak{x} = \brak{x-2}^4 \brak{x+1}^3$ has \brak{i} local maxima \brak{ii} local minima \brak{iii} point of inflexion\\
+\textbf{Theroretical solution}
+\begin{align}
+	f\brak{x} &= \brak{x-2}^4\brak{x+1}^3\\
+	f^{\prime}\brak{x} &= \brak{x-2}^3\brak{x+1}^2\brak{7x-2}
+\end{align}
+Setting $f^{\prime}\brak{x} = 0$, we get three critical points:
+\begin{align}
+	x &= 2\\ x &= -1\\ x &= \frac{2}{7}
+\end{align}
+Checking the values of $f^{\prime}\brak{x}$ before and after these values of $x$, we can conclude that
+\begin{align*}
+	\text{there is a point of inflection at } x&=-1\\
+	\text{there is a maxima at } x&=\frac{2}{7}\\
+	\text{there is a minima at } x&=2
+\end{align*}
+\textbf{Computational Solution}
+This problem can be solved with the Gradient Descent algorithm.
+The algorithm is implemented as
+\begin{align}
+	x_{n+1}&=x_n-\alpha f{\prime}\brak{x_n}\\
+	x_{n+1}&=x_n-\alpha \brak{x+1}^2\brak{x-2}^4\brak{7x-2}
+\end{align}
+Where $\alpha$ is the learning rate. This algorithm is enough to find local minimum. The sign of $\alpha$ when set negative will change the algorithm to Gradient Ascent, which can be used to find local maximum.\\
+We can find all the critial points and their nature by running the algorithm based on the currently acquired data.
+\begin{figure}
+	\centering
+	\includegraphics[width=\columnwidth]{/home/gvt1/sdcard/github/EE1003/Assignment3/figs/fig.png}
+	\caption{Demonstration}
+\end{figure}
+\end{document}
