@@ -1,0 +1,178 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}                                      
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}
+\usepackage{multicol}
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{10.3.2.5}
+\author{EE24BTECH11006 - Arnav Mahishi}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+
+\textbf{Question}:\newline
+Half the perimeter of a rectangular garden, whose length is $4m$ more than its width, is $36$m. Find the dimensions of the garden
+\newline
+\begin{table}[h!]    
+  \centering
+  \input{tables/table.tex}
+  \caption{Variables Used}
+  \label{tab1.1.2.2}
+\end{table}
+\newline
+\textbf{Theoretical Solution:}\\
+Taking $x$ to be length and $y$ to be width
+We get:
+\begin{align}
+    x-y=4\\
+    x+y=72\\
+    \implies 2x=76\\
+    \implies x=38\\
+    \implies y=34
+\end{align}
+\textbf{Computational Solution:}\\
+The set of linear equations $x-y-4=0$ and $x+y-72=0$ can be represented by the following equation
+\begin{align}
+    \myvec{1&-1\\1&1}\myvec{x\\y}=\myvec{4\\72}
+\end{align}
+Any non-singular matrix can be represented as a product of a lower triangular matrix $L$ and an
+upper triangular matrix $U$:
+\begin{align}
+    A = L \cdot U
+\end{align}
+1. Initialization: 
+   - Start by initializing $ \mathbf{L} $ as the identity matrix $ \mathbf{L} = \mathbf{I} $ and $ \mathbf{U} $ as a copy of $ \mathbf{A} $.
+   
+2. Iterative Update:
+   - For each pivot $ k = 1, 2, \ldots, n $:
+     - Compute the entries of $ U $ using the first update equation.
+     - Compute the entries of $ L $ using the second update equation.
+   
+3. Result:
+   - After completing the iterations, the matrix $ \mathbf{A} $ is decomposed into $ \mathbf{L} \cdot \mathbf{U} $, where $ \mathbf{L} $ is a lower triangular matrix with ones on the diagonal, and $ \mathbf{U} $ is an upper triangular matrix.
+\subsection*{1. Update for $ U_{k,j} $ (Entries of $ U $)}
+
+For each column $ j \geq k $, the entries of $ U $ in the $ k $-th row are updated as:
+\[
+U_{k,j} = A_{k,j} - \sum_{m=1}^{k-1} L_{k,m} \cdot U_{m,j}, \quad \text{for } j \geq k.
+\]
+This equation computes the elements of the upper triangular matrix $ \mathbf{U} $ by eliminating the lower triangular portion of the matrix.
+
+\subsection*{2. Update for $ L_{i,k} $ (Entries of $ L $)}
+
+For each row $ i > k $, the entries of $ L $ in the $ k $-th column are updated as:
+\[
+L_{i,k} = \frac{1}{U_{k,k}} \left( A_{i,k} - \sum_{m=1}^{k-1} L_{i,m} \cdot U_{m,k} \right), \quad \text{for } i > k.
+\]
+This equation computes the elements of the lower triangular matrix $ \mathbf{L} $, where each entry in the column is determined by the values in the rows above it.\\
+Using a code we get L,U as 
+
+\textbf{Step-by-Step Process:}\\
+
+\textbf{1. Initial Matrix:}
+\begin{align}
+    A = \myvec{1&-1\\1&1}
+\end{align}
+
+\textbf{2. Compute $U$ (Upper Triangular Matrix):}\\
+Using the update equation for $U$:
+\begin{align}
+    U_{11} = A_{11} = 1, \quad U_{12} = A_{12} = -1
+\end{align}
+For $U_{22}$:
+\begin{align}
+    U_{22} = A_{22} - L_{21} \cdot U_{12} = 1 - 1\cdot (-1) = 2
+\end{align}
+
+\textbf{3. Compute $L$ (Lower Triangular Matrix):}\\
+Using the update equation for $L$:
+\begin{align}
+    L_{21} = \frac{A_{21}}{U_{11}} = 1
+\end{align}
+The final $L$ matrix is:
+\begin{align}
+    L = \myvec{1 & 0 \\ 1 & 1}
+\end{align}
+
+\textbf{4. Solving the System:}\\
+Using the equations $L\vec{y} = \vec{b}$ and $U\vec{x} = \vec{y}$:
+\begin{itemize}
+    \item \textbf{Forward Substitution:}
+    \begin{align}
+        \myvec{1 & 0 \\ 1 & 1}\myvec{y_1 \\ y_2} = \myvec{4 \\ 72}
+    \end{align}
+    Solving gives:
+    \begin{align}
+        y_1 = 4, \quad y_2 = 68
+    \end{align}
+
+    \item \textbf{Backward Substitution:}
+    \begin{align}
+        \myvec{1 & -1 \\ 0 & 2}\myvec{x_1 \\ x_2} = \myvec{4 \\ 68}
+    \end{align}
+    Solving gives:
+    \begin{align}
+        x_2 = 34, \quad x_1 = 38
+    \end{align}
+\end{itemize}
+
+Thus, the solution is:
+\begin{align}
+    \vec{x} =\myvec{x\\y}=\myvec{38 \\ 34}
+\end{align}
+
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/fig.png}
+    \caption{Solution to set of linear equations}
+\end{figure}
+\end{document}
+
