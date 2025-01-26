@@ -1,0 +1,163 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{11.16.3.2}
+\author{EE24BTECH11001 - Aditya Tripathy}
+ \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+
+\textbf{Question}:\\
+A coin is tossed twice, what is the probability that atleast one tail occurs?
+\\
+\textbf{Solution: }\\
+The sample space is 
+\begin{align}
+  \Omega = \cbrak{HH, HT, TH, TT}
+\end{align}
+Assuming equally likely outcomes, 
+\begin{align}
+  p\brak{\omega \in \Omega} = \frac{1}{4}
+\end{align}
+Define a discrete random variable X = number of tails in the sequence.
+\newline
+Probability Mass Function $p_{X}\brak{n}$ is given by:
+\begin{align}
+  p_{X}\brak{n} = \begin{cases}
+\frac{1}{4} & x = 0\\
+    \frac{1}{2} & x = 1\\
+    \frac{1}{4} & x = 2\\
+\end{cases}
+\end{align}
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/fig1.png}
+    \caption{Probability Mass Function}
+\end{figure}
+The CDF (Cumulative Distribution Function) is given by:
+\begin{align}
+  F_{X}\brak{n} = p_X\brak{X \le n} = \begin{cases}
+    0 & x < 0\\
+    \frac{1}{4} & 0 \le x < 1\\
+    \frac{3}{4} & 1 \le x < 2\\
+    1 & x >=2
+  \end{cases}
+\end{align}
+\begin{align}
+  p\brak{X \ge 1} &= 1 - p\brak{X < 1}\\
+  &= 1 - \frac{1}{4} = \frac{3}{4}
+\end{align}
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/fig2.png}
+    \caption{Cumulative Distribution Function}
+\end{figure}
+
+Simulation:
+\newline
+To run a simulation we need to generate random numbers with uniform probability, which is done
+as shown below(Algorithm taken from OpenSSL's random\_uniform.c):
+\begin{enumerate}
+  \item \text{Generate 32 bits of entropy using /dev/urandom.}
+  \item Treat this as a fixed point number in the range [0, 1)
+  \item Scale this to desired range using fixed point multiplication and treat as 64bit number(upper 32 bits integer and rest as fractional part)
+  \item Return the integer part of the fixed point numbers
+\end{enumerate}
+The following shows how the relative frequency reaches true probability with increasing number of trials of the event.
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/fig.png}
+    \caption{Relative Frequency tends to True Probability}
+\end{figure}
+\newline
+Approach 2 :
+\newline
+In this approach, we treat our random variable as the sum of outcomes of two bernoulli random
+variables
+
+\begin{align}
+  Y = X_1 + X_2
+\end{align}
+where,
+\begin{align}
+	X_i = \begin{cases}
+		0 & \text{Outcome is Heads}\\	
+		1 & \text{Outcome is Tails}	
+	\end{cases}
+\end{align}
+\begin{align}
+  p_X\brak{n} = \begin{cases}
+    p = \frac{1}{2} & n = 0\\
+    1-p = \frac{1}{2} & n = 1
+  \end{cases}
+\end{align}
+Our random variable is a sum of a two bernoulli random variables
+\begin{align}
+  Y = X_1 + X_2
+\end{align}
+Using properties of Z transform of PMF,
+\begin{align}
+  M_Y\brak{z} &= M_{X_1}\brak{z}M_{X_2}\brak{z}\\
+  M_{X_1}\brak{z} &= \sum_{k = -\infty}^{\infty} p_{X_1}\brak{k}z^{-k} = p + \brak{1-p}z^{-1}\\
+  M_{X_2}\brak{z} &= \sum_{k = -\infty}^{\infty} p_{X_2}\brak{k}z^{-k} = p + \brak{1-p}z^{-1}\\
+  M_Y\brak{z} &= \brak{p + \brak{1-p}z^{-1}}^2\\
+              &= \sum_{k = -\infty}^{\infty} \comb{2}{k}p^{2-k}\brak{1-p}^{k}z^{-k}\\
+  p_Y\brak{n} &= \comb{2}{k} p^{2-k}\brak{1-p}^k
+\end{align}
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/binomial.png}
+    \caption{Generating binomial distribution from bernoulli}
+\end{figure}
+The blue plot is the $n = 2$ case and red plot is the $n = 10$ case.
+\end{document}
+
