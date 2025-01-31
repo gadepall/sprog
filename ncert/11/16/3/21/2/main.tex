@@ -1,0 +1,130 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{11.16.3.21.2}
+\author{EE24TECH11036 - Krishna Patil}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\textbf{Question}: In a class of $60$ students, $30$ opted for NCC, $32$ opted for NSS and $24$ opted for both NCC and NSS. If one of these students is selected at random, find the probability that the student has opted neither NCC nor NSS. \\ \\
+\solution
+Define events $X$ and $Y$ as shown in the table \ref{table}, \\
+\begin{table}[h!]    
+  \centering
+  \input{tables/table1.tex}
+  \caption{defining events}
+  \label{table}
+\end{table}
+\newline Below are some posulates and theorems from boolean algebra : 
+\begin{table}[h!]    
+  \centering
+  \input{tables/table2.tex}
+  \caption{Boolean Algebra}
+  \label{table2}
+\end{table}
+\newline The axioms of probability are as follows:
+
+\textbf{Non-Negativity Axiom:}
+\[
+P(A) \geq 0
+\]
+The probability of any event \( A \) is always non-negative.
+
+\textbf{Normalization Axiom:}
+\[
+P(S) = 1
+\]
+The probability of the sample space \( S \) (i.e., the set of all possible outcomes) is 1.
+
+\textbf{Additivity Axiom (Countable Additivity for Disjoint Events):}  
+If \( A_1, A_2, A_3, \dots \) are mutually exclusive (disjoint) events, then:
+\[
+P(A_1 \cup A_2 \cup A_3 \cup \dots) = P(A_1) + P(A_2) + P(A_3) + \dots
+\]
+
+ For any two event A and B,
+\begin{align}
+	\because A + A^\prime &= 1 \\
+	 AB + A^\prime B &= B \label{2} \\
+	 \implies \pr{AB} + \pr{A^\prime B} &= \pr{B} \label{3} \\
+	 \because B + B^\prime &= 1 \\
+	 AB + AB^\prime &= A \label{5}\\
+	 \implies \pr{AB} + \pr{AB^\prime} &= \pr{A} \label{6} \\
+	 \text{adding } \eqref{2} \text{ and } \eqref{5} \\
+	 A + B &= AB + AB + AB^\prime + A^\prime B  \\
+	 A + B &= AB + AB^\prime + A^\prime B \\ 
+	 \pr{A + B} &= \pr{AB} + \pr{AB^\prime} + \pr{A^\prime B} \label{10}\\
+	 \text{Adding \eqref{3},\eqref{6} and \eqref{10} and cancelling same terms } \\
+	 \pr{AB} &= \pr{A} + \pr{B} - \pr{A + B} \\
+	 \because \pr{A^\prime B^\prime} &=  \pr{\brak{A + B}^\prime} \label{13} \\
+	 \pr{A^\prime  B^\prime} &=  1 - \pr{A+B} \label{14}
+\end{align}
+
+
+
+From the given data in question,
+    \begin{align}
+        \pr{A} &= \frac{30}{60} \\
+        \pr{B} &= \frac{32}{60} \\
+        \pr{AB} &= \frac{24}{60}     
+    \end{align}
+Now using axioms of probability (boolean logic),
+Thus, we write
+    \begin{align}
+	    \pr{A + B} &= \pr{A} +  \pr{B} - \pr{A B} \\
+	                                 &= \frac{30}{60} + \frac{32}{60} - \frac{24}{60} \\
+	                                 &= \frac{38}{60} \\
+	     \pr{A^\prime  B^\prime} &=  1 - \pr{A+B} \brak{\because \eqref{13} \text{ and } \eqref{14}} \\ 
+	                              &= 1- \frac{38}{60} = \frac{11}{30} 
+    \end{align} 
+So, the probablity $\pr{A^\prime  B^\prime}$ i.e., the probability that the student has opted neither NCC nor NSS is $\frac{11}{30} = 0.36667$.
+Also after verifying using computational method to get the probability as 0.36680.
+\end{document}
+
+
