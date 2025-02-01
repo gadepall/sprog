@@ -1,0 +1,194 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern}
+\usepackage{tfrupee}
+\setlength{\headheight}{1cm}
+\setlength{\headsep}{0mm}
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tikz}
+\usepackage{tkz-euclide}
+\usepackage{listings}
+\def\inputGnumericTable{}
+\usepackage[latin1]{inputenc}
+\usepackage{color}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{calc}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{ifthen}
+\usepackage{lscape}
+\usetikzlibrary{matrix}
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{10.4.ex.2}
+\author{EE24BTECH11011-PRANAY}
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt}
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{Question:}
+
+Find the roots of the quadratic equation:
+\begin{align}
+    (x-2)^2 + 1 = 2x - 3
+\end{align}
+
+\solution
+
+Rearranging terms:
+\begin{align}
+    (x-2)^2 + 1 - (2x - 3) &= 0 \\
+    x^2 - 4x + 4 + 1 - 2x + 3 &= 0 \\
+    x^2 - 6x + 8 &= 0
+\end{align}
+
+\textbf{Theoretical solution (Quadratic formula):}
+
+The roots are given by the quadratic formula:
+\begin{align}
+    x &= \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} \\
+    x &= \frac{6 \pm \sqrt{36 - 32}}{2} \\
+    x &= \frac{6 \pm 2}{2} \\
+    x &= 4 \text{ and } x = 2
+\end{align}
+
+\textbf{Computational solution:}
+
+To find the eigenvalues of the companion matrix, we use the QR algorithm. The companion matrix \brak{C} is:
+\begin{align}
+    C = \myvec{0 & 1 \\ -b_0 & -b_1}
+\end{align}
+
+For the equation $x^2 - 6x + 8 = 0$, we have:
+\begin{align}
+    b_0 = 8, \quad b_1 = -6
+\end{align}
+\begin{align}
+    C = \myvec{0 & 1 \\ -8 & 6}
+\end{align}
+
+The QR decomposition iteratively computes:
+\begin{align}
+    C_0 &= C \\
+    C_{k+1} &= R_k Q_k
+\end{align}
+where $C_k = Q_k R_k$ is the QR decomposition of $C_k$.
+
+Starting with:
+\begin{align}
+    C_0 = \myvec{0 & 1 \\ -8 & 6}
+\end{align}
+we compute the QR steps iteratively until $C_k$ converges to an upper triangular matrix. The eigenvalues are the diagonal entries:
+\begin{align}
+    C = \myvec{0 & 1 \\ -8 & 6}
+\end{align}
+
+\begin{align}
+    Q_0 = \frac{1}{\sqrt{65}} \myvec{-8 & -1 \\ 1 & -8}, \quad
+    R_0 = \myvec{\sqrt{65} & \frac{-46}{\sqrt{65}} \\ 0 & \frac{5}{\sqrt{65}}}
+\end{align}
+
+\begin{align}
+    C_1 = R_0 Q_0 = \myvec{6.707 & -0.707 \\ 0.707 & 3.293}
+\end{align}
+
+\begin{align}
+    Q_1 = \myvec{-0.99 & -0.14 \\ 0.14 & -0.99}, \quad
+    R_1 = \myvec{-6.757 & 0.991 \\ 0 & -3.243}
+\end{align}
+
+\begin{align}
+    C_2 = R_1 Q_1 = \myvec{6.988 & -0.012 \\ 0.012 & 3.012}
+\end{align}
+
+\begin{align}
+    \lambda_1 = 4, \quad \lambda_2 = 2
+\end{align}
+
+\begin{align}
+    (4-2)^2 + 1 &= 2(4) - 3 \\
+    5 &= 5
+\end{align}
+
+\begin{align}
+    (2-2)^2 + 1 &= 2(2) - 3 \\
+    1 &= 1
+\end{align}
+\begin{align}
+    x_1 = 4, \quad x_2 = 2
+\end{align}
+
+(2) \textbf{Newton-Raphson iterative method:}
+
+The function and its derivative are:
+\begin{align}
+    f(x) &= x^2 - 6x + 8 \\
+    f'(x) &= 2x - 6
+\end{align}
+
+The difference equation for the Newton-Raphson method is:
+\begin{align}
+    x_{n+1} &= x_n - \frac{f(x_n)}{f'(x_n)} \\
+    x_{n+1} &= x_n - \frac{x_n^2 - 6x_n + 8}{2x_n - 6}
+\end{align}
+
+Starting with initial guesses:
+\begin{align}
+    x_0 &= 3 \text{ converges to } 2 \\
+    x_0 &= 5 \text{ converges to } 4
+\end{align}
+
+\textbf{Verification:}
+
+Substituting \(x = 4\):
+\begin{align}
+    (4-2)^2 + 1 &= 2(4) - 3 \\
+    4 + 1 &= 8 - 3 \\
+    5 &= 5
+\end{align}
+
+Substituting \(x = 2\):
+\begin{align}
+    (2-2)^2 + 1 &= 2(2) - 3 \\
+    0 + 1 &= 4 - 3 \\
+    1 &= 1
+\end{align}
+
+Hence, the roots are verified.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{figs/fig.png}
+\caption{Plot using Newton-Raphson method}
+\label{fig:Plot1} 
+\end{figure}
+
+\end{document}
+

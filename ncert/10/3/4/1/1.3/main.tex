@@ -1,0 +1,157 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Uncomment if needed for pdflatex
+
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+%\usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{tikz}
+\usepackage{circuitikz}
+\usepackage{standalone} % For including external TikZ files
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{10.3.4.1.3}
+\author{EE24BTECH11013 - MANIKANTA D}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Problem:}\\ 
+Solve the system of linear equations:  
+\begin{align}  
+3x - 5y - 4 = 0 \text{ and } 9x = 2y + 7.  
+\end{align}
+
+\textbf{Step 1: Represent the system in matrix form} \\ 
+The system of equations can be written as:  
+\begin{align}  
+A \mathbf{x} = \mathbf{b},  
+\end{align}  
+where  
+\begin{align}  
+A = \begin{pmatrix} 3 & -5 \\ 9 & -2 \end{pmatrix}, \mathbf{x} = \begin{pmatrix} x \\ y \end{pmatrix}, \mathbf{b} = \begin{pmatrix} 4 \\ -7 \end{pmatrix}.  
+\end{align}
+
+\textbf{Step 2: Perform LU Decomposition} \\ 
+We decompose the matrix $A$ into the product of a lower triangular matrix $L$ and an upper triangular matrix $U$, i.e.,  
+\begin{align}  
+A = LU,  
+\end{align}  
+where  
+\begin{align}  
+L = \begin{pmatrix} 1 & 0 \\ l_{21} & 1 \end{pmatrix}, U = \begin{pmatrix} u_{11} & u_{12} \\ 0 & u_{22} \end{pmatrix}.  
+\end{align}
+
+Now, let's compute the LU decomposition step by step.  
+
+First, we find the elements of $U$ and $L$:  
+\begin{align}  
+u_{11} = a_{11} = 3, u_{12} = a_{12} = -5.  
+\end{align}  
+Next, we compute $l_{21}$ and $u_{22}$:  
+\begin{align}  
+l_{21} = \frac{a_{21}}{u_{11}} = \frac{9}{3} = 3,  
+\end{align}  
+\begin{align}  
+u_{22} = a_{22} - l_{21} u_{12} = -2 - 3 \times (-5) = 13.  
+\end{align}  
+So the LU decomposition is:  
+\begin{align}  
+L = \begin{pmatrix} 1 & 0 \\ 3 & 1 \end{pmatrix}, U = \begin{pmatrix} 3 & -5 \\ 0 & 13 \end{pmatrix}.  
+\end{align}
+
+\textbf{Step 3: Solve for $\mathbf{x}$ using $LU$ decomposition}  \\
+Now we solve the system in two steps using forward substitution and backward substitution.  
+
+First, solve $L \mathbf{y} = \mathbf{b}$ for $\mathbf{y}$:  
+\begin{align}  
+\begin{pmatrix} 1 & 0 \\ 3 & 1 \end{pmatrix} \begin{pmatrix} y_1 \\ y_2 \end{pmatrix} = \begin{pmatrix} 4 \\ -7 \end{pmatrix}.  
+\end{align}  
+This gives:  
+\begin{align}  
+y_1 = 4, 3y_1 + y_2 = -7 \Rightarrow 3(4) + y_2 = -7 \Rightarrow y_2 = -19.  
+\end{align}  
+Thus, $\mathbf{y} = \begin{pmatrix} 4 \\ -19 \end{pmatrix}$.  
+
+Next, solve $U \mathbf{x} = \mathbf{y}$ for $\mathbf{x}$:  
+\begin{align}  
+\begin{pmatrix} 3 & -5 \\ 0 & 13 \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} 4 \\ -19 \end{pmatrix}.  
+\end{align}  
+This gives:  
+\begin{align}  
+13y = -19 \Rightarrow y = -\frac{19}{13},  
+\end{align}  
+\begin{align}  
+3x - 5y = 4 \Rightarrow 3x - 5\left(-\frac{19}{13}\right) = 4 \Rightarrow 3x = 4 - \frac{95}{13} \Rightarrow x = \frac{147}{39}.  
+\end{align}  
+
+Thus, the solution is $x = \frac{147}{39}$ and $y = -\frac{19}{13}$.  
+
+\textbf{LU Decomposition using Doolittle's algorithm}:  \\
+The LU decomposition can be efficiently computed using Doolittle's algorithm. This method generates the matrices $L$ (lower triangular) and $U$ (upper triangular) such that $A = LU$. The elements of these matrices are calculated as follows: \\  
+Elements of the $U$ Matrix: \\  
+For each column $j$:  
+\begin{align}  
+U_{ij} = A_{ij} \text{ if } i = 0, \\  
+U_{ij} = A_{ij} - \sum_{k=0}^{i-1} L_{ik} U_{kj} \text{ if } i > 0.  
+\end{align}  
+Elements of the $L$ Matrix: \\  
+For each row $i$:  
+\begin{align}  
+L_{ij} = \frac{A_{ij}}{U_{jj}} \text{ if } j = 0, \\  
+L_{ij} = \frac{A_{ij} - \sum_{k=0}^{j-1} L_{ik} U_{kj}}{U_{jj}} \text{ if } j > 0.  
+\end{align}  
+
+This systematic approach ensures that the matrix $A$ is decomposed into $L$ and $U$ without requiring row swaps, provided $A$ is nonsingular.  
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=1\columnwidth]{solution_plot.png}
+   \caption{Solving the system of equations}
+   \label{stemplot}
+\end{figure}
+
+
+\end{document}
