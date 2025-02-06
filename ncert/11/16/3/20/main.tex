@@ -1,0 +1,123 @@
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\begin{document}
+\bibliographystyle{IEEEtran}
+\title{11.16.3.20}
+\author{EE24BTECH11051 - Prajwal}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+\begin{enumerate} 
+
+\item The probability that a student will pass in the final examination in both english and hindi is 0.5 and the probability passing neither is 0.1.If the probability of  passing the english examination is 0.75,what is probability of passing the hindi examination
+
+\textbf{Solution}:-\\
+  \begin{table}[h!]    
+  \centering
+  \input{tables/table1.tex}
+  \caption{defining events}
+  \label{table}
+\end{table}
+\newline Below are some postulates and theorems from boolean algebra : 
+  \begin{table}[h!]    
+  \centering
+  \input{tables/table2.tex}
+  \caption{defining events}
+  \label{table}
+\end{table}
+\newline\textbf{Non-Negativity Axiom:}
+\[
+P(A) \geq 0
+\]
+The probability of any event \( A \) is always non-negative.
+
+\textbf{Normalization Axiom:}
+\[
+P(S) = 1
+\]
+The probability of the sample space \( S \) (i.e., the set of all possible outcomes) is 1.
+
+\textbf{Additivity Axiom (Countable Additivity for Disjoint Events):}  
+If \( A_1, A_2, A_3, \dots \) are mutually exclusive (disjoint) events, then:
+\[
+P(A_1 \cup A_2 \cup A_3 \cup \dots) = P(A_1) + P(A_2) + P(A_3) + \dots
+\]
+
+ For any two event A and B,
+\begin{align}
+	\because A + A^\prime &= 1 \\
+	 AB + A^\prime B &= B \label{2} \\
+	 \implies \pr{AB} + \pr{A^\prime B} &= \pr{B} \label{3} \\
+	 \because B + B^\prime &= 1 \\
+	 AB + AB^\prime &= A \label{5}\\
+	 \implies \pr{AB} + \pr{AB^\prime} &= \pr{A} \label{6} \\
+	 \text{adding } \eqref{2} \text{ and } \eqref{5} \\
+	 A + B &= AB + AB + AB^\prime + A^\prime B  \\
+	 A + B &= AB + AB^\prime + A^\prime B \\ 
+	 \pr{A + B} &= \pr{AB} + \pr{AB^\prime} + \pr{A^\prime B} \label{10}\\
+	 \text{Adding \eqref{3},\eqref{6} and \eqref{10} and cancelling same terms } \\
+	 \pr{AB} &= \pr{A} + \pr{B} - \pr{A + B} \\
+	 \because \pr{A^\prime B^\prime} &=  \pr{\brak{A + B}^\prime} \label{13} \\
+	 \pr{A^\prime  B^\prime} &=  1 - \pr{A+B} \label{14}
+\end{align}
+From the given data in question,
+    \begin{align}
+        \pr{A} &= 0.75 \\
+        \pr{AB} &= 0.5 \\
+        \pr{(A+B)^\prime} &= 0.1      
+    \end{align}
+
+    Now using axioms of probability (boolean logic),
+Thus, we write
+    \begin{align}
+	    \pr{A + B} &= \pr{A} +  \pr{B} - \pr{A B} \\
+	                                 &= 0.75+\pr{B}-0.5 \\
+	                                 &= 0.25+\pr{B} \\
+	     \pr{(A+B)^\prime)} &=  1 - \pr{A+B} \\ 
+	     0.1=1-0.25-\pr{B}\\
+         \pr{B}=0.65
+    \end{align} 
+\end{enumerate}
+
+
+\end{document}
