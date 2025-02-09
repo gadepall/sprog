@@ -108,9 +108,9 @@ By computing each integral we get
 	\int_{0}^{1}\brak{x^2+1} dx = \sbrak{\frac{x^3}{3} + x}_{0}^{1} = \sbrak{\frac{4}{3} -0 } = \frac{4}{3} \\
 	\int_{1}^{2}\brak{x+1} dx = \sbrak{\frac{x^2}{2} + x}_{1}^{2} = \sbrak{4 - \frac{3}{2}} = \frac{5}{2}
 \end{align}
-From the equations \brak{0.14} and \brak{0.15} 
+From the equations \brak{0.10} and \brak{0.11} 
 \begin{align}
-	Area = \frac{23}{6}
+	Area = \frac{23}{6} = 3.83
 \end{align}
 Total area of given regions is $\frac{23}{6}$ \\
 \textbf{Computational Solution}: \\
@@ -123,14 +123,21 @@ $\therefore$ The equation obtained is
 \begin{align}
 	Area = \int_{a}^{b} f\brak{x} dx \approx h\brak{\frac{1}{2}f\brak{a}+f\brak{x_1}+ f\brak{x_2} + \dots + f\brak{x_n-1}+\frac{1}{2}f\brak{b}} \\
 	Area = j_n \quad \brak{j_{i+1} = j_i + h\frac{f\brak{x_{i+1} + f\brak{x_i}}}{2}} \\
-	x_{i+1} = x_i + h \\
+	Area = j_n \quad \brak{j_{i+1} = j_i +h\frac{\brak{x_{i+1}^2+1} +\brak{x_i^2 +1}}{2}} && 0 \le x \le 1 \\
+	Area = j_n \quad \brak{j{i+1} = j_i + h\frac{\brak{x_{i+1}+1}+\brak{x_i}+1}{2}} && 1 \le x \le 2 \\
+	x_{i+1} = x_{i} + h \\
 	N = 100000
 \end{align}
 Using the code the answer we get is
-\begin{figure}[!h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width = \columnwidth]{figs/Figure_1.png}
 	\label{fig}
 \end{figure}
+Area calculated by computaional method = Area under $f_1$ + Area under $f_2$ \\
+\begin{align}
+Area = 1.33 + 2.5 = 3.83
+\end{align}
+We got same answer from Theoretical solution also . So we can say our computation is correct.
 \end{document}
 
