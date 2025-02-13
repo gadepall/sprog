@@ -1,0 +1,127 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{multicol}
+
+% Marks the beginning of the document
+\begin{document}
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{11.16.1.9}
+\author{EE24BTECH11018 - Durgi Swaraj Sharma}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt}
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Problem:} A box contains $1$ red and $3$ identical white balls. Two balls are drawn at random in succe
+ssion without replacement. Write the sample space for this experiment.\\
+\sbrak{\text{Additional: Find the probability mass function too.}}\\
+\solution
+
+The sample space $\sigma$ is given by:
+\begin{align}
+  \sigma = \cbrak{WW, RW, WR}
+\end{align}
+
+We shall define random variable $X$, which denotes the position at which the Red ball is drawn. \\
+Then $X$ takes the values
+\begin{align}
+  X = 
+  \begin{cases}
+    0 ,&\, \text{red ball never drawn}\\
+    1 ,&\, \text{red ball drawn first}\\
+    2 ,&\, \text{red ball drawn second}
+  \end{cases}
+\end{align}
+There is a total of $4\cdot3$ outcomes that can happen, with $4$ in first draw and $3$ in second.
+These outcomes relate with $X$ as:
+\begin{itemize}
+  \item $X=0$ when both balls drawn are white, and there's a total of $3\cdot2$ these outcomes.
+  \item $X=1$ when the first ball is red, the second ball has to white. Giving a total of $1\cdot3$.
+  \item $X=2$ when the second ball is red, the first has to be white. Giving a total of $3\cdot1$
+\end{itemize}
+This translates to the Probability Mass Function as 
+\begin{align}
+  p_X\brak{k} = 
+  \begin{cases}
+    \frac{6}{12} = 0.50,\,& k = 0\\
+    \frac{3}{12} = 0.25,\,& k = 1\\
+    \frac{3}{12} = 0.25,\,& k = 2
+  \end{cases}
+\end{align}
+\textbf{Computing the Probabilities}
+
+
+We perform a Monte Carlo simulation to verify these probabilities by running a large number of trials. The algorithm proceeds as follows:
+\begin{enumerate}
+    \item Randomly select the first ball: Red with probability $\frac{1}{4}$, White with probability $\frac{3}{4}$.
+    \item If the first ball is White, randomly select the second ball: Red with probability $\frac{1}{3}$, White with probability $\frac{2}{3}$.
+    \item Count occurrences of each event $(WW, RW, WR)$.
+    \item Compute empirical probabilities as the relative frequencies of these events.
+\end{enumerate}
+This is how the code works:
+\begin{itemize}
+    \item We generate $X_1$ by selecting a random number between 0 and 3. We set $X_1 = 1$ if the chosen number is 0, which occurs with probability $0.25$.
+    \item If $X_1 = 1$, we set $X_2 = 0$ since the only red ball has already been drawn.
+    \item Otherwise, we generate $X_2$ by selecting a random number between 0 and 2, setting $X_2 = 1$ if the chosen number is 0, which occurs with probability $0.33$.
+\end{itemize}
+
+\textbf{Outcome Definitions:}
+\begin{align*}
+    RW &: \quad X_1 = 1, X_2 = 0 \\
+    WR &: \quad X_1 = 0, X_2 = 1 \\
+    WW &: \quad X_1 = 0, X_2 = 0
+\end{align*}
+
+
+The estimated probabilities from the simulation are:
+\begin{align}
+  P(WW) &\approx 0.50 \\
+  P(RW) &\approx 0.25 \\
+  P(WR) &\approx 0.25
+\end{align}
+
+\end{document}
