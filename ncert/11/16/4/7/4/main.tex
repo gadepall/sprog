@@ -1,0 +1,153 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{11.16.4.7.4}
+\author{EE24BTECH11017 - D.Karthik}
+ \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Problem Statement :}
+
+Given two events \( A \) and \( B \) such that:
+
+
+   $ P(A) = 0.54, \quad P(B) = 0.69, \quad P(A \cap B) = 0.35$
+
+Find \( P(B \cap A^c) \).
+\section{Solution Using Set Properties and Probability Axioms}
+
+From the definition of probability and set relations, we know:
+
+\[
+P(B) = P(A \cap B) + P(A^c \cap B)
+\]
+
+Rearranging,
+
+\[
+P(A^c \cap B) = P(B) - P(A \cap B)
+\]
+
+Substituting the given values,
+
+\[
+P(A^c \cap B) = 0.69 - 0.35 = 0.34
+\]
+
+Thus, the required probability is:
+
+\[
+\boxed{0.34}
+\]
+
+\section{Solution Using Random Variables and Conditional Probability}
+
+Let \( X \) be an indicator random variable such that:
+
+\[
+X =
+\begin{cases}
+1, & \text{if } B \text{ occurs}, \\
+0, & \text{otherwise}.
+\end{cases}
+\]
+
+Using conditional probability,
+
+\[
+P(B) = P(B | A) P(A) + P(B | A^c) P(A^c)
+\]
+
+Rearranging to find \( P(B | A^c) P(A^c) \):
+
+\[
+P(B | A^c) P(A^c) = P(B) - P(B | A) P(A)
+\]
+
+We compute \( P(B | A) \):
+
+\[
+P(B | A) = \frac{P(A \cap B)}{P(A)} = \frac{0.35}{0.54} \approx 0.6481
+\]
+
+Similarly, we compute \( P(A^c) \):
+
+\[
+P(A^c) = 1 - P(A) = 1 - 0.54 = 0.46
+\]
+
+Now, solving for \( P(B | A^c) \):
+
+\[
+P(B | A^c) = \frac{P(B) - P(A \cap B)}{P(A^c)}
+\]
+
+\[
+= \frac{0.69 - 0.35}{0.46} = \frac{0.34}{0.46} \approx 0.7391
+\]
+
+Thus,
+
+\[
+P(B \cap A^c) = P(B | A^c) P(A^c) = 0.7391 \times 0.46 = 0.34
+\]
+
+\textbf{Monte Carlo Simulation Approach:} We can verify this result by simulating a large number of trials where:
+\begin{enumerate}
+    \item Generate a random value to determine if \( A \) occurs.
+    \item Generate a random value to determine if \( B \) occurs, conditioned on \( A \) or \( A^c \).
+    \item Count occurrences where \( B \cap A^c \) happens.
+\end{enumerate}
+
+Running a simulation with one million trials will produce an estimate close to \( 0.34 \), confirming our calculations.
+
+
+\end{document}
