@@ -1,0 +1,286 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title{Scientific Calculator}
+\author{Eshan Ray\\EE24BTECH11021}
+\date{March 24, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This report details the implementation of a scientific calculator that uses the Runge-Kutta 4th order (RK4) method to compute various mathematical functions. The calculator is implemented on an AVR microcontroller and features a 4x5 keypad matrix for input and an LCD display for output.
+
+\section{Mathematical Implementation}
+The core of this project is the implementation of scientific functions using numerical methods instead of standard library functions. The Runge-Kutta 4th order method is used to solve differential equations that represent various mathematical functions.
+
+\subsection{RK4 Method}
+The Runge-Kutta 4th order method (RK4) is a numerical technique used to solve ordinary differential equations (ODEs) of the form:
+\begin{align}
+\frac{dy}{dx} = f(x, y), \quad y(x_0) = y_0
+\end{align}
+
+Given a step size $h$, the RK4 method approximates the solution at $x_{n+1} = x_n + h$ using the formula:
+\begin{align}
+y_{n+1} = y_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)
+\end{align}
+
+Where:
+\begin{align}
+k_1 &= hf(x_n, y_n)\\
+k_2 &= hf\left(x_n + \frac{h}{2}, y_n + \frac{k_1}{2}\right)\\
+k_3 &= hf\left(x_n + \frac{h}{2}, y_n + \frac{k_2}{2}\right)\\
+k_4 &= hf(x_n + h, y_n + k_3)
+\end{align}
+
+The RK4 method is a fourth-order method, meaning that the local truncation error is on the order of $O(h^5)$, while the total accumulated error is on the order of $O(h^4)$.
+
+Two implementations of the RK4 method are used:
+
+\begin{enumerate}
+    \item \textbf{First-Order Differential Equations}: Used for functions like exponential, logarithm, square root, and inverse trigonometric functions.
+    \item \textbf{Second-Order Differential Equations}: Used for sine and cosine functions.
+\end{enumerate}
+
+For second-order differential equations of the form $y'' = f(x, y, y')$, we convert them into a system of two first-order equations:
+\begin{align}
+y_1' &= y_2\\
+y_2' &= f(x, y_1, y_2)
+\end{align}
+
+Then we apply the RK4 method to this system:
+\begin{align}
+y_{1,n+1} &= y_{1,n} + \frac{1}{6}(k_1 + 2s_1 + 2l_1 + p_1)\\
+y_{2,n+1} &= y_{2,n} + \frac{1}{6}(k_2 + 2s_2 + 2l_2 + p_2)
+\end{align}
+
+Where:
+\begin{align}
+k_1 &= hf_1(x_n, y_{1,n}, y_{2,n})\\
+k_2 &= hf_2(x_n, y_{1,n}, y_{2,n})\\
+s_1 &= hf_1\left(x_n + \frac{h}{2}, y_{1,n} + \frac{k_1}{2}, y_{2,n} + \frac{k_2}{2}\right)\\
+s_2 &= hf_2\left(x_n + \frac{h}{2}, y_{1,n} + \frac{k_1}{2}, y_{2,n} + \frac{k_2}{2}\right)\\
+l_1 &= hf_1\left(x_n + \frac{h}{2}, y_{1,n} + \frac{s_1}{2}, y_{2,n} + \frac{s_2}{2}\right)\\
+l_2 &= hf_2\left(x_n + \frac{h}{2}, y_{1,n} + \frac{s_1}{2}, y_{2,n} + \frac{s_2}{2}\right)\\
+p_1 &= hf_1(x_n + h, y_{1,n} + l_1, y_{2,n} + l_2)\\
+p_2 &= hf_2(x_n + h, y_{1,n} + l_1, y_{2,n} + l_2)
+\end{align}
+
+\subsection{Scientific Functions}
+The following scientific functions are implemented using the RK4 method:
+
+\begin{tabularx}{\textwidth}{|l|X|l|}
+\hline
+\textbf{Function} & \textbf{Differential Equation} & \textbf{Mode} \\
+\hline
+Exponential ($e^x$) & $y' = y$ with $y(0) = 1$ & 1 \\
+\hline
+Sine ($\sin x$) & $y'' + y = 0$ with $y(0) = 0, y'(0) = 1$ & 2 \\
+\hline
+Cosine ($\cos x$) & $y'' + y = 0$ with $y(0) = 1, y'(0) = 0$ & 3 \\
+\hline
+Tangent ($\tan x$) & Computed as $\frac{\sin x}{\cos x}$ & 4 \\
+\hline
+Natural Logarithm ($\ln x$) & $y' = \frac{1}{x}$ with $y(1) = 0$ & 5 \\
+\hline
+Base-10 Logarithm ($\log_{10} x$) & $y' = \frac{1}{2.3025x}$ with $y(1) = 0$ & 6 \\
+\hline
+Square Root ($\sqrt{x}$) & $y' = \frac{1}{2y}$ with $y(1) = 1$ & 7 \\
+\hline
+Arcsine ($\arcsin x$) & $y' = \frac{1}{\sqrt{1-x^2}}$ with $y(0) = 0$ & 8 \\
+\hline
+Arccosine ($\arccos x$) & Computed as $\frac{\pi}{2} - \arcsin x$ & 9 \\
+\hline
+Arctangent ($\arctan x$) & $y' = \frac{1}{1+x^2}$ with $y(0) = 0$ & 10 \\
+\hline
+\end{tabularx}
+
+\section{Hardware Interface}
+
+\subsection{LCD Interface}
+The calculator uses a 16x2 LCD display in 4-bit mode with the following connections:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{LCD Pin} & \textbf{AVR Port/Pin} & \textbf{Arduino Pin} \\
+\hline
+Register Select (RS) & PORTD2 & 2 \\
+\hline
+Enable (EN) & PORTD3 & 3 \\
+\hline
+Data 4 (D4) & PORTD4 & 4 \\
+\hline
+Data 5 (D5) & PORTD5 & 5 \\
+\hline
+Data 6 (D6) & PORTD6 & 6 \\
+\hline
+Data 7 (D7) & PORTB4 & 12 \\
+\hline
+\end{tabular}
+\caption{LCD Pin Connections}
+\end{table}
+
+\subsection{Keypad Interface}
+A 4x5 matrix keypad is implemented with the following connections:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Keypad} & \textbf{AVR Port/Pin} & \textbf{Arduino Pin} \\
+\hline
+Row 1 & PORTB0 & 8 \\
+\hline
+Row 2 & PORTB1 & 9 \\
+\hline
+Row 3 & PORTB2 & 10 \\
+\hline
+Row 4 & PORTB3 & 11 \\
+\hline
+Column 1 & PORTC5 & A5 \\
+\hline
+Column 2 & PORTC4 & A4 \\
+\hline
+Column 3 & PORTC3 & A3 \\
+\hline
+Column 4 & PORTC2 & A2 \\
+\hline
+Column 5 & PORTC1 & A1 \\
+\hline
+\end{tabular}
+\caption{Keypad Matrix Connections}
+\end{table}
+
+\subsection{Pin-Saving Matrix Design}
+The 4x5 keypad matrix implementation in this scientific calculator project helped save Arduino pins through efficient multiplexing. Instead of requiring 20 individual pins for 20 buttons, the matrix arrangement needs only 9 pins (4 rows + 5 columns).
+
+This design works by setting one row LOW at a time while keeping others HIGH, then checking each column to see if a button is pressed. When a button is pressed, it connects a row to a column, creating a circuit that can be detected by the microcontroller.
+
+The scanning function implements this approach:
+\begin{enumerate}
+    \item It iterates through each row, setting the current row LOW
+    \item For each row, it checks all five columns
+    \item When a pressed button is detected, it returns the corresponding character from the keypad layout
+\end{enumerate}
+
+\subsection{Keypad Layout}
+The 4x5 keypad matrix has the following layout in normal mode:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+7 & 8 & 9 & + & D \\
+\hline
+4 & 5 & 6 & - & S \\
+\hline
+1 & 2 & 3 & * & A \\
+\hline
+0 & . & = & / & C \\
+\hline
+\end{tabular}
+\caption{Keypad Layout (Normal Mode)}
+\end{table}
+
+Where:
+\begin{itemize}
+    \item D: Delete/Backspace
+    \item S: Shift mode toggle
+    \item A: Alpha mode toggle
+    \item C: Clear
+\end{itemize}
+
+\section{User Interface}
+
+\subsection{Input Modes}
+The calculator supports three input modes:
+
+\begin{enumerate}
+    \item \textbf{Normal Mode}: Basic arithmetic and number entry
+    \item \textbf{Shift Mode}: Access to inverse functions and special operations
+    \item \textbf{Alpha Mode}: Access to scientific functions and constants
+\end{enumerate}
+
+The matrix design also supports these three different input modes without requiring additional hardware. This multiplexing technique allows a single button to have up to three different functions, effectively tripling the functionality without adding more hardware.
+
+\subsection{Alpha Mode Functions}
+In Alpha mode, the keypad provides access to scientific functions:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+EXP & cos & tan & \textasciicircum & BS \\
+\hline
+log & ln & e\textasciicircum & $\sqrt{x}$ & ( \\
+\hline
+$\pi$ & * & / & 1/x & ) \\
+
+\hline
+sin & ANS & cos & M- & MR \\
+\hline
+\end{tabular}
+\caption{Keypad Layout (Alpha Mode)}
+\end{table}
+
+\subsection{Shift Mode Functions}
+In Shift mode, the keypad provides access to additional functions:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+asin & acos & atan & y\textasciicircum x & CLR \\
+\hline
+10\textasciicircum & e & abs & cbrt & [ \\
+\hline
+deg & rad & mod & fact & ] \\
+\hline
+7 & 8 & asin & acos & MC \\
+\hline
+\end{tabular}
+\caption{Keypad Layout (Shift Mode)}
+\end{table}
+
+\subsection{Memory Functions}
+The calculator includes memory operations:
+\begin{itemize}
+    \item Memory Recall (MR): Retrieve stored value
+    \item Memory Add (M+): Add current value to memory
+    \item Memory Subtract (M-): Subtract current value from memory
+    \item Memory Clear (MC): Reset memory to zero
+\end{itemize}
+
+\section{Expression Evaluation}
+The calculator implements a BODMAS (Brackets, Orders, Division, Multiplication, Addition, Subtraction) evaluation system for arithmetic expressions. The evaluation process includes:
+
+\begin{enumerate}
+    \item Parsing the input expression
+    \item Identifying special functions (sin, cos, log, etc.)
+    \item Applying the appropriate mathematical operations
+    \item Handling operator precedence
+    \item Displaying the result on the LCD
+\end{enumerate}
+
+\section{Project Repository}
+The complete source code and documentation for this project are available on GitHub:
+\href{https://github.com/yourusername/scientific-calculator-rk4}{Scientific Calculator with RK4 Implementation}
+
+\section{Conclusion}
+This scientific calculator project demonstrates the successful implementation of mathematical functions using numerical methods, specifically the RK4 method for solving differential equations. The approach provides accurate approximations of complex functions without relying on standard library implementations.
+
+The modular design allows for easy extension with additional functions, and the user interface provides intuitive access to both basic and advanced mathematical operations. The implementation on AVR microcontrollers makes it suitable for embedded applications where computational resources are limited.
+
+The matrix keypad design efficiently uses microcontroller pins, allowing a full-featured calculator interface with minimal hardware requirements.
+
+\end{document}
+
