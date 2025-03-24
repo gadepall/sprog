@@ -1,0 +1,139 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{longtable}
+
+\title{Digital Clock}
+\author{Eshan Ray\\ EE24BTECH11021}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document presents the design and implementation of an Arduino Uno-based digital clock featuring a countdown timer mode. The project utilizes an Arduino Uno and a 7-segment display for time representation. The system supports real-time clock functionality, user-configurable time adjustments, and a timer mode with auto-stop when time reaches zero.
+\end{abstract}
+
+\section{Introduction}
+The purpose of this project is to develop a digital clock using an Arduino Uno. The clock includes features such as time display, time adjustment via push buttons, and a timer mode. The clock operates based on a millisecond timer interrupt and follows the 24-hour format.
+
+\section{Hardware Components}
+\begin{itemize}
+\item Arduino Uno
+\item 7-Segment Display (6 Digits)
+\item Push Buttons (Hour, Minute, Second Increment/Decrement, Timer Mode, Reset)
+\item Resistors and Capacitors
+\item Power Supply (5V)
+\end{itemize}
+
+\section{Circuit Connections}
+The following table outlines the connections between the Arduino Uno and various components:
+\newpage
+\begin{longtable}{|c|c|c|}
+\hline
+Component & Arduino Pin & Description \\
+\hline
+Hour Increment Button & PB0 & Increments the hour count \\
+Hour Decrement Button & PB1 & Decrements the hour count \\
+Minute Increment Button & PC5 & Increments the minute count \\
+Minute Decrement Button & PC3 & Decrements the minute count \\
+Second Increment Button & PD0 & Increments the second count \\
+Timer Mode Button & PC4 & Toggles timer mode on/off \\
+Reset Button & PC2 & Resets or restores time settings \\
+7-Segment Display & PD2, PD3, PD4, PD5 & Used for digit selection (decoder) \\
+Display Enable Lines & PB5, PB4, PC1, PC0, PB3, PD7 & Selects active digit \\
+\hline
+\end{longtable}
+
+Each button is connected to a specific pin on the Arduino Uno with internal pull-up resistors enabled. The display is multiplexed using a decoder circuit and selection lines to cycle through the six digits.
+
+\section{Software Implementation}
+The project is implemented in C using the AVR-GCC compiler. The system structure includes:
+\begin{itemize}
+\item Millisecond timer interrupt for real-time updates.
+\item Button handling with debounce and long-press detection.
+\item Time management functions for incrementing, decrementing, and resetting time.
+\item Display multiplexing for 7-segment display using a decoder.
+\end{itemize}
+
+\section{Code Implementation}
+The main functionalities are defined in the following sections:
+
+\subsection{Timer Interrupt for Millis Counter}
+The system maintains a millisecond counter using the Timer0 Compare Match interrupt.
+
+\begin{lstlisting}[language=C, caption=Millis Timer Interrupt, basicstyle=\ttfamily, keywordstyle=\color{blue}]
+ISR(TIMER0\_COMPA\_vect) {
+millis\_count++;
+}
+
+unsigned long currentMillis(void) {
+unsigned long m;
+cli();
+m = millis\_count;
+sei();
+return m;
+}
+\end{lstlisting}
+
+\subsection{Button Handling}
+Each button is mapped to specific microcontroller pins. A debounce mechanism prevents false triggers.
+
+\begin{lstlisting}[language=C, caption=Button Checking Function]
+void checkButtons(void) {
+static unsigned long holdStart[NUM\_BUTTONS] = {0};
+void (*actions[])() = {incrementHour, decrementHour, incrementMinute,
+decrementMinute, toggleTimerMode, incrementSecond, resetClock};
+// Process button states and handle actions
+}
+\end{lstlisting}
+
+\subsection{Time Update Functions}
+The system supports both time increment and decrement operations, ensuring proper rollover at 24-hour and 60-minute limits.
+
+\begin{lstlisting}[language=C, caption=Increment Time]
+void incrementTime(void) {
+seconds++;
+if(seconds > 59) {
+seconds = 0;
+minutes++;
+if(minutes > 59) {
+minutes = 0;
+hours++;
+if(hours > 23) {
+hours = 0;
+}
+}
+}
+}
+\end{lstlisting}
+
+\subsection{Display Multiplexing}
+The 7-segment display is controlled using a decoder and port-based switching. Since the Arduino Uno has a limited number of I/O pins, the display multiplexing is done by enabling only one display at a time while sending the corresponding digit data.
+
+\begin{lstlisting}[language=C, caption=Show Digit Function]
+void showDigit(uint8\_t digit, uint8\_t displayIndex) {
+*decoderPort &= ~((1 << PD2) | (1 << PD5) | (1 << PD4) | (1 << PD3));
+if(digit & 0x01) *decoderPort |= (1 << PD2);
+if(digit & 0x02) *decoderPort |= (1 << PD5);
+if(digit & 0x04) *decoderPort |= (1 << PD4);
+if(digit & 0x08) *decoderPort |= (1 << PD3);
+}
+\end{lstlisting}
+
+\section{Results and Testing}
+The clock was successfully tested for accurate timekeeping and responsiveness to user inputs. The timer mode correctly halts at zero, and button presses reliably adjust time settings.
+
+\section{Conclusion}
+This project demonstrates an effective implementation of a digital clock with a countdown timer using an Arduino Uno. Future improvements could include  an OLED display for enhanced readability.
+
+\section{Project Repository}
+The source code and additional details can be found at: \\ 
+\href{https://github.com/eshan810/ee1003/blob/main/Hardware/Clock/codes/clock.c}{https://github.com/eshan810/ee1003/blob/main/Hardware/Clock/codes/clock.c}
+
+
+\end{document}
