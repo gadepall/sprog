@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.8.21)  22 MAR 2025 20:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.8.21)  24 MAR 2025 22:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1373,12 +1373,15 @@ LaTeX Font Info:    Font shape `OT1/txr/b/n' in size <17.28> not available
 (Font)              Font shape `OT1/txr/bx/n' tried instead on input line 81.
 LaTeX Font Info:    Font shape `OT1/txr/b/n' in size <14.4> not available
 (Font)              Font shape `OT1/txr/bx/n' tried instead on input line 100.
+
+(./tables/table1.tex
 LaTeX Font Info:    Font shape `OT1/txr/b/n' in size <12> not available
-(Font)              Font shape `OT1/txr/bx/n' tried instead on input line 106.
- [1
+(Font)              Font shape `OT1/txr/bx/n' tried instead on input line 5.
+) (./tables/table2.tex [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-di
-st/fonts/enc/dvips/base/8r.enc}] [2]
+st/fonts/enc/dvips/base/8r.enc}])
+(./tables/table3.tex) (./tables/table4.tex) [2]
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 )
@@ -1386,7 +1389,7 @@ File: lstlang1.sty 2023/02/27 1.9 listings language file
 File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
 )
 LaTeX Font Info:    Trying to load font information for OT1+txtt on input line 
-194.
+146.
 
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/ot1txtt.fd
 File: ot1txtt.fd 2000/12/15 v3.1
@@ -1400,10 +1403,10 @@ Package rerunfilecheck Info: File `clock.out' has not changed.
 (rerunfilecheck)             Checksum: 1932D9A23C615667DB47354E97C79915;3098.
  ) 
 Here is how much of TeX's memory you used:
- 35968 strings out of 474222
- 739321 string characters out of 5748733
+ 35993 strings out of 474222
+ 739800 string characters out of 5748733
  2088975 words of memory out of 5000000
- 57365 multiletter control sequences out of 15000+600000
+ 57377 multiletter control sequences out of 15000+600000
  591794 words of font info for 122 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
  101i,9n,103p,1173b,2525s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1413,7 +1416,7 @@ exmf-dist/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/public/txfonts/txtt.pfb></usr/share/texlive/texmf-dist/fonts/type1/ur
 w/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.
 pfb>
-Output written on clock.pdf (7 pages, 71236 bytes).
+Output written on clock.pdf (7 pages, 71239 bytes).
 PDF statistics:
  331 PDF objects out of 1000 (max. 8388607)
  306 compressed objects within 4 object streams
