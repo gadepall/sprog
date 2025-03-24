@@ -1,0 +1,11 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Materials Required}{2}{section.2}%
+\contentsline {section}{\numberline {3}Circuit Connections}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Connecting Arduino to IC 7447}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Connecting IC 7447 to the 7-Segment Display}{3}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Powering the IC and Display}{3}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Optional: Adding Push Buttons for Time Setting}{3}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Arduino Code}{3}{section.4}%
+\contentsline {section}{\numberline {5}Testing and Calibration}{6}{section.5}%
+\contentsline {section}{\numberline {6}Enhancements}{7}{section.6}%
+\contentsline {section}{\numberline {7}Conclusion}{7}{section.7}%
