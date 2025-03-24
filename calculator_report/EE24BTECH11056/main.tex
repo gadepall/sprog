@@ -1,0 +1,84 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{siunitx}
+
+\title{\textbf{Design and Implementation of a Scientific Calculator Using AVR-GCC}}
+\author{S.Kavya Anvitha \\EE24BTECH11056}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report details the design and development of a scientific calculator utilizing an Arduino Uno, a JHD162A LCD display, and 23 push buttons. The system is programmed using AVR-GCC on a Debian-based Termux environment. The calculator supports arithmetic, trigonometric, logarithmic, and exponential functions while ensuring efficient input handling and display management. This document outlines the circuit design, software implementation, and experimental results.
+\end{abstract}
+
+\section{Introduction}
+Scientific calculators are essential tools in engineering and academic fields, providing advanced mathematical functionalities. This project aims to construct a scientific calculator based on an embedded system using an Arduino Uno and programming it with AVR-GCC. The focus is on achieving efficient performance while maintaining a user-friendly interface.
+
+\section{Hardware Components}
+The primary components used in this project are:
+\begin{itemize}
+    \item \textbf{Microcontroller:} Arduino Uno
+    \item \textbf{Display:} JHD162A 16x2 LCD module
+    \item \textbf{Input:} 23 push buttons
+    \item \textbf{Resistors:} 1k\si{\ohm}, 2k\si{\ohm}, 1.5k\si{\ohm}, 15k\si{\ohm}
+    \item \textbf{Connections:} Jumper wires, conducting wires, and a breadboard
+\end{itemize}
+
+\section{Circuit Design}
+The circuit consists of the Arduino as the processing unit, push buttons for input, and an LCD for displaying outputs. The buttons are arranged in two rows:
+\begin{itemize}
+    \item \textbf{Row 1:} 10 buttons for digits (0-9)
+    \item \textbf{Row 2:} 13 buttons for functions (arithmetic, trigonometric, logarithmic, etc.)
+\end{itemize}
+The connections for the LCD and push buttons are detailed in Table \ref{tab:connections}.
+
+\input{tables/table}
+
+\textbf{Note:} Circuit designed with contributions from Akshara EE24BTECH11003, Akshita EE24BTECH11054.
+
+\section{Software Implementation}
+The software is written in embedded C using AVR-GCC and compiled in a Termux (Debian) environment. The main features include:
+\begin{itemize}
+    \item Basic arithmetic operations (addition, subtraction, multiplication, division)
+    \item Trigonometric functions (\texttt{sin}, \texttt{cos}, \texttt{tan})
+    \item Logarithmic and exponential functions
+    \item Factorial and power functions
+    \item Efficient keypad scanning and input processing
+\end{itemize}
+
+\subsection{Implementation Details}
+The AVR code is structured as follows:
+\begin{itemize}
+    \item \textbf{Initialization:} Configuring LCD and keypad
+    \item \textbf{Interrupt Handling:} Managing button presses
+    \item \textbf{Computation:} Executing mathematical functions
+    \item \textbf{Display Update:} Showing results on the LCD
+\end{itemize}
+
+The source code can be accessed at Codes of this folder
+
+\textbf{Acknowledgment:} Code contributions from Akshara EE24BTECH11003, Rasagna EE24BTECH11023, Shannu TejVardan EE24BTECH11034
+
+\subsection{Push Button Function Mapping}
+The key functions associated with each button are listed in Table \ref{tab:functions}.
+
+\input{tables/table1}
+
+\section{Experimental Results}
+The calculator was tested for accuracy and response time. The output was compared against standard scientific calculators, showing minimal error. The system successfully executed all planned operations within the given hardware limitations.
+
+\section{Conclusion}
+This project successfully demonstrates the design and implementation of a scientific calculator using an Arduino Uno and AVR-GCC. The system performs mathematical operations efficiently while mintaining simplicity in user interaction. Future improvements can include an expanded function set and memory storage for calculations.
+
+\end{document}a
