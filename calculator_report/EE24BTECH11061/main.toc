@@ -1,0 +1,17 @@
+\contentsline {section}{Scientific Calculator}{2}{section*.2}%
+\contentsline {subsection}{Design Objectives}{2}{section*.3}%
+\contentsline {section}{Hardware Components}{2}{section*.4}%
+\contentsline {subsection}{Keypad}{2}{section*.5}%
+\contentsline {subsubsection}{5×5 Keypad}{2}{section*.6}%
+\contentsline {subsubsection}{Shift Button Functionality}{3}{section*.8}%
+\contentsline {subsection}{Circuit Design}{3}{section*.10}%
+\contentsline {subsubsection}{LCD Connection}{3}{section*.11}%
+\contentsline {subsubsection}{Keypad Connection}{3}{section*.12}%
+\contentsline {subsubsection}{Circuit Diagram Description}{4}{section*.13}%
+\contentsline {subsection}{Implementation}{4}{section*.14}%
+\contentsline {subsubsection}{Software Architecture}{4}{section*.15}%
+\contentsline {subsubsection}{Trignometric Functions Implementation}{4}{section*.16}%
+\contentsline {section}{Results and Discussion}{7}{section*.17}%
+\contentsline {subsection}{Performance Metrics}{7}{section*.18}%
+\contentsline {subsection}{Limitations and Challenges}{8}{section*.19}%
+\contentsline {subsection}{Conclusion}{8}{section*.20}%
