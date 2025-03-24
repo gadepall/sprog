@@ -5,7 +5,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <math.h>
 
 # define h 0.01
 # define PI 3.14159265359
