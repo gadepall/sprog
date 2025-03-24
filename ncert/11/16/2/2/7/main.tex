@@ -1,0 +1,270 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{11.16.2.2.7}
+\author{EE24BTECH11058 - P.Shiny Diavajna}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\textbf{Question:}\\
+A die is thrown\\
+A: The event that a number less than 7 appears.\\
+B: The event that a number greater than 7 appears.\\
+Find $P\brak{A+B}$
+
+
+\textbf{Theoretical Solution:}\\
+For 2 Boolean variables $A$ and $B$, the axioms of Boolean Algebra are defined as:
+\begin{align}
+	A + A^\prime &= 1\\
+	A + A &= A\\
+	AB &= BA\\
+	A + B &= B + A\\
+	AA^\prime &= 0\\
+	\Pr\brak{1} &= 1\\
+	\Pr\brak{A + B} &= \Pr\brak{A} + \Pr\brak{B}, \text{ if } \Pr\brak{AB} = 0
+\end{align}
+Using these axioms, we will try to prove that
+\begin{align}
+	\Pr\brak{A + B} = \Pr\brak{A} + \Pr\brak{B} - \Pr\brak{AB}
+\end{align}
+We will start by representing $A$ and $B$ as:
+\begin{align}
+	A &= AB + AB^\prime\\
+	B &= AB + A^\prime B\\
+	\Pr\brak{A} &= \Pr\brak{AB} + \Pr\brak{AB^\prime}\\
+	\Pr\brak{B} &= \Pr\brak{AB} + \Pr\brak{A^\prime B}
+\end{align}
+On adding $\brak{0.9}$ and $\brak{0.10}$,
+\begin{align}
+	A + B &= AB + AB + AB^\prime + A^\prime B\\
+	A + B &= AB + AB^\prime + A^\prime B\\
+	\Pr\brak{A + B} &= \Pr\brak{AB + AB^\prime + A^\prime B}\\
+	\Pr\brak{A + B} &= \Pr\brak{AB} + \Pr\brak{AB^\prime} + \Pr\brak{A^\prime B}\\
+	\Pr\brak{A + B} &= \Pr\brak{AB} + \Pr\brak{A} - \Pr\brak{AB} + \Pr\brak{B} - \Pr\brak{AB}\\
+	\implies \Pr\brak{A + B} &= \Pr\brak{A} + \Pr\brak{B} - \Pr\brak{AB}
+\end{align}
+
+\newpage
+Now, to obtain the probability of $\Pr\brak{A}$ and $\Pr\brak{B}$, We use the PMF for the throw of die \\
+
+The probability mass function (PMF) for the throw of a fair six-sided die is:
+\begin{align}
+    P_X\brak{x} = \begin{cases}
+        \frac{1}{6} & \text{for } x = 1, 2, 3, 4, 5, 6 \\
+        0 & \text{otherwise}
+    \end{cases}
+\end{align}
+The cumulative distribution function (CDF) gives the probability of rolling a number less than or equal to some integer $x$.
+\begin{align}
+    F_X\brak{x} = \Pr\brak{X \leq x} = \begin{cases}
+        0 & \text{for } x < 1 \\
+        \frac{x}{6} & \text{for } x = 1, 2, 3, 4, 5, 6 \\
+        1 & \text{for } x > 6
+    \end{cases}
+\end{align}
+Thus, the probability of event $A$ can be calculated as follows:
+\begin{align}
+    \Pr\brak{A} &= \Pr\brak{X < 7}\\
+    &=F_X\brak{7} - P_X\brak{7}\\
+    &=1 - 0 \\
+    \implies \Pr \brak{A}&= 1
+\end{align}
+Using the axiom of Boolean Algebra $E+E^{\prime}=1$ for some event $E$ in the sample space
+\begin{align}
+    B+B^{\prime}&=1\\
+    \Pr\brak{B}+ \Pr\brak{B^{\prime}}&=1\\
+    \Pr\brak{B} &= \Pr\brak{X > 7}\\
+     &=1 - \Pr\brak{X \leq 7} \\
+     &= 1 - F_X\brak{7}\\
+     \implies \Pr\brak{B} = 1 - 1 &= 0
+\end{align}
+
+$A$ and $B$ can be observed to be mutually exclusive events, as no number $x$ can be lesser than and greater than 7 at the same time.
+Hence, we can say that:
+\begin{align}
+    \Pr\brak{AB} = 0
+\end{align}
+
+Therefore,
+\begin{align}
+    \Pr\brak{A}=1\\
+    \Pr\brak{B}=0\\
+    \Pr\brak{AB}=0
+\end{align}
+
+Using the values of $\Pr\brak{A}, \Pr\brak{B}$ and $\Pr\brak{AB}$,
+\begin{align}
+	\Pr\brak{A + B} &= 1 + 0- 0\\
+	\Pr\brak{A + B} &= 1
+\end{align}
+Therefore, the value of $\Pr\brak{A + B}$ is $1$.\\\\   
+
+\textbf{Simulated Solution:\\}
+Let $X_1$ be an indicator random variable of the event $A$.\\
+$X_1$ is defined as:
+\begin{align}
+	X_1 =
+	\begin{cases}
+		1 ,& A\\
+		0 ,& A^\prime\\
+	\end{cases}
+\end{align}
+Let $X_2$ be the indicator random variable of the event $B$.\\
+$X_2$ is defined as:
+\begin{align}
+	X_2 =
+	\begin{cases}
+		1 ,& B\\
+		0 ,& B^\prime\\
+	\end{cases}
+\end{align}
+Let $X_3$ be the indicator random variable of the event $AB$.\\
+$X_3$ is defined as:
+\begin{align}
+	X_3 =
+	\begin{cases}
+		1 ,& AB\\
+		0 ,& \brak{AB}^\prime\\
+	\end{cases}
+\end{align}
+The PMF of the random variable $X_1$ is:
+\begin{align}
+	p_{X_1}\brak{n} =
+	\begin{cases}
+		p_1 ,& n = 1\\
+		1 - p_1 ,& n = 0
+	\end{cases}
+\end{align}
+The PMF of the random variable $X_2$ is:
+\begin{align}
+	p_{X_2}\brak{n} =
+	\begin{cases}
+		p_2 ,& n = 1\\
+		1 - p_2 ,& n = 0
+	\end{cases}
+\end{align}
+The PMF of the random variable $X_3$ is:
+\begin{align}
+	p_{X_3}\brak{n} =
+	\begin{cases}
+		p_3 ,& n = 1\\
+		1 - p_3 ,& n = 0
+	\end{cases}
+\end{align}
+where,
+\begin{align}
+	p_1 &= 1\\
+	p_2 &= 0\\
+	p_3 &= 0\\
+\end{align}
+Let $Y$ be the random variable which is defined as follows:
+\begin{align}
+	Y = X_1 + X_2 - X_3
+\end{align}
+But we know that $X_3$ can never be $0$ when $X_1$ and $X_2$ are $1$ and vice versa.\\
+So, $Y$ is another Indicator Random variable whose PMF is defined as:
+\begin{align}
+	p_{Y}\brak{n} =
+	\begin{cases}
+		p ,& n = 1\\
+		1 - p ,& n = 0
+	\end{cases}
+\end{align}
+From $\brak{34}$,
+\begin{align}
+	E\brak{Y} &= E\brak{X_1 + X_2 - X_3}\\
+	E\brak{Y} &= E\brak{X_1} + E\brak{X_2} - E\brak{X_3}\\
+	1.\brak{p} + 0.\brak{1 - p} &= 1.\brak{p_1} + 0.\brak{1 - p_1} + 1.\brak{p_2} + 0.\brak{1 - p_2} - 1.\brak{p_3} - 0.\brak{1 - p_3}\\
+	p &= p_1 + p_2 - p_3
+\end{align}
+Through our definition, we know that,
+\begin{align}
+	\Pr\brak{A} = p_1\\
+	\Pr\brak{B} = p_2\\
+	\Pr\brak{AB} = p_3
+\end{align}
+Therefore, by comparison of the axiom
+\begin{align}
+	\Pr\brak{A + B} = \Pr\brak{A} + \Pr\brak{B} - \Pr\brak{AB}
+\end{align}
+and the equation $\brak{0.52}$,
+\begin{align}
+	p &= \Pr\brak{A + B}\\
+	\Pr\brak{A + B} &= 1 + 0 - 0\\
+	\implies \Pr\brak{A + B} &= 1
+\end{align}
+
+\newpage 
+\textbf{Plots:}\\
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\columnwidth]{figs/figure2.png}
+	\caption{Plot for PMF of die roll}
+\end{figure}
+
+Below is the plot for the simulation of the probabilities, where the grey stems represent the theoretical probabilities and the coloured stems represent the simulated ones.\\
+Through observation in the last stem, we have proved through the code that
+\begin{align}
+	\Pr\brak{A + B} = \Pr\brak{A} + \Pr\brak{B} - \Pr\brak{AB}
+\end{align}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\columnwidth]{figs/figure1.png}
+        \caption{Plot for simulation Probabilities}
+\end{figure}
+
+
+\end{document}

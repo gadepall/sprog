@@ -1,0 +1,408 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{circuitikz}
+\usepackage[justification=centering]{caption}
+\lstset{
+  language=Python,
+  backgroundcolor=\color{black!5},   % light gray background
+  basicstyle=\ttfamily\small,         % Monospaced font for code
+  breaklines=true,                    % Line wrapping
+  keywordstyle=\color{blue},           % Keywords in blue
+  commentstyle=\color{green},         % Comments in green
+  stringstyle=\color{red},            % Strings in red
+  identifierstyle=\color{black},      % Identifiers in black
+  morekeywords={def,class}, 
+           % Function and class names in bold
+  morekeywords={import, as},      % Add extra keywords to be highlighted
+                      % Space between line numbers and code
+  frame=single,                       % Single line frame around the code
+  rulecolor=\color{black},            % Frame color
+  tabsize=4,                          % Number of spaces per tab
+  showstringspaces=false              % Don't underline spaces in strings
+}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\Large \bfseries  Digital Clock using AVR-GCC through Arduino
+
+ \par}
+    \vspace{1cm}
+    \includegraphics[width=5cm]{figs/logo.jpg} % Replace with your logo file
+    \vspace{1cm}
+   
+    
+   
+    {\large EE1003: Scientific Programming for Electrical Engineers\par}
+    \vspace{2cm}
+   
+\begin{tabular}{ll}
+    \textbf{Y. Harsha Vardhan Reddy} & \textbf{EE24BTECH11063} \\
+\end{tabular}
+\vspace{1cm}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+This document explains the implementation of a digital clock using an AVR microcontroller. The system uses a BCD to 7-segment decoder (7447 IC) and six 7-segment displays to show the time in hours, minutes, and seconds. The clock includes functionalities for setting the time using increment and decrement buttons.
+
+\section{Hardware Components}
+The digital clock is built using the following hardware components:
+
+\begin{itemize}
+    \item AVR microcontroller (operating at 16MHz)
+    \item Six 7-segment displays (common anode)
+    \item BCD to 7-segment decoder (74LS47)
+    \item Four push buttons (for incrementing and decrementing hours and minutes)
+\end{itemize}
+
+\section{Pin Configuration}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Component} & \textbf{Pins} & \textbf{Function} \\
+\hline
+BCD Outputs & PD2-PD5 (PORTD) & Connect to 74LS47 inputs A, B, C, D \\
+\hline
+Common Anodes & PC0-PC5 (PORTC) & Control which display is active \\
+\hline
+Hour Increment Button & PD6 & Increase hours \\
+\hline
+Minute Increment Button & PD7 & Increase minutes \\
+\hline
+Hour Decrement Button & PB0 & Decrease hours \\
+\hline
+Minute Decrement Button & PB1 & Decrease minutes \\
+\hline
+\end{tabular}
+\caption{Pin Configuration}
+\end{table}
+
+\section{Hardware Operation}
+The system operates using the following principles:
+
+\subsection{Multiplexed Display}
+Since we are using six 7-segment displays but only one BCD-to-7-segment decoder, we implement time-division multiplexing to control all six displays. This technique involves:
+
+\begin{enumerate}
+    \item Rapidly switching between displays (only one display is active at a time)
+    \item Setting the appropriate BCD value for the active display
+    \item Creating the illusion that all displays are simultaneously active due to persistence of vision
+\end{enumerate}
+
+\subsection{BCD Output}
+The 7447 IC(7-segment decoder) translates 4-bit BCD values into the appropriate segment patterns to display decimal digits (0-9). The four BCD pins connect from PORTD (PD2-PD5) to the 7447 IC's inputs.
+
+\subsection{User Input}
+Four push buttons allow the user to set the time:
+\begin{itemize}
+    \item Two buttons for incrementing hours and minutes
+    \item Two buttons for decrementing hours and minutes
+\end{itemize}
+
+\section{Software Implementation}
+
+\subsection{Time Representation}
+The time is represented in BCD (Binary-Coded Decimal) format, where each decimal digit is encoded using 4 bits. This approach simplifies displaying the digits on 7-segment displays.
+
+\begin{lstlisting}[language=C, caption=Time Variables]
+// Time variables (BCD format)
+volatile int seconds = 0x00, minutes = 0x30, hours = 0x15;
+\end{lstlisting}
+
+In this BCD representation:
+\begin{itemize}
+    \item \texttt{0x15} represents 15 hours (1 in tens place, 5 in ones place)
+    \item \texttt{0x30} represents 30 minutes (3 in tens place, 0 in ones place)
+    \item \texttt{0x00} represents 00 seconds
+\end{itemize}
+
+\subsection{System Initialization}
+
+The setup function initializes the microcontroller:
+
+\begin{lstlisting}[language=C, caption=System Initialization]
+void setup() {
+    // Configure BCD pins (PD2-PD5) as outputs
+    BCD_DDR |= BCD_MASK;
+    BCD_PORT &= ~BCD_MASK; // Initialize BCD output to LOW
+
+    // Configure common anode control (PC0-PC5) as outputs
+    COMMON_DDR = 0xFF;  
+    COMMON_PORT = 0x00; // Turn off all displays
+
+    // Configure button pins as inputs with pull-ups
+    PORTD |= (1 << HOUR_INC_PIN) | (1 << MIN_INC_PIN); // Enable internal pull-ups
+    DDRB &= ~((1 << HOUR_DEC_PIN) | (1 << MIN_DEC_PIN)); // Set as inputs
+    PORTB |= (1 << HOUR_DEC_PIN) | (1 << MIN_DEC_PIN); // Enable internal pull-ups
+
+    // Timer1 setup for 1-second interrupt
+    TCCR1B |= (1 << WGM12) | (1 << CS12) | (1 << CS10); // CTC mode, Prescaler = 1024
+    OCR1A = 0x3D08; // Compare match value for 1Hz (1 sec) - 16MHz/1024/1Hz - 1
+    TIMSK1 |= (1 << OCIE1A); // Enable Timer1 compare interrupt
+
+    sei(); // Enable global interrupts
+}
+\end{lstlisting}
+
+Key initialization tasks:
+\begin{itemize}
+    \item Configure output pins for the BCD decoder and common anode control
+    \item Set up input pins with internal pull-ups for the buttons
+    \item Configure Timer1 in CTC (Clear Timer on Compare) mode to generate an interrupt every second
+    \item Enable global interrupts
+\end{itemize}
+
+\subsection{Timer Interrupt for Clock Timekeeping}
+
+The system uses Timer1 in CTC mode to generate an interrupt every second. This interrupt increments the time and handles the BCD adjustments:
+
+\begin{lstlisting}[language=C, caption=Timer Interrupt Service Routine]
+ISR(TIMER1_COMPA_vect) {
+    // Increment seconds
+    seconds++;
+    // Adjust if lower digit > 9
+    if ((seconds & 0x0F) > 0x09) {
+        seconds = (seconds & 0xF0) + 0x10;
+    }
+    // Check for 60 seconds
+    if (seconds >= 0x60) {
+        seconds = 0;
+        
+        // Increment minutes
+        minutes++;
+        // Adjust if lower digit > 9
+        if ((minutes & 0x0F) > 0x09) {
+            minutes = (minutes & 0xF0) + 0x10;
+        }
+        // Check for 60 minutes
+        if (minutes >= 0x60) {
+            minutes = 0;
+            
+            // Increment hours
+            hours++;
+            // Adjust if lower digit > 9
+            if ((hours & 0x0F) > 0x09) {
+                hours = (hours & 0xF0) + 0x10;
+            }
+            // Check for 24 hours
+            if (hours >= 0x24) {
+                hours = 0;
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+The interrupt service routine:
+\begin{itemize}
+    \item Increments seconds, minutes, and hours
+    \item Performs BCD adjustment when necessary
+    \item Handles overflow conditions (60 seconds, 60 minutes, 24 hours)
+\end{itemize}
+
+\subsection{Display Multiplexing}
+
+The displayTime function implements the multiplexing logic for the six 7-segment displays:
+
+\begin{lstlisting}[language=C, caption=Display Multiplexing Function]
+void displayTime() {
+    // Extract individual digits correctly
+    int digits[0x06] = {
+        (hours >> 0x04) & 0x0F,    // Hours tens digit
+        hours & 0x0F,           // Hours ones digit
+        (minutes >> 0x04) & 0x0F,  // Minutes tens digit
+        minutes & 0x0F,         // Minutes ones digit
+        (seconds >> 0x04) & 0x0F,  // Seconds tens digit
+        seconds & 0x0F          // Seconds ones digit
+    };
+
+    for (int i = 0; i < 0x06; i++) {
+        COMMON_PORT = (1 << i);  // Activate current display
+        setBCD(digits[i]);       // Send BCD value to 7447
+        _delay_ms(0x02);            // Short delay for persistence of vision
+        COMMON_PORT = 0;         // Deactivate all displays
+    }
+}
+\end{lstlisting}
+
+This function:
+\begin{itemize}
+    \item Extracts individual digits from hours, minutes, and seconds
+    \item Cycles through each display, activating only one at a time
+    \item Sends the appropriate BCD value to the decoder
+    \item Maintains a short delay for persistence of vision
+\end{itemize}
+
+\subsection{BCD Output Function}
+
+The setBCD function outputs the BCD value to the appropriate pins:
+
+\begin{lstlisting}[language=C, caption=BCD Value Output]
+void setBCD(int value) {
+    BCD_PORT = (BCD_PORT & ~BCD_MASK) | ((value << 2) & BCD_MASK);
+}
+\end{lstlisting}
+
+This function:
+\begin{itemize}
+    \item Clears the BCD pins using the mask
+    \item Sets the new value shifted by 2 positions (to map to PD2-PD5)
+\end{itemize}
+
+\subsection{Button Input Handling}
+
+The system checks for button presses to adjust the time:
+
+\begin{lstlisting}[language=C, caption=Button Input Handling]
+void checkButtons() {
+    // Check increment buttons
+    bool isHourIncPressed = !(PIND & (1 << HOUR_INC_PIN));
+    bool isMinuteIncPressed = !(PIND & (1 << MIN_INC_PIN));
+    
+    // Check decrement buttons
+    bool isHourDecPressed = !(PINB & (1 << HOUR_DEC_PIN));
+    bool isMinuteDecPressed = !(PINB & (1 << MIN_DEC_PIN));
+
+    // Handle hour increment button
+    if (isHourIncPressed) {
+        _delay_ms(50); // Debounce delay
+        isHourIncPressed = !(PIND & (1 << HOUR_INC_PIN)); // Check again
+        if (isHourIncPressed) {
+            hours++;
+            if ((hours & 0x0F) > 0x09) {
+                hours = (hours & 0xF0) + 0x10;
+            }
+            if (hours >= 0x24) { // Reset at 24
+                hours = 0;
+            }
+            seconds = 0;
+            while (!(PIND & (1 << HOUR_INC_PIN))); // Wait for release
+        }
+    }
+
+    // Similar logic for minute increment and 
+    // hour/minute decrement buttons...
+}
+\end{lstlisting}
+
+Key aspects of button handling:
+\begin{itemize}
+    \item Includes debounce delay (50ms) to prevent false readings
+    \item Adjusts time when buttons are pressed
+    \item Resets seconds to zero when time is adjusted
+    \item Waits for button release to prevent multiple adjustments
+\end{itemize}
+
+\subsection{Decrement Functions}
+
+Special functions handle the decrementation of hours and minutes, which is more complex due to BCD borrowing:
+
+\begin{lstlisting}[language=C, caption=Hour and Minute Decrement Functions]
+void decrementHours() {
+    if (hours == 0) {
+        hours = 0x23; // Wrap around to 23 when decrementing from 0
+    } else {
+        if ((hours & 0x0F) == 0x00) {
+            // If the lower nibble is 0, borrow from the upper nibble
+            hours = (hours - 0x10) | 0x09;
+        } else {
+            // Simply decrement if no BCD borrowing is needed
+            hours--;
+        }
+    }
+}
+
+void decrementMinutes() {
+    if (minutes == 0) {
+        minutes = 0x59; // Wrap around to 59 when decrementing from 0
+    } else {
+        if ((minutes & 0x0F) == 0x00) {
+            // If the lower nibble is 0, borrow from the upper nibble
+            minutes = (minutes - 0x10) | 0x09;
+        } else {
+            // Simply decrement if no BCD borrowing is needed
+            minutes--;
+        }
+    }
+}
+\end{lstlisting}
+
+These functions handle:
+\begin{itemize}
+    \item Wrap-around from 0 to the maximum value (23 for hours, 59 for minutes)
+    \item BCD borrowing logic when the lower digit is 0
+\end{itemize}
+
+\subsection{Main Function}
+
+The main function orchestrates the entire system:
+
+\begin{lstlisting}[language=C, caption=Main Function]
+int main() {
+    setup();
+    while (true) {
+        checkButtons(); // Read push-buttons
+        displayTime(); // Refresh display continuously
+    }
+}
+\end{lstlisting}
+
+\section{Working Principle Summary}
+
+\begin{enumerate}
+    \item The system initializes all required peripherals and timers.
+    \item Timer1 generates an interrupt every second to update the time.
+    \item The main loop continuously:
+        \begin{itemize}
+            \item Checks for button inputs to adjust the time
+            \item Updates the displays using multiplexing
+        \end{itemize}
+    \item The displayTime function cycles through all six displays rapidly, creating the illusion that all displays are active simultaneously.
+    \item The BCD to 7-segment decoder converts 4-bit BCD values to appropriate segment patterns.
+\end{enumerate}
+
+\section{Challenges and Solutions}
+
+\subsection{BCD Representation}
+Working with BCD format requires careful handling when incrementing or decrementing values. Each digit must be checked and adjusted when it exceeds the valid range (0-9).
+
+\subsection{Multiplexed Display}
+Multiplexing requires precise timing to ensure all displays appear active simultaneously. The code includes a 2ms delay per display, striking a balance between refresh rate and display stability.
+
+\subsection{Button Debouncing}
+Mechanical buttons typically bounce, causing multiple readings for a single press. The code implements a simple debounce mechanism with a 50ms delay and re-checking the button state.
+
+\section{Conclusion}
+This digital clock implementation demonstrates several important concepts in embedded systems:
+\begin{itemize}
+    \item Time-division multiplexing for controlling multiple displays
+    \item BCD representation and manipulation
+    \item Interrupt-based timekeeping
+    \item Button debouncing
+    \item User input handling
+\end{itemize}
+
+The system provides a complete 24-hour clock with hour and minute adjustment capabilities using both increment and decrement buttons, making it a practical and user-friendly device.
+
+
+
+
+\end{document}
+

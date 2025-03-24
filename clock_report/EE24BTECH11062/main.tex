@@ -1,0 +1,89 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{hhline}
+\usepackage{ifthen}
+\usepackage{lscape}
+
+\begin{document}
+
+\title{
+Hardware Assignment \\ Digital Clock
+
+\large{EE1003}
+}
+
+\author{Homa Harshitha Vuddanti \\(EE24BTECH11062)}
+
+\maketitle
+
+\bigskip
+
+\textbf{Problem Statement}: Make a digital clock using seven-segment displays in AVR-GCC, without using flip-flops.
+\section{Introduction}
+I have used multiplexing for this project. A digital clock typically has multiple digits (e.g., hours, minutes, seconds) displayed on a 7-segment LED display. The microcontroller controlling the clock rapidly switches between the different digits, illuminating the segments of each digit in sequence.\\ The switching happens so quickly that the human eye perceives all digits lit simultaneously, even though only one digit is actually illuminated at any given moment. This technique significantly reduces the number of display pins required, as each digit doesn't need its own dedicated pins.
+\section{Materials Required}
+\begin{itemize}
+    \item ATmega328P (Arduino Uno)
+    \item Breadboard
+    \item Common Anode 7-Segment Displays
+    \item Resistors (for segment control)
+    \item Connecting Wires
+    \item Push buttons (for manually setting time)
+\end{itemize}
+
+\section{Procedure}
+\begin{enumerate}
+    \item \textbf{Hardware Setup:}
+    \begin{itemize}
+        \item Connect the common-anode 7- segment displays to the ATmega328P via breadboard.
+        \item Assign segment control lines; I have used PD2-PD7, PB0 for segments a-g.
+        \item Assign common pins for digit selection: A0-A2 (PC0-PC2), 10-12 (PB2-PB4).
+        \item Connect push buttons to PB1, PB5, PC3-PC5 for input control.
+        \item We can actually use any ports, but we just have to make sure that the changes are made in the code as well.
+    \end{itemize}
+    \item \textbf{Software Implementation:}
+    The code has following parts in it : 
+    \begin{itemize}
+        \item the seg\_map function is like a lookup table for checking digits display configuration.
+        \item the set\_segments function is used to send a number to the 7-segment display to correctly light up the segments.
+        \item the enable\_digit function is used to activate turn off all digits before enabling the correct one. We are basically mapping numbers to their ports.
+        \item The ISR(TIMER1\_COMPA\_vect) function is to increment correctly. It increments each second, changes minutes when 60 seconds are crossed and so on.
+        \item check\_buttons function is for button control, if the variable set\_mode is 1, it means we can use our assigned buttons to increment hours, minutes, seconds using them.
+        \item The main function uses the above functions, configures pins, pulls up resistors, and 1-second interrupts. It has a multiplexing loop.
+    \end{itemize}
+\end{enumerate}
+\section{Button description}
+There are five buttons implemented here. 
+\begin{enumerate}
+    \item First one connected to PB1 is to stop or start time to set it. Let's call it the set button. When we first press this, clock stops ticking.
+    \item Second button connected to PB5 is to increment hours in the clock once we have stopped the clock using the set button.
+    \item the third and fourth buttons are used to set the minutes. One increments ten's of minutes and other the one's.
+    \item The last button connected to PC5 is to increment seconds.
+\end{enumerate}
+\section{Code}
+The code is available in the following git hub permalink :\\
+\url{https://github.com/HomaHarshitha/Digital-Clock--AVR-GCC/tree/44627885a86f58260135cd2e80b99632bd9f1763/Digital_clock-AVRGCC-ee062}
+\section{Result}
+The digital clock successfully displays hours, minutes, and seconds using a common anode 7-segment display. Time can be adjusted using the provided push buttons. The multiplexing technique ensures clear and stable digit display.
+
+\end{document}
+

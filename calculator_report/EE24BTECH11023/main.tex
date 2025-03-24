@@ -1,0 +1,157 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{SCIENTIFIC CALCULATOR}
+\author{EE24BTECH11023 - RASAGNA}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\section{Objective}
+\begin{itemize}
+    \item The objective of this project is to design and implement a scientific calculator using an LCD and AVR-GCC on an Arduino microcontroller.
+    \item The calculator will be capable of performing basic arithmetic operations, trigonometric functions, logarithmic calculations, and other scientific computations.
+    \item The project aims to develop an efficient, user-friendly interface for input and output, utilizing an LCD for display and a keypad for user interaction.
+    \item Through this project, we explore the integration of embedded systems with mathematical operations, optimizing performance using AVR-GCC for precise and efficient computation.
+\end{itemize}
+
+
+\section{Components and Equipment}
+
+\begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|l|c|}
+        \hline
+        \textbf{S.No} & \textbf{Component} & \textbf{Quantity} \\
+        \hline
+         1& Arduino  & 1 \\
+         2& Breadboard & 2 \\
+         3& LCD display & 1  \\
+         4& USB A to USB B cable & 1 \\
+         5& OTG adapter & 1 \\
+         6& Jumper wires (Male-Male)& 50 \\
+         7& Resistors \SI{15000}{\ohm} & 9 \\
+         8& Push Buttons &25\\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+
+\begin{itemize}
+    \item \textbf{VSS} $\rightarrow$ GND (Ground)
+    \item \textbf{VDD} $\rightarrow$ 5V (Power Supply)
+    \item \textbf{V0} $\rightarrow$ 10k Potentiometer (middle pin) (Contrast Adjustment)
+    \item \textbf{RS} $\rightarrow$ D7 (Register Select)
+    \item \textbf{RW} $\rightarrow$ GND (Read/Write, set to Write)
+    \item \textbf{E} $\rightarrow$ D6 (Enable)
+    \item \textbf{D4} $\rightarrow$ D4 (Data Bit 4)
+    \item \textbf{D5} $\rightarrow$ D5 (Data Bit 5)
+    \item \textbf{D6} $\rightarrow$ D6 (Data Bit 6)
+    \item \textbf{D7} $\rightarrow$ D7 (Data Bit 7)
+    \item \textbf{A (LED+)} $\rightarrow$ 5V with a Resistor (Backlight Power)
+    \item \textbf{K (LED-)} $\rightarrow$ GND (Backlight Ground)
+\end{itemize}
+
+\section{Working Principle-Software Implementation}
+\subsection{Software implementation using ADC Values}
+The scientific calculator utilizes the ADC (Analog-to-Digital Converter) of the Arduino microcontroller to read analog inputs, such as a voltage divider-based keypad. The ADC converts the analog input into a digital value, which is then processed to determine the corresponding keypress.\\
+The ADC is configured in free-running mode with a prescaler to ensure accurate readings.
+
+\begin{itemize}
+    \item \textbf{ADC Initialization:} Configure the ADC in the AVR-GCC environment by setting the appropriate registers.
+    \item \textbf{Reading ADC Values:} Continuously read the ADC values from the analog pin where the keypad is connected.
+    \item \textbf{Mapping ADC Values to Keypad Inputs:} Compare the ADC readings against predefined threshold values to determine which key is pressed.
+    \item \textbf{Processing Key Inputs:} Perform mathematical operations based on the detected keypress and update the LCD accordingly.
+    \item \textbf{Displaying Results:} Output the computed result on the LCD using 4-bit mode communication.
+\end{itemize}
+
+\subsection{Debouncing}
+\begin{enumerate}
+    \item Mechanical buttons often generate noisy signals, causing bouncing, where the button state might change rapidly due to physical contact. This can cause multiple increments instead of just one.
+    \item To prevent this, a debounce delay is added, which ensures that only one increment happens for each button press (or jumper wire tap).
+    \item After detecting a state change, the program waits for a short period (e.g., 300 ms) before checking the button state again.
+    \item This debounce delay helps ignore any unintended multiple presses from the same action.
+\end{enumerate}
+
+
+\section{Advantages of AVR-GCC}
+\begin{itemize}
+    \item Direct access to AVR registers which results in smaller and faster machine code.
+    \item No C++ overhead (such as classes, virtual functions, and dynamic memory allocation).
+    \item We can directly manipulate registers (e.g., PORTB, DDRC) for faster execution.
+    \item No need for functions like digitalWrite(), which are slower than direct register access.
+    \item No unnecessary code from high-level abstractions or unused libraries.
+    \item Avoids unexpected behavior caused by library overhead.
+    \item AVR-GCC is faster, more efficient, and gives complete hardware control. 
+\end{itemize}
+
+\section{Precautions}
+\subsection{Hardware}
+\begin{enumerate}
+    \item Always connect a Resistor between Backlight pin of LCD and 5V.
+    \item Connect the RW pin of the LCD to GND to keep it in write mode.
+    \item Use proper grounding to prevent noise and ensure stable operation.
+\end{enumerate}
+
+\subsection{Software}
+\begin{enumerate}
+    \item Verify correct pin assignments in the code to match hardware connections.
+    \item Use appropriate delays after sending commands to allow the LCD to process them.
+    \item Ensure proper handling of buffer overflows when processing user input.
+\end{enumerate}
+\end{document}
+
