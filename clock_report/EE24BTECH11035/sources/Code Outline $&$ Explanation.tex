@@ -1,0 +1,139 @@
+
+\definecolor{codebg}{rgb}{0.95,0.95,0.95}
+\lstset{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!50!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true
+}
+\subsection*{Defining CPU Frequency}
+\begin{lstlisting}
+#define F_CPU 16000000UL
+\end{lstlisting}
+The microcontroller runs at 16 MHz. This definition ensures proper timing calculations.
+
+\subsection*{Including Required Headers}
+\begin{lstlisting}
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+\end{lstlisting}
+These headers provide functions for I/O operations, interrupt handling, and delays.
+
+\subsection*{Defining BCD and Display Control Pins}
+\begin{lstlisting}
+#define A PD2  
+#define B PD3  
+#define C PD4  
+#define D PD5  
+
+#define H1 PD6  
+#define H2 PD7  
+#define M1 PB0  
+#define M2 PB1  
+#define S1 PB2  
+#define S2 PB3  
+\end{lstlisting}
+- **PD2–PD5** are connected to the 7447 BCD decoder.
+- **PD6, PD7, PB0–PB3** control which digit is active.
+
+\subsection*{Clock Variables in BCD Format}
+\begin{lstlisting}
+volatile uint8_t hours = 0b00010010;
+volatile uint8_t minutes = 0b00000000;
+volatile uint8_t seconds = 0b00000000;
+\end{lstlisting}
+The time is stored in **Binary-Coded Decimal (BCD)** format.
+
+\subsection*{Displaying a Single Digit}
+\begin{lstlisting}
+void displayDigit(uint8_t digit) {
+    PORTD = (PORTD & 0b11000011) | (digit << 0b00000010);
+}
+\end{lstlisting}
+This function sends a **BCD digit** to **PORTD (PD2–PD5)** while preserving other bits.
+
+\subsection*{Displaying the Complete Time}
+\begin{lstlisting}
+void displayTime() {
+    uint8_t h1 = (hours >> 4) & 0x0F;
+    uint8_t h2 = hours & 0x0F;
+    uint8_t m1 = (minutes >> 4) & 0x0F;
+    uint8_t m2 = minutes & 0x0F;
+    uint8_t s1 = (seconds >> 4) & 0x0F;
+    uint8_t s2 = seconds & 0x0F;
+
+    PORTD |= (1 << H1); displayDigit(h1); _delay_ms(5); PORTD &= ~(1 << H1);
+    PORTD |= (1 << H2); displayDigit(h2); _delay_ms(5); PORTD &= ~(1 << H2);
+    PORTB |= (1 << M1); displayDigit(m1); _delay_ms(5); PORTB &= ~(1 << M1);
+    PORTB |= (1 << M2); displayDigit(m2); _delay_ms(5); PORTB &= ~(1 << M2);
+    PORTB |= (1 << S1); displayDigit(s1); _delay_ms(5); PORTB &= ~(1 << S1);
+    PORTB |= (1 << S2); displayDigit(s2); _delay_ms(5); PORTB &= ~(1 << S2);
+}
+\end{lstlisting}
+- Extracts each **tens** and **units** place digit using bitwise operations.
+- Uses **multiplexing** to display each digit sequentially.
+
+\subsection*{Timer Interrupt for 1-Second Updates}
+\begin{lstlisting}
+ISR(TIMER1_COMPA_vect) {
+    seconds += 1;
+    if ((seconds & 0x0F) > 9) { 
+        seconds = (seconds & 0xF0) + 0x10;
+    }
+    if (seconds >= 0x60) {
+        seconds = 0x00;
+        minutes += 1;
+    }
+    if ((minutes & 0x0F) > 9) { 
+        minutes = (minutes & 0xF0) + 0x10;
+    }
+    if (minutes >= 0x60) {
+        minutes = 0x00;
+        hours += 1;
+    }
+    if ((hours & 0x0F) > 9) { 
+        hours = (hours & 0xF0) + 0x10;
+    }
+    if (hours >= 0x24) {
+        hours = 0x00;
+    }
+}
+\end{lstlisting}
+- Increments **seconds** every timer interrupt (1 second).
+- **Handles carry propagation** from seconds → minutes → hours.
+
+\subsection*{Timer1 Configuration}
+\begin{lstlisting}
+void timer1_init() {
+    TCCR1B |= (1 << WGM12) | (1 << CS12) | (1 << CS10);
+    OCR1A = 15624;
+    TIMSK1 |= (1 << OCIE1A);
+    sei();
+}
+\end{lstlisting}
+- **Sets Timer1 to CTC mode**.
+- **Prescaler 1024** → Results in **1-second intervals**.
+- Enables **interrupts** on compare match.
+
+\subsection*{Main Function}
+\begin{lstlisting}
+int main(void) {
+    DDRD |= (1 << A) | (1 << B) | (1 << C) | (1 << D);
+    DDRD |= (1 << H1) | (1 << H2);
+    DDRB |= (1 << M1) | (1 << M2) | (1 << S1) | (1 << S2);
+    
+    timer1_init();
+
+    while (1) {
+        displayTime();
+    }
+}
+\end{lstlisting}
+- **Configures I/O pins** for **BCD outputs** and **digit control**.
+- **Starts Timer1** for automatic timekeeping.
+- **Continuously updates the display** in an infinite loop.
