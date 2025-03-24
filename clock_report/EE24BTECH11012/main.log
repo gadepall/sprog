@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.1.3)  24 MAR 2025 23:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.1.3)  24 MAR 2025 23:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2157,10 +2157,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 281--282
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2020/03/25>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 1FABF86E12C9A796609BF765559FE880;2593.
  ) 
