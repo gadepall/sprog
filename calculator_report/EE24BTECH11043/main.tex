@@ -1,0 +1,211 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal,12pt,onecolumn,article]{IEEEtran}
+\usepackage{cite}
+\usepackage{color,soul}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{ifthen}
+\usepackage{lscape}
+\usepackage[latin1]{inputenc} 
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}{Example}[section]
+\newtheorem{definition}[problem]{Definition}
+
+\newcommand{\BEQA}{\begin{eqnarray}}
+\newcommand{\EEQA}{\end{eqnarray}}
+\newcommand{\define}{\stackrel{\triangle}{=}}
+\renewcommand{\thesection}{\arabic{section}}
+
+\usepackage{titlesec}
+\titleformat{\section}{\raggedright\normalfont\Large}{\thesection.}{1em}{}
+\titleformat{\subsection}{\raggedright\normalfont\large}{\thesubsection.}{1em}{}
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}
+
+\begin{document}
+
+\title{Hardware Experiment of Scientific Calculator}
+\author{Murra Rajesh Kumar Reddy - EE24BTECH11043}
+\maketitle
+\section{Introduction}
+This project involves designing a calculator using an Arduino Uno, a 16x2 LCD display, a 4x4 keypad, and a shift button to toggle between basic arithmetic and scientific operations. The objective is to create a user-friendly calculator with an interactive interface.
+
+\section{Components Used}
+The hardware components used in this project include:
+\begin{enumerate}
+    \item \textbf{Arduino Uno} - Microcontroller for processing inputs and performing calculations.
+    \item \textbf{16x2 LCD Display} - Displays user inputs and computed results.
+    \item \textbf{4x4 Keypad} - Allows user input for numbers and mathematical operations.
+    \item \textbf{Push Button} - Used to shift between basic and scientific functions.
+    \item \textbf{Resistors and Wires} - Supporting electronic components.
+\end{enumerate}
+
+\section{Working Principle}
+\subsection{User Input}
+The user enters numbers and operations via the 4x4 keypad.
+
+\subsection{Processing}
+The Arduino reads input values and processes calculations accordingly.
+
+\subsection{Shift Functionality}
+A button is used to toggle between basic arithmetic functions (+, -, $\times$, /) and scientific functions (sin, cos, tan, log, etc.).
+
+\subsection{Output Display}
+The computed result is displayed on the LCD screen.
+
+\section{Features}
+\begin{enumerate}
+    \item Performs basic arithmetic calculations: addition, subtraction, multiplication, and division.
+    \item Supports scientific functions such as trigonometric and logarithmic calculations.
+    \item User-friendly interface with a clear LCD display.
+    \item The shift button enables additional functionalities without extra hardware.
+\end{enumerate}
+
+\section{Circuit Pin Connections}
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{LCD Pin} & \textbf{Function} & \textbf{Arduino Pin} & \textbf{Notes} \\ \hline
+RS             & Register Select & D8 (PB0)           & LOW: Command; HIGH: Data \\ \hline
+E              & Enable          & D9 (PB1)           & Latches data \\ \hline
+D4             & Data Bit 4      & D10 (PB2)          & 4-bit interface \\ \hline
+D5             & Data Bit 5      & D11 (PB3)          & 4-bit interface \\ \hline
+D6             & Data Bit 6      & D12 (PB4)          & 4-bit interface \\ \hline
+D7             & Data Bit 7      & D13 (PB5)          & 4-bit interface \\ \hline
+\end{tabular}
+
+\bigskip
+Additional connections: VSS (GND), VDD (+5V), VO (potentiometer for contrast), RW (GND), A (+5V backlight), K (GND).
+
+\subsubsection{Push Button Connections}
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Button}  & \textbf{Function}         & \textbf{Arduino Pin} & \textbf{Notes} \\ \hline
+Digits 0--5    & Enter digits 0--5         & D2, D3, D4, D5, D6, D7   & Active-low; internal pull-ups \\ \hline
+Digits 6--9    & Enter digits 6--9         & A0, A1, A2, A3           & Digital inputs; pull-ups enabled \\ \hline
+\textbf{Clear (C)}    & Clear input                & A4                      & Resets expression \\ \hline
+\textbf{Enter (=)}   & Evaluate expression        & A5                      & Triggers computation \\ \hline
+Extra Button 1 & Additional function       & (Assign as needed)      & \\ \hline
+Extra Button 2 & Additional function       & (Assign as needed)      & \\ \hline
+\end{tabular}
+
+\bigskip
+\textbf{Note:} The extra two push buttons can be used for further functions or for shift modes if needed.
+
+\section{Code Structure}
+The code follows a modular approach, with key sections handling different functionalities:
+
+\subsection{Library Inclusions}
+The necessary libraries are included at the beginning to interface with the LCD and perform mathematical operations.
+\begin{lstlisting}[language=C++, caption=Library Inclusion]
+#include <LiquidCrystal.h>  // LCD display control
+#include <math.h>           // Mathematical functions (sin, cos, etc.)
+\end{lstlisting}
+
+\subsection{Hardware Setup}
+The LCD display is connected to the Arduino through digital pins, and the push buttons are assigned to specific pins for input handling. A potentiometer is used for selecting different functions.
+\begin{lstlisting}[language=C++, caption=Hardware Setup]
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);  // LCD pins
+const int potPin = A0;  // Potentiometer for function selection
+const int buttonPins[] = {2, 3, 4, 5, 6}; // Buttons for input
+\end{lstlisting}
+
+\subsection{Input Handling}
+The push buttons allow users to enter numbers and select operations. The potentiometer maps to different scientific functions.
+\begin{lstlisting}[language=C++, caption=Reading Button Input]
+void readButtons() {
+    for (int i = 0; i < 5; i++) {
+        if (digitalRead(buttonPins[i]) == LOW) {
+            // Capture input value
+        }
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++, caption=Mapping Potentiometer Input]
+int getFunction() {
+    int value = analogRead(potPin);
+    return map(value, 0, 1023, 0, 5);  // Example: 0 = sin, 1 = cos, etc.
+}
+\end{lstlisting}
+
+\subsection{Performing Calculations}
+A function processes user input and performs the required mathematical operation.
+\begin{lstlisting}[language=C++, caption=Calculation Function]
+float calculate(float num1, float num2, char op) {
+    switch (op) {
+        case '+': return num1 + num2;
+        case '-': return num1 - num2;
+        case '*': return num1 * num2;
+        case '/': return (num2 != 0) ? num1 / num2 : 0;
+        case 's': return sin(num1);  // Example: Scientific function
+        default: return 0;
+    }
+}
+\end{lstlisting}
+
+\subsection{Displaying Output}
+Results are displayed on the \textbf{16x2 LCD screen} after processing.
+\begin{lstlisting}[language=C++, caption=LCD Output Display]
+void displayResult(float result) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Result:");
+    lcd.setCursor(0, 1);
+    lcd.print(result);
+}
+\end{lstlisting}
+
+\subsection{Main Loop Execution}
+The loop continuously checks for user input, processes calculations, and updates the LCD display.
+\begin{lstlisting}[language=C++, caption=Main Loop Execution]
+void loop() {
+    int selectedFunction = getFunction();
+    readButtons();
+    // Perform calculation and display result
+}
+\end{lstlisting}
+
+\section{Features of the Code}
+\begin{enumerate}
+    \item Supports \textbf{basic arithmetic} operations (+, -, $\times$, /)
+    \item Includes \textbf{scientific functions} (sin, cos, log, etc.)
+    \item Uses a \textbf{potentiometer} for function selection
+    \item Displays results on an \textbf{LCD screen}
+    \item Handles \textbf{multiple inputs} via push buttons
+\end{enumerate}
+\section{Challenges and Solutions}
+\begin{enumerate}
+    \item \textbf{Keypad Debouncing:} Implemented software techniques to handle multiple keypresses correctly.
+    \item \textbf{Limited LCD Display Space:} Optimized data display by clearing and refreshing necessary portions.
+    \item \textbf{Memory Constraints:} Efficiently managed code structure to ensure smooth operation.
+\end{enumerate}
+
+\section{Conclusion}
+This project successfully demonstrates the implementation of a calculator using an Arduino. It serves as an educational tool for understanding microcontroller-based projects and user interface design.
+
+\end{document}
+
