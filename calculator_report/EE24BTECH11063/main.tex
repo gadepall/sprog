@@ -1,0 +1,497 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{circuitikz}
+\usepackage[justification=centering]{caption}
+\lstset{
+  language=Python,
+  backgroundcolor=\color{black!5},   % light gray background
+  basicstyle=\ttfamily\small,         % Monospaced font for code
+  breaklines=true,                    % Line wrapping
+  keywordstyle=\color{blue},           % Keywords in blue
+  commentstyle=\color{green},         % Comments in green
+  stringstyle=\color{red},            % Strings in red
+  identifierstyle=\color{black},      % Identifiers in black
+  morekeywords={def,class}, 
+           % Function and class names in bold
+  morekeywords={import, as},      % Add extra keywords to be highlighted
+                      % Space between line numbers and code
+  frame=single,                       % Single line frame around the code
+  rulecolor=\color{black},            % Frame color
+  tabsize=4,                          % Number of spaces per tab
+  showstringspaces=false              % Don't underline spaces in strings
+}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\Large \bfseries  Scientific Calculator using AVR-GCC through Arduino
+
+ \par}
+    \vspace{1cm}
+    \includegraphics[width=5cm]{figs/logo.jpg} % Replace with your logo file
+    \vspace{1cm}
+   
+    
+   
+    {\large EE1003: Scientific Programming for Electrical Engineers\par}
+    \vspace{2cm}
+   
+\begin{tabular}{ll}
+    \textbf{Y. Harsha Vardhan Reddy} & \textbf{EE24BTECH11063} \\
+\end{tabular}
+\vspace{1cm}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+The scientific calculator implemented in this project is built using an AVR microcontroller, programmed with C using the AVR-GCC compiler. The calculator provides a wide range of functions including:
+\begin{itemize}
+\item Basic arithmetic operations (addition, subtraction, multiplication, division)
+\item Trigonometric functions (sine, cosine, tangent, cotangent, secant, cosecant)
+\item Inverse trigonometric functions
+\item Hyperbolic functions (sinh, cosh)
+\item Exponential and logarithmic functions
+\item Powers and roots
+\item Constants ($\pi$, $e$)
+\item Result storage and recall
+\end{itemize}
+The calculator employs custom implementations of mathematical functions rather than relying on standard libraries, making it more suitable for resource-constrained microcontrollers.
+\section{Hardware Components}
+\subsection{Required Components}
+\begin{itemize}
+\item Arduino
+\item LCD display
+\item Push buttons
+\item Connecting wires
+\end{itemize}
+\subsection{Pin Connections}
+\subsubsection{LCD Connections}
+The LCD is connected to PORTB of the microcontroller:
+\begin{itemize}
+    \item LCD\_RS (Register Select) → PORTB0
+    \item LCD\_E (Enable) → PORTB1
+    \item Data line 4 → PORTB2
+\item Data line 5 → PORTB3
+\item Data line 6 → PORTB4
+\item Data line 7 → PORTB5
+\end{itemize}
+The LCD is operated in 4-bit mode to save microcontroller pins.
+\subsubsection{Keypad Connections}
+The 6×6 matrix keypad requires 12 pins for interfacing:
+\begin{itemize}
+\item Row pins (6) → PORTD0 to PORTD5
+\item Column pins (6) → PORTC0 to PORTC5
+\end{itemize}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\draw (0,0) rectangle (8,6);
+\node[align=center] at (4,5) {AVR Microcontroller};
+% LCD connections
+\draw (8,4) -- (10,4) node[right] {LCD Display};
+\node[align=left] at (9,3.5) {PORTB0-5};
+% Keypad connections
+\draw (8,2) -- (10,2) node[right] {6×6 Keypad};
+\node[align=left] at (9.75,1.5) {PORTD0-5 (Rows)};
+\node[align=left] at (10.1,1) {PORTC0-5 (Columns)};
+\end{tikzpicture}
+\caption{Hardware Connection Diagram}
+\end{figure}
+\subsection{Keypad Layout}
+The calculator uses a 6×6 matrix keypad with the following key mapping:
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+0 & 1 & 2 & 3 & 4 & 5 \\
+\hline
+6 & 7 & 8 & 9 & + & - \\
+\hline
+* & / & = & $\text{Clear}$ & $\text{shift}$ & . \\
+\hline
+$\sin\textbf{/sinh}$ & $\cos\textbf{/cosh}$ & $\tan$ & $\cot$ & $\csc$ & $\sec$ \\
+\hline
+$\exp\textbf{/e}$ & $\ln\textbf{/pi}$ & $\arcsin$ & $\arccos$ & $\arctan$ & $\operatorname{arccot}$ \\
+\hline
+$\operatorname{arccsc}$ & $\operatorname{arcsec}$ & $\text{pow/\textbf{root}}$ & $\log$ & $\text{Ans}$ & $\text{Sign}$ \\
+\hline
+\end{tabular}
+\end{table}
+\begin{itemize}
+    \item The functions in \textbf{bold} letters are computed when shift button is enabled
+\end{itemize}
+\section{Software Architecture}
+\subsection{Code Structure}
+The software is structured into several functional modules:
+\begin{itemize}
+\item LCD interface functions
+\item Keypad scanning functions
+\item Mathematical function implementations
+\item Input processing and calculation logic
+\item Main program loop
+\end{itemize}
+\subsection{LCD Interface}
+The LCD interface uses a 4-bit mode to communicate with the HD44780 compatible display. The following functions are implemented:
+\begin{itemize}
+\item \texttt{PulseEnableLine()}: Generates the enable pulse for the LCD
+\item \texttt{SendNibble()}: Sends 4 bits of data to the LCD
+\item \texttt{SendByte()}: Sends a full byte by calling SendNibble twice
+\item \texttt{LCD\_Cmd()}: Sends a command to the LCD
+\item \texttt{LCD\_Char()}: Sends a character to the LCD
+\item \texttt{LCD\_Init()}: Initializes the LCD in 4-bit mode
+\item \texttt{LCD\_Clear()}: Clears the LCD display
+\item \texttt{LCD\_Message()}: Displays a string on the LCD
+\item \texttt{LCD\_Float()}: Displays a floating point number on the LCD
+\end{itemize}
+\subsection{Keypad Scanning}
+The keypad scanning mechanism uses a matrix scanning approach:
+\begin{itemize}
+\item \texttt{keypad\_init()}: Initializes the row pins as inputs with pull-ups and column pins as outputs
+\item \texttt{keypad\_scan()}: Scans the keypad by activating one column at a time and checking row pins for key presses
+\end{itemize}
+The function returns the character associated with the pressed key according to the defined keypad mapping.
+\subsection{Mathematical Function Implementations}
+\subsubsection{CORDIC Algorithm for Trigonometric and Inverse-Trigonometric Functions}
+The trigonometric and inverse-trigonometric functions are implemented which is explained in the following section \ref{cordic}
+\subsubsection{Exponential Function using Forward-Euler method}
+The forward Euler method is a first-order numerical approach to approximate solutions to ordinary differential equations. For the exponential function, we start with the differential equation:
+\begin{equation}
+\frac{dy}{dx} = y, \quad y(0) = 1
+\end{equation}
+This differential equation describes $y = e^x$. The Forward Euler method approximates this by:
+\begin{equation}
+y_{n+1} = y_n + h \cdot f(x_n, y_n) = y_n + h \cdot y_n = y_n(1 + h)
+\end{equation}
+Where $h$ is the step size. If we take $n$ steps of size $h = \frac{x}{n}$ from $x=0$ to $x$, we get:
+\begin{equation}
+y_n = y_0 \cdot \left(1 + \frac{x}{n}\right)^n
+\end{equation}
+
+\paragraph{Logarithmic Function using Newton-Raphson}
+Newton-Raphson is an iterative method for finding roots of equations. For calculating $\ln(x)$, we need to find $y$ such that:
+\begin{equation}
+e^y - x = 0
+\end{equation}ref
+The Newton-Raphson iteration formula is:
+\begin{equation}
+y_{n+1} = y_n - \frac{f(y_n)}{f'(y_n)}
+\end{equation}
+Here, $f(y) = e^y - x$ and $f'(y) = e^y$. Substituting:
+\begin{equation}
+y_{n+1} = y_n - \frac{e^{y_n} - x}{e^{y_n}}
+\end{equation}
+This is precisely the formula you provided. Starting with a good initial guess $y_0$ (often $y_0 = x-1$ for $x > 0$ or a simpler approximation like $y_0 = \sqrt{x}$), this method converges quadratically to $\ln(x)$.
+The formula can be rewritten as:
+\begin{equation}
+y_{n+1} = y_n - 1 + \frac{x}{e^{y_n}}
+\end{equation}
+\subsubsection{Power and Root Functions}
+Power and root calculations use the exponential and logarithmic functions:
+\begin{equation}
+x^y = e^{y \cdot \ln(x)}
+\end{equation}
+For roots:
+\begin{equation}
+\sqrt[n]{x} = x^{1/n}
+\end{equation}
+\subsection{Input Processing}
+The $process\_input()$ function handles key presses and maintains the calculator state:
+\begin{itemize}
+\item Number entry and decimal point handling
+\item Operation selection
+\item Calculation execution
+\item Result display
+\item Error handling
+\end{itemize}
+\subsection{Main Program Loop}
+The main program continuously scans the keypad, processes key presses, and updates the display accordingly.
+\section{Mathematical Capabilities}
+\subsection{Basic Arithmetic Operations}
+\begin{itemize}
+\item Addition: \texttt{Number = Num1 + Num2}
+\item Subtraction: \texttt{Number = Num1 - Num2}
+\item Multiplication: \texttt{Number = Num1 * Num2}
+\item Division: \texttt{Number = Num1 / Num2}
+\end{itemize}
+\subsection{Trigonometric Functions}
+\begin{itemize}
+\item Sine: \texttt{sin\_cos(Num2); Number = y;}
+\item Cosine: \texttt{sin\_cos(Num2); Number = x;}
+\item Tangent: \texttt{sin\_cos(Num2); Number = y/x;}
+\item Cotangent: \texttt{sin\_cos(Num2); Number = x/y;}
+\item Secant: \texttt{sin\_cos(Num2); Number = 1/x;}
+\item Cosecant: \texttt{sin\_cos(Num2); Number = 1/y;}
+\end{itemize}
+\subsection{Inverse Trigonometric Functions}
+\begin{itemize}
+\item Arcsine: \texttt{inv\_trigo(Num2, 'a'); Number = -angle;}
+\item Arccosine: \texttt{inv\_trigo(Num2, 'b'); Number = -angle;}
+\item Arctangent: \texttt{inv\_trigo(Num2, 'w'); Number = -angle;}
+\item Arccotangent: \texttt{inv\_trigo(Num2, 'x'); Number = -angle;}
+\item Arcsecant: \texttt{inv\_trigo(Num2, 'z'); Number = -angle;}
+\item Arccosecant: \texttt{inv\_trigo(Num2, 'y'); Number = -angle;}
+\end{itemize}
+\subsection{Hyperbolic Functions}
+\begin{itemize}
+\item Hyperbolic sine: \texttt{Number = (exp(Num2) - exp(-Num2))/2;}
+\item Hyperbolic cosine: \texttt{Number = (exp(Num2) + exp(-Num2))/2;}
+\end{itemize}
+\subsection{Exponential and Logarithmic Functions}
+\begin{itemize}
+\item Exponential function: \texttt{Number = exp(Num2);}
+\item Natural logarithm: \texttt{Number = ln(Num2);}
+\item Logarithm with custom base: \texttt{Number = ln(Num2)/ln(Num1);}
+\end{itemize}
+\subsection{Power and Root Functions}
+\begin{itemize}
+\item Power: \texttt{Number = power(Num1, Num2);}
+\item nth Root: \texttt{Number = power(Num1, 1.0/Num2);}
+\end{itemize}
+\subsection{Constants}
+\begin{itemize}
+\item $\pi$ (pi): 3.14159265358979
+\item $e$ (Euler's number): exp(1)
+\end{itemize}
+\section{Special Features}
+\subsection{Error Handling}
+The calculator implements comprehensive error checking for:
+\begin{itemize}
+\item Division by zero
+\item Logarithm of non-positive numbers
+\item Square root of negative numbers
+\item Invalid domains for trigonometric functions
+\item Other mathematical errors
+\end{itemize}
+When errors occur, the calculator displays "Math Error" and resets the calculation state.
+\subsection{Result Storage}
+The calculator stores the last valid calculation result in the \texttt{answer} variable, which can be recalled using the "Ans" key.
+\subsection{Sign Toggle}
+The sign of the current number can be toggled using the dedicated "Sign" key.
+\subsection{Shift Function}
+The calculator implements a shift function to access secondary operations on certain keys:
+\begin{itemize}
+\item \texttt{power} → \texttt{root} when shifted
+\item \texttt{exp} → \texttt{e constant} when shifted
+\item \texttt{ln} → \texttt{pi constant} when shifted
+\item \texttt{sin} → \texttt{sinh} when shifted
+\item \texttt{cos} → \texttt{cosh} when shifted
+\end{itemize}
+\section{CORDIC Algorithm Explained} \label{cordic}
+
+This implementation uses the CORDIC (COordinate Rotation DIgital Computer) algorithm to calculate various trigonometric functions. CORDIC is particularly useful for systems with limited computational resources as it avoids complex multiplications and divisions.
+
+\subsection{Basic CORDIC Principle}
+
+CORDIC works by performing a series of rotations using only shifts and additions to compute trigonometric functions. The code shows two main functions:
+
+\begin{enumerate}
+    \item \texttt{sin\_cos()} - Computes sine and cosine
+    \item \texttt{inv\_trigo()} - Computes inverse trigonometric functions
+\end{enumerate}
+
+\subsection{Trigonometric Functions Implementation}
+\subsubsection{Basic equation of CORDIC's algorithm}
+
+\[
+\begin{bmatrix} x' \\ y' \end{bmatrix} =
+\begin{bmatrix} 
+\cos \alpha & \sin \alpha \\ 
+-\sin \alpha & \cos \alpha 
+\end{bmatrix}
+\begin{bmatrix} x \\ y \end{bmatrix}
+\]
+
+\[
+\begin{bmatrix} x' \\ y' \end{bmatrix} =
+\cos \alpha
+\begin{bmatrix} 
+1 & \tan \alpha \\ 
+-\tan \alpha & 1 
+\end{bmatrix}
+\begin{bmatrix} x \\ y \end{bmatrix}
+\]
+\begin{itemize}
+    \item For making the computations economical(involving division by '2'), we took angles such that $\tan{\alpha}$ such that they are powers of $\frac{1}{2}$ and pre-computed the value of product of cosines accordingly.
+\end{itemize}
+\subsubsection{Vector Rotation for Sine and Cosine}
+
+The \texttt{sin\_cos()} function calculates sine and cosine simultaneously through a series of microrotations:
+
+\begin{verbatim}
+void sin_cos(double n) {
+    // Initialize vector [1,0] and angle
+    x = 1.0;
+    y = 0.0;
+    double angle = 0.0;
+    
+    // Perform CORDIC iterations
+    for (uint8_t i = 0; i < NUM_STEPS; i++) {
+        int sigma = (angle < n) ? 1 : -1;
+        double scale = 1.0 / (1UL << i);  // Precompute scale = 2^-i
+        double x_new = x - sigma * (y * scale);
+        double y_new = y + sigma * (x * scale);
+        x = x_new;
+        y = y_new;
+        angle += sigma * angle_out_degrees[i];
+    }
+    x = x * K;
+    y = y * K;
+}
+\end{verbatim}
+
+Key aspects:
+\begin{itemize}
+    \item Starts with vector $[1,0]$ and rotates it to reach target angle $n$
+    \item Uses conditional rotation: clockwise if current angle $<$ target, counterclockwise otherwise
+    \item Scale factor $1/(2^i)$ corresponds to $\arctan(2^{-i})$ angles and finally angle tends to n\\
+    \textbf{This step makes this method very suitable for hardware since it is just dividing by 2 in each iteration which is just shifting of bits, which is very economical}
+    \item $K$ is a scaling constant which is multiplication of $cos(arctan(1/2^i))$
+    \item After iterations, $x$ contains cosine and $y$ contains sine of angle $n$
+\end{itemize}
+
+\subsubsection{Inverse Trigonometric Functions}
+
+\begin{verbatim}
+void inv_trigo(double z, char mode) {
+    // Initialize variables
+    x = 1.0;
+    y = 0.0;
+    angle = 0.0;
+    
+    // Input validation
+    if ((mode == 'a' || mode == 'b') && (z < -1.0 || z > 1.0)) {
+        math_error = true;
+        return;
+    }
+    
+    // Set initial vector based on function type
+    switch (mode) {  
+        case 'a': // arcsin
+            x = my_sqrt(1-z*z);  
+            y = z;
+            break;
+        // ... other cases for arccos, arctan, etc.
+    }
+    
+    // Rotate vector back to x-axis
+    for (uint8_t i = 0; i < NUM_STEPS; i++) {
+        int sigma = (y < 0) ? 1 : -1;
+        
+        double scale = 1.0 / (1UL << i);
+        double x_new = x - sigma * (y * scale);
+        double y_new = y + sigma * (x * scale);
+        
+        x = x_new;
+        y = y_new;
+        
+        angle += sigma * angle_out_degrees[i];
+    }
+}
+\end{verbatim}
+
+Key aspects:
+\begin{itemize}
+    \item Different initialization based on the inverse function type (arcsin, arccos, etc.)
+    \item Domain validation for functions with restricted input ranges
+    \item Rather than rotating to a target angle, it rotates to reduce y-component to zero
+    \item Final angle accumulator contains the resulting inverse trigonometric value
+\end{itemize}
+
+\subsection{Implementation Details}
+
+\subsubsection{Rotation Logic}
+
+The core of CORDIC lies in its rotation logic:
+
+\begin{enumerate}
+    \item \textbf{Sign Selection ($\sigma$)}: Determines rotation direction
+    \begin{itemize}
+        \item For direct trig: \texttt{sigma = (angle < n) ? 1 : -1}
+        \item For inverse trig: \texttt{sigma = (y < 0) ? 1 : -1}
+    \end{itemize}
+
+    \item \textbf{Microrotation Step}:
+    \begin{verbatim}
+double scale = 1.0 / (1UL << i);  // Equals 2^-i
+double x_new = x - sigma * (y * scale);
+double y_new = y + sigma * (x * scale);
+    \end{verbatim}
+    This implements rotation by approximately $\tan^{-1}(2^{-i})$ degrees
+
+    \item \textbf{Angle Tracking}:
+    \begin{verbatim}
+angle += sigma * angle_out_degrees[i];
+    \end{verbatim}
+    Accumulates rotation angles using a lookup table \texttt{angle\_out\_degrees}
+\end{enumerate}
+
+\subsubsection{Function Selection and Initialization}
+
+The \texttt{inv\_trigo()} function cleverly handles six inverse trigonometric functions through different initializations:
+
+\begin{itemize}
+    \item \textbf{arcsin}: Maps $z \to [x=\sqrt{1-z^2}, y=z]$
+    \item \textbf{arccos}: Maps $z \to [x=z, y=\sqrt{1-z^2}]$
+    \item \textbf{arctan}: Maps $z \to [x=1, y=z]$
+    \item \textbf{arccot}: Maps $z \to [x=z, y=1]$
+    \item \textbf{arccsc}: Maps $z \to$ specialized transformation with domain check
+    \item \textbf{arcsec}: Maps $z \to$ specialized transformation with domain check
+\end{itemize}
+
+Each initialization creates a vector that, when rotated to the x-axis, produces the desired inverse function result as the accumulated angle.
+\section{Code Optimizations}
+\subsection{Memory Usage Optimization}
+The code optimizes memory usage by:
+\begin{itemize}
+\item Using 4-bit mode for LCD interface (saves 4 pins)
+\item Reusing variables where possible
+\item Using appropriate data types (uint8\_t for small integers)
+\end{itemize}
+\subsection{Performance Optimization}
+Several performance optimizations are implemented:
+\begin{itemize}
+\item Pre-computed values for trigonometric calculations
+\item Early termination in iterative algorithms when sufficient precision is reached
+\item Special case handling for common inputs
+\item Efficient key debouncing
+\end{itemize}
+\section{User Interface}
+\subsection{Display Formatting}
+The calculator provides informative display output:
+\begin{itemize}
+\item Operation indicator showing current function
+\item Error messages for invalid operations
+\item Floating point display with adjustable precision
+\item Special symbols for mathematical constants (pi, e)
+\end{itemize}
+\subsection{Input Handling}
+The calculator provides a responsive interface with:
+\begin{itemize}
+\item Decimal point input handling
+\item Negative number support
+\item Shift functionality for accessing secondary functions
+\item Clear function to reset calculations
+\end{itemize}
+\section{Conclusion}
+The scientific calculator implementation demonstrates how to create a complex mathematical device using limited microcontroller resources. By employing efficient algorithms like CORDIC and custom numerical approximations, the calculator provides a wide range of mathematical functions without relying on floating-point libraries.
+The modular code structure separates hardware interfacing, mathematical algorithms, and user interface handling, making the code maintainable and extensible. The comprehensive error checking ensures robust operation, preventing issues with invalid operations.
+This implementation can serve as a starting point for more advanced calculators or as an educational tool for understanding algorithm implementation on microcontrollers.
+
+
+
+\end{document}
+
