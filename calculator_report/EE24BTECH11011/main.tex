@@ -1,0 +1,203 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{SCIENTIFIC CALCULATOR}
+\author{EE24BTECH11011 - Pranay}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\begin{abstract}
+This paper presents the design and implementation of a scientific calculator using an Arduino microcontroller, programmed with AVR-GCC. The system performs fundamental and advanced mathematical operations, including arithmetic, trigonometric, and logarithmic functions. The design integrates an LCD display and keypad for user interaction while ensuring efficient processing. This document covers hardware selection, software implementation, performance optimization, and future enhancements.
+\end{abstract}
+
+\section{Introduction}
+A scientific calculator is an essential tool in engineering, science, and mathematics, offering functionalities beyond basic arithmetic. This project aims to develop a low-cost, embedded system-based scientific calculator with optimized performance using direct hardware control through AVR-GCC. The primary objectives include:
+\begin{itemize}
+    \item Implementing a reliable and efficient user interface.
+    \item Optimizing computational performance with low-power consumption.
+    \item Ensuring accurate and responsive input handling via ADC-based keypad integration.
+    \item Utilizing low-level programming techniques to enhance execution speed.
+\end{itemize}
+
+\section{Hardware Design}
+The system consists of essential components that form the core of the scientific calculator.
+
+\subsection{Component List}
+The required hardware components are summarized in Table \ref{table:hardware}.
+
+\begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \caption{List of Required Hardware Components}
+    \label{table:hardware}
+    \begin{tabular}{|c|l|c|}
+        \hline
+        \textbf{S.No} & \textbf{Component} & \textbf{Quantity} \\
+        \hline
+         1 & Arduino (ATmega328P-based) & 1 \\
+         2 & Breadboard & 2 \\
+         3 & 16x2 LCD Display & 1  \\
+         4 & USB A to USB B Cable & 1 \\
+         5 & OTG Adapter & 1 \\
+         6 & Jumper Wires (Male-Male) & 50 \\
+         7 & Resistors \SI{15}{\kilo\ohm} & 9 \\
+         8 & Push Buttons & 25 \\
+         9 & 10k Potentiometer & 1 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{LCD Wiring Configuration}
+The LCD display is interfaced with the microcontroller as follows:
+\begin{itemize}
+    \item \textbf{Power and Ground:} VSS to GND, VDD to 5V.
+    \item \textbf{Contrast Control:} V0 to a 10k Potentiometer.
+    \item \textbf{Control Pins:} RS to D7, RW to GND, E to D6.
+    \item \textbf{Data Pins:} D4 to D4, D5 to D5, D6 to D6, D7 to D7.
+    \item \textbf{Backlight:} A (LED+) to 5V via a resistor, K (LED-) to GND.
+\end{itemize}
+
+\subsection{Power Considerations}
+To ensure stable operation:
+\begin{itemize}
+    \item A regulated 5V power source is used.
+    \item Decoupling capacitors are placed near the microcontroller.
+    \item Pull-down resistors prevent floating inputs on keypads.
+\end{itemize}
+
+\section{Software Implementation}
+The software for the scientific calculator is developed in AVR-GCC, leveraging direct hardware control for efficiency.
+
+\subsection{Key Features}
+The software module includes:
+\begin{itemize}
+    \item Arithmetic operations: Addition, subtraction, multiplication, and division.
+    \item Trigonometric functions: Sine, cosine, tangent.
+    \item Logarithmic calculations: Natural logarithm (\(\ln\)) and base-10 logarithm.
+    \item User-defined functions and memory storage.
+    \item Optimized input handling through ADC-based keypad reading.
+\end{itemize}
+
+\subsection{ADC-Based Keypad Interpretation}
+The keypad is implemented using an ADC input method. The process follows:
+\begin{itemize}
+    \item Configuring the ADC to read analog voltages from different keys.
+    \item Assigning voltage thresholds to specific button presses.
+    \item Processing user input and executing corresponding operations.
+    \item Displaying results dynamically on the LCD.
+\end{itemize}
+
+\subsection{Button Debouncing}
+A software-based debounce algorithm is implemented to prevent accidental multiple keypresses. This ensures:
+\begin{enumerate}
+    \item A debounce delay (e.g., 300 ms) is applied to filter out noise.
+    \item The system registers only one keypress per press action.
+    \item Improved accuracy and user experience.
+\end{enumerate}
+
+\section{Performance Optimization}
+Optimization techniques used to improve performance:
+\begin{itemize}
+    \item \textbf{Direct Register Manipulation:} Reduces execution time compared to high-level functions.
+    \item \textbf{Interrupts for Input Handling:} Ensures non-blocking keypress detection.
+    \item \textbf{Lookup Tables for Trigonometric Functions:} Reduces computational overhead.
+    \item \textbf{Efficient Memory Management:} Minimizes RAM usage.
+\end{itemize}
+
+\section{Testing and Validation}
+\subsection{Functional Testing}
+The scientific calculator undergoes rigorous testing:
+\begin{itemize}
+    \item Verifying correctness of arithmetic and scientific calculations.
+    \item Ensuring proper ADC keypad response.
+    \item Testing LCD updates under different input conditions.
+\end{itemize}
+
+\subsection{Performance Metrics}
+Performance is evaluated based on:
+\begin{itemize}
+    \item Response time for input processing.
+    \item Accuracy of computed results.
+    \item Power consumption analysis.
+\end{itemize}
+
+\section{Safety and Maintenance}
+\subsection{Hardware Safety Measures}
+\begin{itemize}
+    \item Use resistors to limit current flow in LCD backlight and keypad.
+    \item Secure connections to prevent short circuits.
+    \item Ensure proper ventilation to avoid overheating.
+\end{itemize}
+
+\subsection{Software Reliability Measures}
+\begin{itemize}
+    \item Implement input validation to avoid computational errors.
+    \item Ensure memory protection to prevent buffer overflows.
+    \item Regular firmware updates for improved efficiency.
+\end{itemize}
+
+\section{Future Enhancements}
+Potential improvements for future iterations:
+\begin{itemize}
+    \item Implementing a graphical LCD for enhanced user experience.
+    \item Adding support for matrix operations and complex numbers.
+    \item Wireless connectivity for remote calculations.
+    \item Battery-powered operation with power-saving features.
+\end{itemize}
+
+\section{Conclusion}
+This project demonstrates the successful design and implementation of an embedded system-based scientific calculator. By integrating optimized software techniques and hardware efficiency, the system provides a robust and cost-effective solution for mathematical computations.
+
+\end{document}

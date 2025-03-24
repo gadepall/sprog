@@ -1,0 +1,8 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{}%
+\contentsline {section}{\numberline {2}Components used}{3}{}%
+\contentsline {section}{\numberline {3}Circuit Design}{3}{}%
+\contentsline {section}{\numberline {4}How does the clock work with just 1 7447 Decoder?}{5}{}%
+\contentsline {section}{\numberline {5}Code}{5}{}%
+\contentsline {section}{\numberline {6}Working of circuit based on the code}{9}{}%
+\contentsline {section}{\numberline {7}Results}{14}{}%
+\contentsline {section}{\numberline {8}Conclusion}{14}{}%

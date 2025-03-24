@@ -1,0 +1,15 @@
+\contentsline {section}{\numberline {1}\textbf {Aim}}{2}{section.1}%
+\contentsline {section}{\numberline {2} \textbf {Materials Required}}{2}{section.2}%
+\contentsline {section}{\numberline {3}Hardware Setup}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}7447 Connections}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Segment Connections}{3}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Common Anode Connections}{3}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Key Design Notes}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Current Limiting}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Multiplexing}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}7447 Behavior}{4}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Testing and Troubleshooting}{4}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Common Issues}{4}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Code Implementation}{4}{section.6}%
+\contentsline {section}{\numberline {7}Special Logic Implemented}{6}{section.7}%
+\contentsline {section}{\numberline {8}Conclusion}{7}{section.8}%
