@@ -1,0 +1,180 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\title{\textbf{Digital Clock}}
+\author{Spoorthi Yellamanchali - EE24BTECH11065}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% Define C code style with colors
+\lstdefinestyle{CStyle}{
+    language=C,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!50!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+
+\section{Aim}
+ To design and implement  a digital clock using an Arduino Uno.
+
+\section{Components Used}
+Table \ref{tab:components} lists the components used in this project along with their purpose and connections.
+
+\input{tables/table}
+
+\section{Working Principle}
+\begin{itemize}
+    \item This clock operates using a multiplexing technique, where only one 7-segment display is activated at a time.
+    \item The Arduino rapidly switches between displays, creating an illusion of a continuous display to the human eye. The 7447 decoder is used to convert BCD values into 7-segment outputs.
+\end{itemize}
+ 
+
+\section{Multiplexing Explanation}
+Multiplexing is used to drive multiple 7-segment displays with fewer microcontroller pins. By cycling through displays quickly, we reduce the number of required I/O pins. This technique involves:
+\begin{itemize}
+    \item Assigning a unique enable pin to each display.
+    \item Sending the appropriate BCD value to the 7447 decoder.
+    \item Activating one display at a time while others are off.
+\end{itemize}
+This process is performed fast enough that the human eye perceives a steady display.
+\section{Connections}
+\subsection{BCD Pins (Arduino to 7447 Decoder)}
+The following table describes the connection between the Arduino and the 7447 BCD decoder:
+
+\input{tables/table2}
+
+\subsection{7-Segment Display Selection}
+Each of the six 7-segment displays is controlled through multiplexing:
+
+\input{tables/table3}
+
+The microcontroller rapidly switches between these displays using multiplexing, ensuring that all digits appear visible simultaneously.
+\subsection{Push Button Connections}
+The push buttons allow manual time adjustment:
+
+\input{tables/table4}
+Each button uses an internal pull-up resistor, meaning it reads HIGH when unpressed and LOW when pressed. A software debounce mechanism prevents false triggers.
+
+
+
+
+
+
+
+\section{Code implementation}
+This document explains the modular structure of the **Arduino-based digital clock** that uses a **7447 BCD to 7-segment decoder** for display multiplexing.
+
+\subsection{Modules of the Code}
+
+\subsubsection{BCD Encoder Module}
+The function \texttt{setBCD(uint8\_t num)} converts a decimal number into a 4-bit BCD format and sends it to the 7447 decoder.
+
+\begin{lstlisting}[style=CStyle]
+void setBCD(uint8_t num) {
+    // Clear previous BCD data while preserving unaffected bits
+    PORTD = (PORTD & 0xC3) | ((num & 0x0F) << 2);  
+}
+\end{lstlisting}
+
+\subsubsection{Display Selection Module}
+The function \texttt{selectDisplay(uint8\_t disp)} selects one of the six 7-segment displays.
+
+\begin{lstlisting}[style=CStyle]
+void selectDisplay(uint8_t disp) {
+    // Turn off all display selection lines before enabling the required one
+    PORTD &= ~((1 << DISP1) | (1 << DISP2));
+    PORTB &= ~((1 << DISP3) | (1 << DISP4) | (1 << DISP5) | (1 << DISP6));
+
+    // Activate only the required display based on the index
+    switch (disp) {
+        case 0: PORTD |= (1 << DISP1); break;  // Hour Tens
+        case 1: PORTD |= (1 << DISP2); break;  // Hour Units
+        case 2: PORTB |= (1 << DISP3); break;  // Minute Tens
+        case 3: PORTB |= (1 << DISP4); break;  // Minute Units
+        case 4: PORTB |= (1 << DISP5); break;  // Second Tens
+        case 5: PORTB |= (1 << DISP6); break;  // Second Units
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Multiplexed Display Module}
+The function \texttt{displayTime()} cycles through all displays and updates them.
+
+\begin{lstlisting}[style=CStyle]
+void displayTime() {
+    // Extract individual digits for hours, minutes, and seconds
+    uint8_t digits[6] = {
+        hours / 10, hours % 10,  // Hour Tens and Units
+        minutes / 10, minutes % 10,  // Minute Tens and Units
+        seconds / 10, seconds % 10   // Second Tens and Units
+    };
+
+    static uint8_t currentDisplay = 0;  // Keeps track of the active display
+    
+    setBCD(digits[currentDisplay]);  // Send the digit value to the 7447 decoder
+    selectDisplay(currentDisplay);   // Activate the respective 7-segment display
+    currentDisplay = (currentDisplay + 1) % 6;  // Cycle through displays
+}
+\end{lstlisting}
+
+\subsubsection{Button Handling Module}
+This function reads the button inputs and updates the time accordingly.
+
+\begin{lstlisting}[style=CStyle]
+void checkButtons() {
+    // Check if the hour button is pressed
+    if (!(PINB & (1 << HOUR_BUTTON))) {  // Active low button press
+        _delay_ms(50);  // Debounce delay
+        if (!(PINB & (1 << HOUR_BUTTON))) {  // Ensure the button is still pressed
+            hours = (hours + 1) % 24;  // Increment the hour, rolling over at 24
+        }
+    }
+
+    // Check if the minute button is pressed
+    if (!(PINC & (1 << MIN_BUTTON))) {
+        _delay_ms(50);
+        if (!(PINC & (1 << MIN_BUTTON))) {
+            minutes = (minutes + 1) % 60;  // Increment minutes, rolling over at 60
+        }
+    }
+    
+    // Check if the second button is pressed
+    if (!(PINC & (1 << SEC_BUTTON))) {
+        _delay_ms(50);
+        if (!(PINC & (1 << SEC_BUTTON))) {
+            seconds = (seconds + 1) % 60;  // Increment seconds, rolling over at 60
+        }
+    }
+}
+\end{lstlisting}
+\subsection{Compilation and Upload Process}
+The code for the digital clock was written in **Embedded C** and compiled using the **AVR-GCC** toolchain. The following steps were followed:
+
+\begin{enumerate}
+    \item The code was written and compiled using the AVR-GCC `make` command to generate the binary file.
+    \item The compiled binary was then transferred into the **precompiled section** of **ArduinoDroid**, an Android-based IDE for Arduino development.
+    \item Using ArduinoDroid, the binary was uploaded to the **Arduino Uno** microcontroller, ensuring the clock's execution.
+\end{enumerate}
+
+This method allows seamless integration of **AVR low-level programming** with **Arduino-based deployment** for better flexibility and control.
+
+\section{Conclusion}
+This project successfully implements a digital clock using an Arduino Uno and a 7447 BCD decoder. Multiplexing effectively reduces hardware requirements while maintaining clear and readable digit output. The modular code structure ensures easy understanding and modifications.
+
+\end{document}
+
