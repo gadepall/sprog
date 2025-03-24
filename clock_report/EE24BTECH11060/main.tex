@@ -1,0 +1,185 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+\title{\textbf{Digital Clock Using AVR-GCC}}
+\author{Sruthi Bijili \\EE24BTECH11060}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Objective}
+To design and implement a digital clock using an Arduino board and a seven-segment display, programmed using AVR-GCC.
+
+\section{Introduction}
+This experiment demonstrates the implementation of a digital clock using an Arduino board. The timekeeping is achieved through a timer interrupt, while multiplexed seven-segment displays are used to show the time in HH:MM:SS format.
+
+\section{Apparatus}
+\begin{itemize}
+\item bread board
+\item Seven-segment display (Common Anode)
+\item Resistors
+\item Arduino UNO
+\item power supply
+\item Connecting Wires
+\end{itemize}
+\section{Connections}
+\begin{itemize}
+\item Place the six seven-segment displays on the breadboard. The first two are used to display the two digits of hours, the next two for minutes, and the next two for seconds.
+    \item Connect the 5V and GND pins from the Arduino to the power rails of the breadboard.
+    \item Connect the COM of each display to the 5V rail through resistors.
+    \item Connect the dot of each display to GND.
+    \item Make connections from the Arduino pins to the seven-segment displays as per the table below.
+\end{itemize}
+\input{tables/table}
+\section{AVR Code}
+\begin{lstlisting}[language=C, basicstyle=\ttfamily, keywordstyle=\color{blue}, commentstyle=\color{green}]
+// setting cpu frequency to 16 mega hz (for atmega328p)
+// atmega328p microcontroller is in the arduino
+// frequency is needed for timing calculations
+#define F_CPU 16000000UL
+
+// including required libraries
+// they provide access to hardware registers, interrupts, delays
+#include <avr/io.h> // standard input-output functions for avr
+#include <avr/interrupt.h> // interrupt handling
+#include <util/delay.h> // delay functions
+
+// array to store bit patterns for each digit
+// low (0) turns on the led segment
+const uint8_t digit_map[] = {
+    0b00000000,  // 0
+    0b11100100,  // 1
+    0b10010000,  // 2
+    0b11000000,  // 3
+    0b01100100,  // 4
+    0b01001000,  // 5
+    0b00001000,  // 6
+    0b11100000,  // 7
+    0b00000000,  // 8
+    0b01000000   // 9
+};
+
+// defining time variables
+volatile uint8_t hours = 5, minutes = 11, seconds = 10;
+
+// array to store display digits
+uint8_t digits[6];
+// function to calculate digit values for display
+void update_digits() {
+    digits[0] = hours / 10;   // first display
+    digits[1] = hours % 10;   // second display
+    digits[2] = minutes / 10; // third display
+    digits[3] = minutes % 10; // fourth display
+    digits[4] = seconds / 10; // fifth display
+    digits[5] = seconds % 10; // sixth display
+}
+
+// function to update time at every second
+void update_time() {
+    seconds++;
+    if (seconds >= 60) { seconds = 0; minutes++; }
+    if (minutes >= 60) { minutes = 0; hours++; }
+    if (hours >= 24) { hours = 0; } // 24-hour clock
+
+    // update digits array after time update
+    update_digits();
+}
+
+// interrupt service routine (ISR) for Timer1 compare match A
+// calls update_time() function every second
+ISR(TIMER1_COMPA_vect) {
+    update_time();
+}
+
+// function to display a single digit (multiplexing)
+void display_digit(uint8_t display, uint8_t digit) {
+    PORTB &= ~(0b00011110); // turn off PB1-PB4
+    PORTC &= ~(0b00000011); // Turn off PC0-PC1
+
+    PORTD = digit_map[digit];  // set segments a-f
+     // control segment G (PB0)
+    if (digit == 0 || digit == 1 || digit == 7) {
+        PORTB |= (1 << PB0); // turn on g segment
+    } else {
+        PORTB &= ~(1 << PB0); // turn off g segment
+    }
+
+    // enable the correct digit select pin
+    if (display < 4) {
+        // PB1-PB4 for first to fourth displays
+        PORTB |= (1 << (display + 1));
+    } else {
+        // PC0-PC1 for fifth and sixth displays
+        PORTC |= (1 << (display - 4));
+    }
+
+    // ensuring the digit is viible before switching
+    _delay_ms(2);
+}
+
+int main(void) {
+    // setting PD2-PD7 as output for segments a-f
+    DDRD |= 0b11111100;
+    // setting PB0 as output for segment g
+    DDRB |= (1 << PB0);
+    // setting PORTB (PIN 9-12) and PORTC (A0-A1) as output 
+    // (for digit selection)
+    DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3) | (1 << PB4);
+    DDRC |= (1 << PC0) | (1 << PC1);
+
+    // initialize display digits before Timer starts
+    update_digits();
+      // set-up Timer1 (1 hz interrupt)
+    TCCR1B |= (1 << WGM12) | (1 << CS12) | (1 << CS10);
+    OCR1A = 15625;  // compare value for 1-second tick
+    TIMSK1 |= (1 << OCIE1A);  // enable Timer1 compare interrupt
+    sei();  // enable global interrupts
+
+    while (1) {
+        for (uint8_t i = 0; i < 6; i++) {
+            // cycle through all 6 digits
+            display_digit(i, digits[i]);
+        }
+    }
+}
+\end{lstlisting}
+
+\section{Code Explanation}
+\begin{enumerate}
+    \item The program sets the CPU frequency to \textbf{16 MHz} and includes necessary AVR libraries for \textbf{I/O operations, interrupts, and delays}.
+    \item A \textbf{digit map array} is defined to store bit patterns for displaying numbers (0-9) on a \textbf{7-segment display}.
+    \item Variables \texttt{hours}, \texttt{minutes}, and \texttt{seconds} store the current time, while an array \texttt{digits[6]} holds individual digits for display.
+    \item The function \texttt{update\_digits()} extracts \textbf{each digit} from \texttt{hours}, \texttt{minutes}, and \texttt{seconds} to update the display.
+    \item The function \texttt{update\_time()} increments the \textbf{time every second}, resetting values when they reach \textbf{60 (minutes/seconds) or 24 (hours)}.
+    \item \textbf{Timer1 is configured} to generate an interrupt \textbf{every second}, calling \texttt{update\_time()} automatically.
+    \item The \textbf{display uses multiplexing}, where only \textbf{one digit is turned on at a time} using \texttt{display\_digit()}, reducing the number of required pins.
+    \item \textbf{PORTB, PORTC, and PORTD} are set as \textbf{output pins} to control the \textbf{segments and digit selection} for the display.
+    \item The \textbf{main loop continuously refreshes} the 7-segment display by cycling through all \textbf{6 digits rapidly}.
+    \item The system runs indefinitely, updating time \textbf{every second} and displaying it using \textbf{time-sharing multiplexing}.
+\end{enumerate}
+
+\section{Results}
+\begin{itemize}
+\item The clock successfully keeps time, updating every second.
+\item The multiplexed display correctly shows the HH:MM:SS format.
+\item Timer1 ISR ensures accurate timekeeping with minimal drift.
+\end{itemize}
+
+
+\section{Conclusion}
+The experiment successfully demonstrates a working digital clock using an Arduino board and seven-segment displays. By leveraging timer interrupts and display multiplexing, an efficient and accurate timekeeping system is achieved.\\
+
+Acknowledgement: code sourced from M srujana, EE24BTECH11060
+\end{document}
+
+
+
+
