@@ -1,0 +1,9 @@
+\contentsline {section}{\numberline {I}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {II}Components Used}{2}{section.2}%
+\contentsline {section}{\numberline {III}Circuit Diagram}{2}{section.3}%
+\contentsline {subsection}{\numberline {\mbox {III-A}}LCD Connections}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {\mbox {III-B}}Button Connections}{3}{subsection.3.2}%
+\contentsline {section}{\numberline {IV}Working Principle}{3}{section.4}%
+\contentsline {section}{\numberline {V}Results}{7}{section.5}%
+\contentsline {section}{\numberline {VI}Conclusion}{7}{section.6}%
+\contentsline {section}{\numberline {VII}References}{7}{section.7}%
