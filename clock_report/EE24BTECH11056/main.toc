@@ -1,0 +1,7 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Hard Ware components}{2}{section.2}%
+\contentsline {section}{\numberline {3}Circuit Configuration}{2}{section.3}%
+\contentsline {section}{\numberline {4}Code Execution}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}AVR Code}{3}{subsection.4.1}%
+\contentsline {section}{\numberline {5}Results}{5}{section.5}%
+\contentsline {section}{\numberline {6}Conclusion}{5}{section.6}%
