@@ -1,0 +1,139 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{11.16.3.8.2}
+\author{EE24BTECH11035 -K.Akhil}
+\maketitle
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{Question}:\\
+If three coins are tossed once, what is the probability of getting exactly 2 heads?\\
+\textbf{Solution: }\\
+Define a discrete random variable $X = $ number of heads\\
+We will take our random variable as a sum of outcomes of three Bernoulli random variables
+\begin{align}
+    X = X_1+X_2+X_3
+\end{align}
+Where
+\begin{align}
+X_i = 
+\begin{cases}
+    1, & \text{Outcome in Heads}\\
+    0, & \text{Outcome in Tails}
+\end{cases}\\
+p_{X_i}(n) = 
+\begin{cases}
+    1-p, & n = 0\\
+    p, & n = 1
+\end{cases}
+\end{align}
+Where $p=\frac{1}{2}$\\
+Using properties of Z-Transform of PMF
+\begin{align}
+    M_X(z) &= M_{X_1}(z)M_{X_2}(z)M_{X_3}(z)\\
+    M_{X_1}(z) &= \sum_{n=-\infty}^{\infty}p_{X_1}(n)z^{-n} = (1-p)+pz^{-1}\\
+    M_{X_2}(z) &= \sum_{n=-\infty}^{\infty}p_{X_2}(n)z^{-n} = (1-p)+pz^{-1}\\
+    M_{X_3}(z) &= \sum_{n=-\infty}^{\infty}p_{X_3}(n)z^{-n} = (1-p)+pz^{-1}\\
+    M_X(z) &= ((1-p)+pz^{-1})^3\\
+     &= \sum_{n=-\infty}^{\infty}\comb{3}{n}(1-p)^{3-n}p^nz^{-n}\\
+    p_{X}(n) &= \comb{3}{n}p^{n}(1-p)^{3-n}\\
+    p_{X}(n) &= \frac{\comb{3}{n}}{8}
+\end{align}
+The Probability Mass Function (PMF) for the given random variable is
+\begin{align}
+p_X(n) =
+\begin{cases}
+    \frac{1}{8}, & n = 0 \\
+    \frac{3}{8}, & n = 1 \\
+    \frac{3}{8}, & n = 2 \\
+    \frac{1}{8}, & n = 3 \\
+\end{cases}
+\end{align}
+The probability of getting exactly 2 heads is
+\begin{align}
+  p_X(2) &= \frac{3}{8}
+\end{align}
+
+The Cumulative Distribution Function (CDF) for the given random variable is
+\begin{align}
+  F_{X}(n) = \sum_{k=-\infty}^n p_X(k) = \begin{cases}
+    0, & n < 0\\
+    \frac{1}{8}, & 0 \le n < 1\\
+    \frac{4}{8}, & 1 \le n < 2\\
+    \frac{7}{8}, & 2 \le n < 3\\
+    1, & n \ge 3
+  \end{cases}
+\end{align}
+To find the probability of getting exactly 2 heads using the CDF:
+\begin{align}
+  P(X = 2) &= F_X(2) - F_X(1) \\
+  &= \frac{7}{8} - \frac{4}{8} \\
+  &= \frac{3}{8}
+\end{align}
+
+The probability of getting exactly 2 heads is \(\frac{3}{8}\).
+
+\textbf{Simulation Process:}\\
+To run a simulation we need to generate random numbers with uniform probability, which is done as shown below:
+\begin{enumerate}
+  \item Generate a random number by calling \texttt{rand()}. It generates a random number between 0 and \texttt{RAND\_MAX}.
+  \item Divide the generated number by \texttt{RAND\_MAX} so that it becomes a real number in the range [0, 1).
+  \item If the number is less than $p$, take it as the event happened (heads), otherwise, the event did not happen (tails).
+\end{enumerate}
+
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=1\columnwidth]{figs/pmf.png}
+    \caption{Probability Mass Function of given Random variable}
+\end{figure}
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=1\columnwidth]{figs/cdf.png}
+    \caption{Cumulative Distribution Function of given Random variable}
+\end{figure}
+\end{document}
+

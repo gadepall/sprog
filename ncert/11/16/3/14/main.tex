@@ -1,0 +1,120 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}                                      
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}
+\usepackage{multicol}
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+
+
+\title{10.3.3.3.1}
+\author{EE24BTECH11009 - Mokshith kumar}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{Question:}
+Given $p\brak{A}=\frac{3}{5}$ and $p\brak{B}=\frac{1}{5}$. Find $p\brak{a or b}$, if $A$ and $B$ are mutually exclusive events.\\
+\textbf{solution:}
+Given the events \( A \) and \( B \), where \( P(A) = \frac{3}{5} \) and \( P(B) = \frac{1}{5} \), and it is stated that \( A \) and \( B \) are mutually exclusive events, we are asked to find \( P(A + B) \), i.e., the probability of \( A \) or \( B \) occurring.\\
+\begin{center}
+\begin{tabular}{|c|c|}
+    \hline
+    $p\brak{A}$ & $\frac{3}{5}$ \\
+    \hline
+    $p\brak{B}$ & $\frac{1}{5}$\\
+    \hline
+\end{tabular}
+\end{center}
+Since \( A \) and \( B \) are mutually exclusive, it means that the events cannot occur simultaneously.\\
+\[
+P(AB)=0
+\]
+ For any two boolean variables A and B,
+\begin{center}
+\begin{align}
+	\because A + A^\prime &= 1 \\
+	 AB + A^\prime B &= B \label{2} \\
+	 \implies \pr{AB} + \pr{A^\prime B} &= \pr{B} \label{3} \\
+	 \because B + B^\prime &= 1 \\
+	 AB + AB^\prime &= A \label{5}\\
+	 \implies \pr{AB} + \pr{AB^\prime} &= \pr{A} \label{6} \\
+	 \text{adding } \eqref{2} \text{ and } \eqref{5} \\
+	 A + B &= AB + AB + AB^\prime + A^\prime B  \\
+	 A + B &= AB + AB^\prime + A^\prime B \\ 
+	 \pr{A + B} &= \pr{AB} + \pr{AB^\prime} + \pr{A^\prime B} \label{10}\\
+	 \text{Adding \eqref{3},\eqref{6} and \eqref{10} and cancelling same terms } \\
+	 \pr{AB} &= \pr{A} + \pr{B} - \pr{A + B}
+\end{align}
+\end{center}
+From above Boolean Logic, the probability of \( A + B \) is given by the formula:
+
+\[
+P(A+B) = P(A) + P(B) - P(AB)
+\]
+
+Substitute the given values of \( P(A) \) and \( P(B) \):
+
+\[
+P(A + B) = \frac{3}{5} + \frac{1}{5}
+\]
+
+Simplifying the sum:
+
+\[
+P(A + B) = \frac{3 + 1}{5} = \frac{4}{5}
+\]
+
+Thus, the probability of \( A + B \) is:
+
+\[
+P(A + B) = \frac{4}{5}
+\]
+
+\end{document}

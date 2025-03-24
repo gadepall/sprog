@@ -1,0 +1,300 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\begin{document}
+	
+	\bibliographystyle{IEEEtran}
+	\vspace{3cm}
+	
+	\title{10.4.3.4}
+	\author{EE24BTECH11030 - KEDARANANDA}
+	% \maketitle
+	% \newpage
+	% \bigskip
+	{\let\newpage\relax\maketitle}
+	
+	\renewcommand{\thefigure}{\theenumi}
+	\renewcommand{\thetable}{\theenumi}
+	\setlength{\intextsep}{10pt} % Space between text and floats
+	
+	\textbf{Question:}
+	\newline
+	The sum of the reciprocals of Rehman's ages, (in years) 3 years ago and 5 years from
+	now is $\frac{1}{3}.$ Find his present age.\\
+	\textbf{Theoritical Solution:}
+	Let Rehman's present age be $x$ years. 
+	
+	Three years ago, his age was $x-3$, and five years from now, his age will be $x+5$. 
+	The sum of the reciprocals of his ages 3 years ago and 5 years from now is:
+	\[
+	\frac{1}{x-3} + \frac{1}{x+5} = \frac{1}{3}.
+	\]
+	
+	To solve, find a common denominator:
+	\[
+	\frac{x+5 + x-3}{(x-3)(x+5)} = \frac{1}{3}.
+	\]
+	
+	Simplify the numerator:
+	\[
+	\frac{2x + 2}{(x-3)(x+5)} = \frac{1}{3}.
+	\]
+	
+	Multiply through by $3(x-3)(x+5)$:
+	\[
+	3(2x + 2) = (x-3)(x+5).
+	\]
+	
+	Expand both sides:
+	\[
+	6x + 6 = x^2 + 5x - 3x - 15.
+	\]
+	
+	Simplify:
+	\[
+	6x + 6 = x^2 + 2x - 15.
+	\]
+	
+	Rearrange into standard quadratic form:
+	\[
+	x^2 - 4x - 21 = 0.
+	\]
+	
+	Factorize:
+	\[
+	x^2 - 4x - 21 = (x - 7)(x + 3) = 0.
+	\]
+	
+	Thus:
+	\[
+	x = 7 \quad \text{or} \quad x = -3.
+	\]
+	
+	Since age cannot be negative, we have:
+	\[
+	x = 7.
+	\]
+	
+	Rehman's present age is $7$ years.\\
+	\textbf{Computational Solution}\\
+	Newton-Raphson Method:\\
+	Start with an initial guess $x_0$, and then run the following logical loop,
+	\begin{align}
+		x_{n+1} = x_n - \frac{f\brak{x_n}}{f^{\prime}\brak{x_n}} 
+	\end{align}
+	where,
+	\begin{align}
+		f\brak{x} = x^2 - 4x - 21\\
+		f^{\prime}\brak{x} = 2x - 4\\
+	\end{align}
+	The update equation will be
+	\begin{align}
+		x_{n+1} = x_n - \frac{{x_n}^2 - 4x_n - 21}{2x_n - 4}\\
+	\end{align}
+	The problem with this method is if the roots are complex but the coeffcients are real, $x_n$ either converges to an extrema or grows continuously without any bound.
+	To get the complex solutions, however , we can just take the initial guess point to be a 
+	random complex number.\\
+	The output of a program written to find roots is shown below:
+	\begin{align}
+		r_1 = -3\\
+		r_2 = 7\\
+	\end{align}
+	Second method to find solution of a quadratic equation are:\\
+	Matrix-Based Method:\\
+	For a polynomial equation of form $x_n+b_{n-1}x^{n-1}+\dots+b_2x^2+b_1x+b_0 = 0$ we construct a matrix called companion matrix of form
+	\begin{align}
+		\Lambda = \myvec{0&1&0&\dots&0\\ 0&0&1&\dots&0\\ \vdots &\vdots &\vdots &\ddots&\vdots\\0&0&0&\vdots&1\\-b_0&-b_1&-b_2&\dots&-b_{n-1}}
+	\end{align}
+	The eigenvalues of this matrix are the roots of the given polynomial equation.\\
+	The solution given by the code is
+	\begin{align}
+		x_1 = -3\\
+		x_2 = 7
+	\end{align}
+	QR decomposition on Hessenberg matrix with Single Shift:\\
+	It is a Numerical method for finding eigenvalues of a given matrix\\
+	For the given polynomial equation the companion matrix will be
+	\begin{align}
+		\Lambda = \myvec{0 & 1\\21 & 4}
+	\end{align}
+	In this algorithm, we decompose matrix given to two matrices $Q$ and $R$ such that $Q$ is an orthogonal matrix and $R$ is an upper triangular matrix. Then we assign the new matrix $A^\prime$ to be $A^\prime = RQ$, and we do this iteratively. Theoritically, as the number of iterations go to infinite, the matrix $A^\prime$ will converge to an upper triangular matrix whose diagonal elements are the eigenvalues of $A$.
+	To increase the rate of convergence we will introduce a shift in the matrix as shown below.
+	\begin{align}
+		\sigma &= 4\\
+		\Lambda_{\text{shifted}} &= \myvec{0 & 1\\21 & 4} - \sigma I\\
+		\Lambda_{\text{shifted}} &= \myvec{-4 & 1\\ 21 & 0}
+	\end{align}
+	Where $\sigma$ is the last diagonal element. Since $Q$ zeroes out the lower triangular element, which in our case, there is only such element. We will construct an orthogonal matrix such that the element will become 0. Since it is orthogonal
+	\begin{align}
+		Q &= \myvec{c & s\\-s & c}\\
+	\end{align}
+	Where
+	\begin{align}
+		c &= \cos{\phi}\\
+		s &= \sin{\phi}
+	\end{align}
+	Where $\phi$ is the rotation angle. Since it should zero out that one element\\
+	\begin{align}
+		\myvec{c & s\\-s & c} \times \myvec{-4 & 1\\ 21 & 0} &= \myvec{a & b\\ 0 & c}\\
+		21c + 4s &= 0\\
+		c^2+s^2 &= 1
+	\end{align}
+	Solving for $c$ and $s$ gives
+	\begin{align}
+		c &= - \frac{4}{\sqrt{457}}\\
+		s &=  \frac{21}{\sqrt{457}}
+	\end{align}
+	Now, as we got the $Q$ matrix we will do the following
+	\begin{align}
+		\Lambda_{\text{new}} &= Q\Lambda_{\text{shifted}}Q^\top + \sigma I\\
+		\Lambda_{\text{new}} &= \myvec{c & s\\-s & c}\myvec{-4 & 1\\ 21 & 0}\myvec{c & -s\\s & c} + \sigma I\\
+		\Lambda_{\text{new}} &\approx \myvec{-0.183807 & -20.964989059\\-0.964989059 & 4.183807440} 
+	\end{align}
+	As the matrix $A$ is undergoing similarity transformation, the eigenvalues will not change.\\
+	Run the same sequence of steps for 20 iterations after which you end up with the following matrix
+	\begin{align}
+		\Lambda_{\text{new}} = \myvec{-3 & 20\\ 0 & 7}
+	\end{align}
+	Since its an upper triangular matrix, the eigenvalues are same as its diagonal elements\\
+	Hence the roots of given equation are -3 and 7\newline \newline
+	For a general matrix, we should bring to hessenberg form $H$, for that let
+	\begin{align}
+		P = I-2\vec{w}\vec{w}^\top
+	\end{align}
+	where w is a vector with $\abs{w}^2=1$. The matrix $P$ is orthogonal as
+	\begin{align}
+		P^2 &=\brak{I - 2\vec{w}\vec{w}^\top}\cdot\brak{I - 2\vec{w}\vec{w}^\top}\\
+		&=I-4\vec{w}\vec{w}^\top + 4\vec{w}\cdot\brak{\vec{w}^\top\vec{w}^\top}\cdot\vec{w}^\top\\
+		&=I
+	\end{align}
+	Therefore, $P=P^{-1}$ but $P = P^\top$, so $P = P^\top$ \\
+	We can rewrite $P$ as
+	\begin{align}
+		P = I - \frac{\vec{u}\vec{u}^\top}{H}
+	\end{align}
+	where the scalar $H$ is
+	\begin{align}
+		H = \frac{1}{2}\abs{\vec{u}}^2
+	\end{align}
+	Where $\vec{u}$ can be any vector. Suppose $\vec{x}$ is the vector composed of the first column of $A$. Take
+	\begin{align}
+		\vec{u} = \vec{x} \mp \abs{\vec{x}}\vec{e}_1
+	\end{align}
+	Where $\vec{e}_1 = \myvec{1 & 0 & \dots}^\top$, we will take the choice of sign later. Then
+	\begin{align}
+		P\cdot\vec{x} &= \vec{x} - \frac{\vec{u}}{H}\cdot\brak{\vec{u}\mp \abs{\vec{x}}\vec{e}_1}^\top\cdot \vec{x}\\
+		&= \vec{x} - \frac{2\vec{u}\brak{\abs{x}^2\mp \abs{x}x_1}}{2\abs{x}^2\mp \abs{x}x_1}\\
+		&= \vec{x} - \vec{u}\\
+		&= \mp\abs{\vec{x}}\vec{e}_1
+	\end{align}
+	To reduce a matrix $A$ into Hessenberg form, we choose vector $\vec{x}$ for the first householder matrix to be lower $n-1$ elements of the first column, then the lower $n-2$ elements will be zeroed.
+	\begin{align}
+		P_1\cdot A &= \myvec{
+			1 & 0 & 0 & \cdots & 0 \\
+			0 & p_{11} & p_{12} & \cdots & p_{1n} \\
+			0      & p_{21} & p_{22} & \cdots & p_{2n} \\
+			0      & p_{31} & p_{32} & \cdots & p_{3n} \\
+			\vdots & \vdots & \vdots & \ddots & \vdots \\
+			0      & p_{n1} & p_{n2} & \cdots & p_{nn}
+		}\myvec{
+			a_{00} & \times & \times & \cdots & \times \\
+			a_{10} & \times & \times & \cdots & \times \\
+			a_{20} & \times & \times & \cdots & \times \\
+			a_{30} & \times & \times & \cdots & \times \\
+			\vdots & \vdots & \vdots & \ddots & \vdots \\
+			a_{n0} & \times & \times & \cdots & \times
+		}\\
+		&=\myvec{
+			a_{00}^\prime & \times & \times & \cdots & \times \\
+			0 & \times & \times & \cdots & \times \\
+			0      & \times & \times & \cdots & \times \\
+			0      & \times   & \times & \cdots & \times \\
+			\vdots & \vdots & \vdots & \ddots & \vdots \\
+			0      & \times      & \times      & \cdots & \times
+		}
+	\end{align}
+	Now we choose the vector $\vec{x}$ for the householder matrix to be the bottom $n-2$ elements of the second column, and from it construct the $P_2$
+	\begin{align}
+		P_2 = \myvec{
+			1 & 0 & 0 & \cdots & 0 \\
+			0 & 1 & 0 & \cdots & 0 \\
+			0 & 0 & p_{22} & \cdots & p_{2n} \\
+			0 & 0 & p_{32} & \cdots & p_{3n} \\
+			\vdots & \vdots & \vdots & \ddots & \vdots \\
+			0 & 0 & p_{n2} & \cdots & p_{nn}
+		}
+	\end{align}
+	Continue the pattern\\
+	Let $H$ be the Hessenberg matrix then
+	\begin{align}
+		H_{n+1} = Q\brak{H_n - \sigma I}Q^\top + \sigma I
+	\end{align}
+	To find $Q$, we do the following, let
+	\begin{align}
+		G = \myvec{
+			1 & \cdots & 0 & 0 & \cdots & 0 \\
+			\vdots & \ddots & \vdots & \vdots & \reflectbox{$\ddots$} & \vdots \\
+			0 & \cdots & c & s & \cdots & 0\\
+			0 & \cdots & -s & c & \cdots & 0\\
+			\vdots & \reflectbox{$\ddots$} & \vdots & \vdots & \ddots & \vdots\\
+			0 & \cdots & 0 & 0 & \cdots & 1
+		}
+	\end{align}
+	Where the value of $c$ and $s$ are
+	\begin{align}
+		c = \frac{\overline{x_{i,i}}}{\sqrt{\abs{x_{i,i}}^2+\abs{x_{i,i+1}}^2}}\\
+		s = \frac{\overline{x_{i,i+1}}}{\sqrt{\abs{x_{i,i}}^2+\abs{x_{i,i+1}}^2}}
+	\end{align}
+	Multiplying $G$ and $A$ nulls out the element in $\brak{i+1}^{\text{th}}$ row and $i^\text{th}$ column. Now
+	\begin{align}
+		H \implies G_{n-1}G_{n-2}\cdots G_2G_1\brak{H - \sigma I}
+	\end{align}
+	Now, we store $G_{n-1}G_{n-2}\cdots G_2G_1$ in $Q$ and then
+	\begin{align}
+		H_{n+1} \implies Q\brak{H_n - \sigma I}Q^\top+ \sigma I\\
+	\end{align}
+	As $n$ tends to $\infty$, the diagonal elements become eigenvalues
+	If all the entries in the matrix are real but the eigenvalues are complex, the matrix $A$ will converge to
+	\begin{align}
+		A = \myvec{B_1 & 0 & \cdots & 0 \\
+			0 & B_2 & \cdots & 0\\
+			\vdots & \cdots & \ddots & 0\\
+			0 & 0 & 0 & B_n}
+	\end{align}
+	Where $B_i$ is a $2 \times 2$ block matrix. These matrices are called jordan blocks. In this case, the eigenvalues are calculated by solving the characteristic equation of the $2 \times 2$ matrix
+\end{document}

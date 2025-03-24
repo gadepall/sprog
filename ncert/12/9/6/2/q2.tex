@@ -1,0 +1,122 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{12-9-6-2}
+\author{EE24BTECH11060}
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{Question}:\\
+Find the general equation of 
+\begin{align}
+    \frac{dy}{dx}+3y=e^{-2x}
+\end{align}
+\textbf{Theoretical solution by laplace transform}:\\
+Laplace transform of the derivative $\frac{dy}{dx}$ is given by 
+\begin{align}
+    \mathcal{L}\cbrak{\frac{dy}{dx}}=sY\brak{s}-y\brak{0}
+\end{align}
+where Y\brak{s} is the laplace transform of y\brak{x},and y\brak{0} is the initial condition.\\
+taking laplace transform on both sides of the equation:
+\begin{align}
+    \mathcal{L}\cbrak{\frac{dy}{dx}+3y}=\mathcal{L}\cbrak{e^{-2x}}\\
+    \implies \mathcal{L}\cbrak{\frac{dy}{dx}}+\mathcal{L}\cbrak{y}=\mathcal{L}\cbrak{e^{-2x}}\\
+    \mathcal{L}\cbrak{e^{-2x}}=\frac{1}{s+2}\\
+    \implies sY\brak{s}-y\brak{0}+3Y\brak{s}=\frac{1}{s+2}
+\end{align}
+rearranging the equation 
+\begin{align}
+    Y\brak{s}=\frac{1}{\brak{s+2}\brak{s+3}}+\frac{y\brak{0}}{s+3}\\
+     Y\brak{s}=\frac{1}{\brak{s+2}}-\frac{1}{\brak{s+3}}+\frac{y\brak{0}}{s+3}
+\end{align}
+Taking the inverse laplace transform of each term:
+\begin{align}
+    \mathcal{L}^{-1}\cbrak{Y\brak{s}}=\mathcal{L}^{-1}\cbrak{\frac{1}{s+2}}+\mathcal{L}^{-1}\cbrak{\frac{1}{s+3}}
+\end{align}
+thus,the solution by laplace transform is 
+\begin{align}
+    y\brak{x}=e^{-2x}-e^{-3x}+y\brak{0}e^{-3x}\\
+    \implies  y\brak{x}=e^{-2x}+\brak{y\brak{0}-1}e^{-3x}
+\end{align}
+
+\textbf{Method of finite differences}
+The derivative of f(x) can be written as 
+\begin{align}
+    \frac{df}{dx}=\frac{f(x+h)-f(x)}{h}\\
+    \implies f(x+h)=f(x)+h\cdot\frac{df}{dx}
+\end{align}
+from the above question 
+\begin{align}
+    \frac{dy}{dx}+3y=e^{-2x}\\
+    \implies \frac{dy}{dx}=e^{-2x}-3x\\
+    \implies y(x+h)=y(x)+h\brak{e^{-2x}-3x}
+\end{align}
+for $x \in \sbrak{x_{0},x_{n}}$ divide into equal parts by difference h\\
+Let us assume that $x_{0}=0$,$y_{0}=1$\\
+Let $x_{1}$=$x_{0}+h$ then
+\begin{align}
+    y_{1}=y_{0}+h\brak{e^{-2x_{0}}-3x_{0}}
+\end{align}
+To obtain the graph repeat the process until sufficient points to pllot the graph and the general equation will be 
+\begin{align}
+    x_{n+1}=x_{n}+h\\
+    y_{n+1}=y_{n}+h\brak{e^{-2x_{n}}-3x_{n}}
+\end{align}
+The curve generalised using the method of finite differences for the given question taking $x_{0}=0$,$y_{0}=1$, $h=0.01$ and running iterations for 100 times
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=0.7\columnwidth]{figs/fig.pdf}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,78 @@
+\RequirePackage{amsmath}
+\DeclareMathOperator*{\Res}{Res}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tabularx}
+
+% Define colors for listings
+\lstset{
+    frame=single, 
+    breaklines=true,
+    columns=fullflexible,
+    basicstyle=\ttfamily,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red!50!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt
+}
+
+% Custom macros
+\providecommand{\pr}[1]{\ensuremath{\Pr\left(#1\right)}}
+\providecommand{\qfunc}[1]{\ensuremath{Q\left(#1\right)}}
+\providecommand{\brak}[1]{\ensuremath{\left(#1\right)}}
+\providecommand{\abs}[1]{\left\vert#1\right\vert}
+\providecommand{\norm}[1]{\left\lVert#1\right\rVert}
+\providecommand{\mean}[1]{E\left[ #1 \right]}
+\providecommand{\rank}{\text{rank}}
+\providecommand{\sgn}{\mathop{\mathrm{sgn}}}
+\providecommand{\sinc}{\,\text{sinc}\,}
+\providecommand{\res}[1]{\Res\displaylimits_{#1}}
+\providecommand{\diff}[2]{\ensuremath{\frac{d{#1}}{d{#2}}}}
+
+% Matching tabular environment
+\newcounter{matchleft}
+\newcounter{matchright}
+\newenvironment{matchtabular}{%
+  \setcounter{matchleft}{0}%
+  \setcounter{matchright}{0}%
+  \tabularx{\textwidth}{%
+    >{\leavevmode\hbox to 1.5em{\stepcounter{matchleft}\arabic{matchleft}.}}X%
+    >{\leavevmode\hbox to 1.5em{\stepcounter{matchright}\alph{matchright})}}X%
+  }%
+}{\endtabularx}
+
+% Augmented matrix environment
+\newenvironment{amatrix}[1]{%
+  \left(\begin{array}{@{}*{#1}{c}|c@{}}
+}{%
+  \end{array}\right)
+}
+
+% New system notation
+\NewDocumentCommand{\system}{gg}{%
+  \IfNoValueTF{#1}
+    {%
+      \longleftrightarrow
+    }
+    {%
+      \IfNoValueTF{#2}
+      {%
+        \overset{\mathcal{#1}}{\longleftrightarrow}
+      }
+      {%
+        \overset{\mathcal{#1}^{#2}}{\longleftrightarrow}
+      }
+    }%
+}
+
+% Additional utility macros
+\providecommand{\myvec}[1]{\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}
+\providecommand{\mydet}[1]{\ensuremath{\begin{vmatrix}#1\end{vmatrix}}}
+\providecommand{\myaugvec}[2]{\ensuremath{\begin{amatrix}{#1}#2\end{amatrix}}}
+
+% End of macros
+

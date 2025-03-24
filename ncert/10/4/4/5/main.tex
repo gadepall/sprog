@@ -1,0 +1,208 @@
+\documentclass[article]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{tfrupee}
+
+\setlength{\headheight}{1cm}
+\setlength{\headsep}{0mm}
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}                                       
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt}
+
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\begin{document}
+\bibliographystyle{IEEEtran}
+\title{10.4.4.5}
+\author{EE24BTECH11035 - KOTHAPALLI AKHIL}
+{\let\newpage\relax\maketitle}
+
+\noindent\textbf{Question:}  
+Is it possible to design a rectangular park of perimeter $80 \, \text{m}$ and area $400 \, \text{m}^2$? If so, find its length and breadth. \\
+
+\noindent\textbf{Solution:} \\
+\textbf{Theoritical solution :}\\
+Let the length and breadth of the rectangular park be $l$ and $b$, respectively. The perimeter of the rectangle is given by:
+\begin{align}
+    2(l + b) = 80.
+\end{align}
+Simplifying, we get:
+\begin{align}
+    l + b = 40. 
+\end{align}
+
+The area of the rectangle is given by:
+\begin{align}
+    l \cdot b = 400. 
+\end{align}
+
+From first Equation, we can express $b$ in terms of $l$:
+\begin{align}
+    b &= 40 - l 
+\end{align}
+
+Substituting into Area Equation, we get:
+\begin{align}
+    l(40 - l) = 400
+\end{align}
+
+Expanding and rearranging terms:
+\begin{align}
+    l^2 - 40l + 400 = 0
+\end{align}
+
+Equation  is a quadratic equation. Solving it using the quadratic formula:
+\begin{align}
+    l &= \frac{-(-40) \pm \sqrt{(-40)^2 - 4(1)(400)}}{2(1)} \\
+    l &= \frac{40 \pm \sqrt{1600 - 1600}}{2} \\
+    l &= \frac{40 \pm 0}{2} \\
+    l &= 20.
+\end{align}
+
+Substituting $l = 20$ , we find:
+\begin{align}
+    b &= 40 - 20 \\
+    b &= 20
+\end{align}
+
+Thus, the rectangular park is a square with side length $20 \, \text{m}$. \\
+ 
+Yes, it is possible to design a rectangular park with the given dimensions. The length and breadth are both $20 \, \text{m}$.\\
+\textbf{Computational approach: }
+\begin{itemize}
+\item Using Fixed point iteration method,\\
+Given equation:  
+\begin{align}
+    l(40 - l) = 400
+\end{align}
+
+Rewriting the equation in standard form:  
+\begin{align}
+    f(l) = l(40 - l) - 400 = 0
+\end{align}
+
+To apply the fixed-point iteration method, we express $l$ as a function $g(l)$:  
+\begin{align}
+    l = g(l)
+\end{align}
+
+From the given equation, we can rewrite $l$ in an iterative form:  
+\begin{align}
+    l_{n+1} = \frac{400}{40 - l_n}
+\end{align}
+
+Here, $l_{n+1}$ is the updated value in terms of the previous value $l_n$.\\
+Steps to Perform Fixed-Point Iteration,\\
+1. Choose an initial guess $l_0$.For, this problem the initial guess i took is 10\\
+2. Compute successive iterations using the formula:  
+   \begin{align}
+       l_{n+1} = \frac{400}{40 - l_n}
+   \end{align}
+3. Check if the sequence $\{l_n\}$ converges to a fixed value. If it converges, the fixed point is a root of the equation.\\
+Convergence Check,\\
+For the fixed-point iteration to converge, the derivative of $g(l)$ must satisfy:  
+\begin{align}
+    \left| g'(l) \right| < 1 \quad \text{in the interval of interest}.
+\end{align}
+
+Differentiating $g(l)$:  
+\begin{align}
+    g(l) = \frac{400}{40 - l}, \quad g'(l) = \frac{400}{(40 - l)^2}
+\end{align}
+
+We verify the convergence condition by ensuring $\left| g'(l) \right| < 1$ near the expected root.
+
+Conclusion:\\
+If the iterations $\{l_n\}$ converge, the fixed point represents a root of the equation $l(40 - l) = 400$. If not, no root exists or the method fails to converge.\\
+The output when I  executed the code of above approach,\\
+\texttt{The approximate root is: 19.980040}
+
+\newpage
+
+\item Using QR decomposition of companion matrix to find the Roots of the quadratic equation,\\
+\\To solve the equation $l(40-l) = 400$ using the QR decomposition method, we transform the problem into finding the eigenvalues of a companion matrix. The eigenvalues of the matrix correspond to the roots of the quadratic equation.
+
+Step 1: Rearrange the Equation\\
+The equation $l(40-l) = 400$ can be rewritten as:
+\begin{align}
+l^2 - 40l + 400 &= 0.
+\end{align}
+
+This is a quadratic equation where $a = 1$, $b = -40$, and $c = 400$.
+Step 2: Construct the Companion Matrix\\
+For the quadratic equation $ax^2 + bx + c = 0$, the companion matrix is given by:
+\begin{align}
+A &= 
+\begin{bmatrix}
+0 & 1 \\
+-\frac{c}{a} & -\frac{b}{a}
+\end{bmatrix}.
+\end{align}
+
+Substituting $a = 1$, $b = -40$, and $c = 400$, we get:
+\begin{align}
+A &= 
+\begin{bmatrix}
+0 & 1 \\
+-\frac{400}{1} & -\frac{-40}{1}
+\end{bmatrix} =
+\begin{bmatrix}
+0 & 1 \\
+-400 & 40
+\end{bmatrix}.
+\end{align}
+
+Step 3: QR Decomposition\\
+The QR decomposition involves factorizing $A$ into:
+\begin{align}
+A_n &= Q_n R_n,
+\end{align}
+where $Q_n$ is an orthogonal matrix and $R_n$ is an upper triangular matrix.
+
+Step 4: Iterative Update of the Matrix\\
+At each iteration, update $A$ as:
+\begin{align}
+A_{n+1} &= R_n Q_n.
+\end{align}
+
+Repeat this process until $A_n$ converges to an upper triangular matrix. The diagonal elements of the final $A_n$ are the eigenvalues, which are the roots of the quadratic equation.
+
+Step 5: Roots of the Equation\\
+After sufficient iterations, the eigenvalues of $A$ converge to the roots of the quadratic equation $l^2 - 40l + 400 = 0$. The roots are:
+\begin{align}
+l &= 20 \quad \text{(repeated root)}.
+\end{align}
+on running the code for above QR approach the output is ,\\
+\texttt{Roots of the quadratic equation: [20.20000494 19.79999506]}
+\end{itemize}
+\end{document}
+

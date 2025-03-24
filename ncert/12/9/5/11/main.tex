@@ -1,0 +1,149 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{circuitikz}
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+    text width=4em, text centered, rounded corners, minimum height=3em]
+\tikzstyle{sum} = [draw, fill=blue!10, circle, minimum size=1cm, node distance=1.5cm]
+\tikzstyle{input} = [coordinate]
+\tikzstyle{output} = [coordinate]
+
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{9-9.5-11}
+\author{EE24BTECH11063 - Y. Harsha Vardhan Reddy}
+ \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{Question}:\\
+For the following differential equation, find the particular solution satisfying the given condition:\\
+$(x + y)\;dy + (x - y)\;dx = 0;\;y=1 \text{ when } x=1$\\
+\solution \\
+First let us solve the given differential equation theoritically and then do it computationally and verify if they are equal \\
+\begin{align}
+    {\brak{x + y}\;dy + \brak{x - y}\;dx = 0}
+\end{align}
+or \begin{align}
+    \frac{dy}{dx}=\frac{y-x}{y+x}
+\end{align}
+Let \begin{align}
+    F\brak{x,y}=\frac{y-x}{y+x}
+\end{align}
+then \begin{align}
+    F\brak{\alpha x,\alpha y}={\alpha}^0 \times \frac{y-x}{y+x}
+\end{align}
+Therefore, this is a homogeneous equation in x and y\\
+Let \begin{align}
+    y = v x 
+\end{align}
+or \begin{align}
+    v + x \frac{dv}{dx} = \frac{v-1}{v+1}
+\end{align}
+or \begin{align}
+    x\frac{dv}{dx}=\frac{v-1}{v+1}-v
+\end{align}
+or \begin{align}
+    x\frac{dv}{dx}=-\frac{v^2+1}{v+1}
+\end{align}
+or \begin{align}
+    \frac{v+1}{v^2+1}\cdot dv = -\frac{dx}{x}
+\end{align}
+Integrating on Both sides, \begin{align}
+   \int \frac{v}{v^2+1}\cdot dv + \int\frac{1}{v^2+1}\cdot dv = -\int \frac{dx}{x}
+\end{align}
+or \begin{align}
+    \frac{1}{2}\ln(v^2+1) + \tan^{-1}{\brak{v}} = - \ln{x} + c
+\end{align}
+By sustituting $v=\frac{y}{x}$ ,
+\begin{align}
+    \frac{1}{2}\ln \brak{\frac{y^2}{x^2}+1} + \tan^{-1}{\brak{\frac{y}{x}}} = - \ln{x} + c  
+    \label{0.12}
+\end{align}
+(where, c is the constant of integration)
+By substituting $x=1 \text{ and } y=1$ ,
+\begin{align}
+    c = \frac{1}{2}\ln{2} + \frac{\pi}{4}
+\end{align}
+Final equation,
+\begin{align}
+    \frac{1}{2}\ln \brak{\frac{y^2}{x^2}+1} + \tan^{-1}{\brak{\frac{y}{x}}} = - \ln{x} + \frac{1}{2}\ln{2} + \frac{\pi}{4}   
+\end{align}
+Now let us verify this computationally
+From definition of $\frac{dy}{dx}$,
+\begin{align}
+    y_{n+1}=y_{n}+\frac{dy}{dx}\cdot h    
+\end{align}
+(where h is small number tending to zero)
+From the differential equation given,
+\begin{align}
+    \frac{dy}{dx}=\frac{y_n-x_n}{y_n+x_n}
+\end{align}
+By substituting,
+\begin{align}
+    y_{n+1}=y_{n}+\brak{\frac{y_n-x_n}{y_n+x_n}}\cdot h
+\end{align}
+By taking $x_1=1 \text{ and } y_1=1$  and $h=0.04$ going till $x=3$ by iterating through the loop and finding $y_2,y_3,\cdots , y_{500}$ and plotting the graph the implicit function we can verify if the function we got by solving the differential equation mathematically.
+The comparision between theoretical and simulated graphs is shown in the following page ~\ref{fig:1}\\
+Clearly, both theoretical and simulated curves are coinciding and Hence the theoretical solution is verified.
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\columnwidth]{figs/Figure_1.png}
+    \caption{}
+    \label{fig:1}
+\end{figure}
+\end{document}
+
+
+
+
+

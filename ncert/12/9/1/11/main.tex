@@ -1,0 +1,117 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{9.1.11}
+\author{EE24BTECH11010 - Balaji B}
+ \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+\textbf{Question}:\\
+Plot a solution to the following differential equation: $\brak{\frac{d^2y}{dx^2}}^3 + \brak{\frac{dy}{dx}}^2 + \sin{\brak{\frac{dy}{dx}}} + 1 = 0$
+\\ \\
+\solution
+An exact theoretical solution using known methods of solving differential equations was not found; however, it can be approximated to a pretty good degree of precision. Euler's method will be used to obtain a plot of the solution\\
+Computational Solution:\\
+By first principle of derivatives,
+\begin{align}
+    y^{\prime}\brak{t} = \lim_{h\to 0}\frac{y\brak{t+h} - y\brak{t}}{h}\\
+    y\brak{t+h} = y\brak{t} + hy^{\prime}\brak{t}
+\end{align}
+Let $y^{i}$ be the $i^{th}$ derivative of the function, $m$ be the order of the differential equation. Set $y_1=y, y_2=y^{1}, y_3=y^{2} \dots$, and so on.\\
+We obtain the system,
+\begin{align}
+    \myvec{y_1^{\prime} \\ y_2^{\prime} \\ \vdots \\ y_{m-1}^{\prime} }&=\myvec{y_2 \\ y_3 \\ \vdots \\ y_m}\\
+y_m^{\prime}&=f\brak{x, y_1, y_2, \dots, y_m}
+\end{align}
+
+Generalizing the system according to Euler's form\\
+\begin{align}
+  \myvec{y_1\brak{x+h} \\ \vdots \\ y_{m-1}\brak{x+h} \\ y_m\brak{x+h}} &=\myvec{y_1\brak{x} \\ \vdots \\ y_{m-1}\brak{x} \\ y_m\brak{x}} + h\myvec{y_2\brak{x} \\ \vdots \\ y_m\brak{x} \\f\brak{x, y_1, y_2, \dots, y_m} }
+\end{align}
+\begin{align}
+  \vec{y}\brak{x+h} &= \vec{y}\brak{x} + h\myvec{0 & 1 & 0 & 0 & \dots & 0 & 0\\ 0 & 0 & 1 & 0 & \dots & 0 & 0\\0 & 0 & 0 & 1 & \dots & 0 & 0\\\vdots & \vdots & \vdots & \vdots& \ddots & \vdots & \vdots\\
+  0 & 0 & 0 & 0 & \dots & 0 & 1\\0 & 0 & 0 & 0 & \dots & 0 &\frac{f\brak{x, y_1, y_2, \dots, y_m}}{y_m\brak{x}}}\vec{y}\brak{x}
+  \end{align}
+  \begin{align}
+  \vec{y}\brak{x+h} &= \myvec{1 & h & 0 & 0 & \dots & 0 & 0\\ 0 & 1 & h & 0 & \dots & 0 & 0\\0 & 0 & 1 & h & \dots & 0 & 0\\\vdots & \vdots & \vdots & \vdots& \ddots & \vdots & \vdots\\
+  0 & 0 & 0 & 0 & \dots & 1 & h\\0 & 0 & 0 & 0 & \dots & 0 & 1+\frac{f\brak{x, y_1, y_2, \dots, y_m}}{y_m\brak{x}}}\vec{y}\brak{x}
+\end{align}
+Discretizing the steps we get,
+\begin{align}
+  \vec{y}_{n+1}&=\myvec{1 & h & 0 & 0 & \dots & 0 & 0\\ 0 & 1 & h & 0 & \dots & 0 & 0\\0 & 0 & 1 & h & \dots & 0 & 0\\\vdots & \vdots & \vdots & \vdots& \ddots & \vdots & \vdots\\
+  0 & 0 & 0 & 0 & \dots & 1 & h\\0 & 0 & 0 & 0 & \dots & 0 &1+\frac{f\brak{x, y_1, y_2, \dots, y_m}}{\brak{y_m}_n}}\vec{y}_{n}\\
+    x_{n+1}&=x_n+h  
+\end{align}
+Where,
+\begin{align}
+  \vec{y}_n=\myvec{y_1\brak{x_n} \\ y_2\brak{x_n} \\ \vdots \\ y_m\brak{x_n}}
+\end{align}
+Smaller values of step size $h$ will give more precise plots. We obtain points to plot by iterating repeatedly. 
+The given differential equation can be written as
+\begin{align}
+    \brak{\frac{d^2y}{dx^2}}^3 = -\brak{\frac{dy}{dx}}^2 - \sin{\brak{\frac{dy}{dx}}} - 1 
+\end{align}
+Here order $m$ is 2.
+\begin{align}
+  \vec{y}_{n+1}=\myvec{1 & h & 0 \\ 0 & 1 & h \\ 0 & 0 & 1+\frac{\brak{-\brak{\brak{y_1}_n^2 - \sin\brak{y_1}_n - 1 }}^{\frac{1}{3}} }{\brak{y_2}_n}}\vec{y}_{n}
+\end{align}
+Note, here the vector $\vec{y}$ is not to be confused with $y_i$ which represents a function, namely the ${i+1}^{th}$ derivative of $y\brak{x}$ Below is the plot for given curve  based on initial conditions, obtained by iterating through the above equation.
+
+\begin{figure}[h!]
+   \centering
+   \includegraphics[width=1\columnwidth]{figs/fig1.png}
+   \caption{Computational solution of $\brak{\frac{d^2y}{dx^2}}^3 + \brak{\frac{dy}{dx}}^2 + \sin{\brak{\frac{dy}{dx}}} + 1 = 0$}
+   \label{stemplot}
+\end{figure}
+\end{document}
