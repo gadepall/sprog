@@ -1,0 +1,175 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal,12pt,onecolumn]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{amsmath}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{listings}
+\usepackage{gvv}                                        
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{multicol}
+\usepackage{circuitikz}
+\usetikzlibrary{patterns}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}{Example}[section]
+\newtheorem{definition}[problem]{Definition}
+\newcommand{\BEQA}{\begin{eqnarray}}
+\newcommand{\EEQA}{\end{eqnarray}}
+\theoremstyle{remark}
+
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{Scientific Calculator}
+\author{EE24BTECH11020    Ellanti Rohith}
+\maketitle
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+
+
+
+\section{Introduction}
+This report details the implementation of a scientific calculator using an Arduino Uno, a 16x2 LCD display, and a 5x5 matrix keypad. The calculator supports:
+\begin{enumerate}
+    \item Standard arithmetic operations (+,-, *, /)
+    \item Trigonometric functions (sin, cos, tan)
+    \item Logarithmic calculations (log, ln)
+    \item Exponentiation and square root
+    \item Factorial calculations
+    \item Modular arithmetic
+    \item Shift functionality for inverse trigonometric functions, and mathematical constants.
+\end{enumerate}
+
+\section{Hardware Components}
+\begin{enumerate}
+    \item \textbf{Arduino Uno} - Microcontroller for processing inputs and outputs
+    \item \textbf{16x2 LCD Display} - Displays user input and results
+    \item \textbf{5x5 Button Matrix Keypad} - Used for user input (numbers, functions, operations)
+    \item \textbf{10k$\Omega$ Potentiometer} - Adjusts LCD contrast
+    \item \textbf{Breadboard and Jumper Wires} - For making circuit connections
+    \item \textbf{Power Supply} - Arduino powered via USB or external 5V source
+\end{enumerate}
+
+\section{Circuit Connections}
+
+\subsection{LCD to Arduino Connections}
+The \textbf{16x2 LCD Display} is connected to the \textbf{Arduino Uno} in \textbf{4-bit mode}, using six digital/analog pins for communication.
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{LCD Pin} & \textbf{Arduino Pin} & \textbf{Function} \\
+\hline
+VSS & GND & Ground \\
+VDD & +5V & Power Supply \\
+V0 & Potentiometer (10k$\Omega$) & Contrast Adjustment \\
+RS & D12 & Register Select \\
+RW & GND & Always set to Ground (Write mode) \\
+E & D13 & Enable Signal \\
+D4 & A0 & Data Line 4 \\
+D5 & A1 & Data Line 5 \\
+D6 & A2 & Data Line 6 \\
+D7 & A3 & Data Line 7 \\
+A (LED +) & +5V & LCD Backlight Positive \\
+K (LED -) & GND & LCD Backlight Negative \\
+\hline
+\end{tabular}
+\end{center}
+
+The \textbf{10k$\Omega$ potentiometer} is used to adjust the contrast of the LCD. One terminal of the potentiometer is connected to +5V, the other to GND, and the middle pin is connected to V0 on the LCD.
+
+\subsection{Keypad to Arduino Connections}
+The \textbf{5x5 keypad matrix} consists of \textbf{5 rows (outputs)} and \textbf{5 columns (inputs)}. The Arduino scans the keypad by driving rows LOW and checking which column reads LOW.
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Keypad Pin} & \textbf{Arduino Pin} & \textbf{Function} \\
+\hline
+Row 1 (R1) & D2 & Output \\
+Row 2 (R2) & D3 & Output \\
+Row 3 (R3) & D4 & Output \\
+Row 4 (R4) & D5 & Output \\
+Row 5 (R5) & D6 & Output \\
+Column 1 (C1) & D7 & Input (Pull-up) \\
+Column 2 (C2) & D8 & Input (Pull-up) \\
+Column 3 (C3) & D9 & Input (Pull-up) \\
+Column 4 (C4) & D10 & Input (Pull-up) \\
+Column 5 (C5) & D11 & Input (Pull-up) \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Keypad Operation}
+The Arduino scans the keypad using the following steps:
+\begin{enumerate}
+    \item The \textbf{Arduino sets one row LOW} at a time while keeping others HIGH.
+    \item It checks which \textbf{column reads LOW}, indicating a pressed key.
+    \item Once detected, the Arduino determines which key was pressed using the \textbf{row-column mapping}.
+    \item The \textbf{Shift key (S)} toggles alternate functions, and results are displayed on the LCD.
+\end{enumerate}
+
+\section{Keypad Layout}
+\subsection{Standard Mode}
+\begin{verbatim}
+  {'7', '8', '9', '/', 's'},  // s = sin
+  {'4', '5', '6', '*', 'c'},  // c = cos
+  {'1', '2', '3', ' ', 't'},  // t = tan
+  {'0', '.', '=', '+', 'l'},  // l = log
+  {'C', 'S', '^', 'R', 'e'}   // S = Shift, R = sqrt, e = exp
+\end{verbatim}
+
+\subsection{Shift Mode}
+\begin{verbatim}
+  {'P', 'E', '!', 'm', 'S'},  // P = pi, E = Euler, ! = factorial, m = mod
+  {'a', 'b', 'c', 'd', 'C'},  // Unused characters
+  {'s', 'c', 't', ' ', 'I'},  // s = asin, c = acos, t = atan, I = inverse
+  {'n', 'L', 'X', '+', 'h'},  // n = ln, L = log10, X = e^x
+  {'C', 'S', '^', 'R', 'e'}   // S = Shift, R = sqrt, e = exp
+\end{verbatim}
+
+
+
+
+\section{Code Implementation}
+
+
+
+The  code for the calculator is available at:  
+\url{https://github.com/ellantirohith/EE1003/blob/main/Reports/Calc/codes/main.c}
+
+\section{Conclusion}
+This scientific calculator effectively handles standard and advanced functions using a matrix keypad. The shift key extends its capability without requiring extra buttons. 
+
+\end{document}
