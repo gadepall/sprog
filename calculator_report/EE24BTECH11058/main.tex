@@ -1,0 +1,89 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{float}
+\title{\textbf{Hardware Project - Scientific Calculator}}
+\author{P. Shiny Diavajna\\EE24BTECH11058}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This report presents the design and implementation of a scientific calculator using the ATmega328P microcontroller and an LCD display. The calculator performs basic arithmetic operations (addition, subtraction, multiplication, division), trigonometric functions (sine, cosine, tangent) and logarithmic functions (log , ln). The primary goal is to implement a versatile and efficient calculator that can display results on an LCD.
+
+\section{Hardware Components}
+The following hardware components were used in the project:
+\begin{itemize}
+    \item Arduino UNO
+    \item 16x2 LCD Display
+    \item 23 Push Buttons
+    \item Resistors (9 15k$\Omega$ ,1 2k$\Omega$, 1 1k$\Omega$,1 1.5 k $\Omega$)
+    \item Breadboard
+    \item Jumper Wires and connecting wires 
+    \item Power Supply 
+\end{itemize}
+
+\section{Software and Tools}
+The following software and tools were utilized:
+\begin{itemize}
+    \item AVR GCC Compiler
+    \item ArduinoDroid for uploading the HEX file
+    \item Termux for file management and HEX file handling
+    \item Mathematical Functions (math.h) for trigonometric calculations
+    \item LCD Control (util/delay.h) for time management
+\end{itemize}
+
+
+\section{Circuit Design}
+\begin{enumerate}
+    \item Connect 5V and Ground from the Arduino onto the breadboard.
+    \item Connect the push buttons in 2 rows (each from grid to power lines not connected to Ground or 5V). The first row must have 10 buttons (for digits), and the second row must have 13 buttons (for functions). Connect one terminal of each button to Ground.
+\end{enumerate}
+ 
+\subsection{Connections}
+    \input{Tables/table1.tex}
+\newpage
+\subsection{Push Button Designations}
+    \input{Tables/table2.tex}
+
+\subsection{Circuit Diagram}
+\begin{figure}[H] 
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/tinkercad.jpeg}
+    \caption{Circuit Diagram of the Scientific Calculator}
+    \label{fig:circuit}
+\end{figure}
+
+
+  
+
+ 
+
+\section{AVR Code}
+ The code follows a structured approach:
+\begin{itemize}
+    \item Initialization of LCD and keypad
+    \item Interrupt-based button handling
+    \item Mathematical function execution
+    \item Displaying results on the LCD
+\end{itemize}
+
+
+ 
+\section{Results}
+The scientific calculator accurately calculates trigonometric functions, basic arithmetic operations and logarithmic functions and displays the results on the LCD display.
+
+ 
+ 
+\section{Conclusion}
+This project successfully implemented a basic scientific calculator using AVR-GCC and embedded C. The system demonstrates reliable performance in performing calculations while maintaining a simple user interface.\\\\
+Acknowlegdement : \\Circuit designed with the help of designed with the help of Akshara EE24BTECH11003, Akshita EE24BTECH11054\\
+Code sourced from Akshara EE24BTECH11003, Teja Vardhan EE24BTECH11034, Rasagna EE24BTECH11023, Akhila EE24BTECH11055
+
+
+
+\end{document}
+
