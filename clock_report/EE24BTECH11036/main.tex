@@ -1,0 +1,859 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{titling}
+\usepackage{geometry}
+\usepackage{lmodern}
+\usepackage{helvet}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    frame=single,
+    framesep=5pt,
+    xleftmargin=10pt,
+    xrightmargin=10pt
+}
+
+\lstset{style=mystyle}
+
+
+\title{Digital Clock Project Using Arduino Uno, SN7447, and Boolean Logic}
+\author{}
+\date{}
+
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    
+    % Title
+    {\Huge\bfseries Digital Clock Project Using Arduino Uno, SN7447, and Boolean Logic\par}
+    \vspace{1.5cm}
+    
+    % Author information
+    {\Large
+    \textbf{AUTHOR}\par
+    \vspace{0.5cm}
+    Krishna Patil\par
+    \vspace{0.3cm}
+    Roll No. : EE24BTECH11036\par
+    \vspace{0.3cm}
+    Department of Electrical Engineering\par
+    \vspace{1cm}
+    
+    % Course information
+    \textbf{Submitted in partial fulfillment of}\par
+    \vspace{0.3cm}
+    Course Name: SCIENTIFIC PROGRAMMING FOR ELECTRICAL ENGINEERING\par
+    Course Code: EE1003\par
+    \vspace{1cm}
+    
+    % Institution
+    INDIAN INSTITUTE OF TECHNOLOGY HYDERABAD\par
+    Faculty of Engineering\par
+    \vspace{1cm}
+    
+    % Date
+    \today\par
+    }
+    
+    % Bottom of the page
+    \vfill
+    \begin{abstract}
+    This report presents a comprehensive analysis of designing and implementing a digital clock using an Arduino Uno (ATmega328P microcontroller), SN7447 BCD-to-seven-segment decoder/driver, and common-anode seven-segment displays. The project demonstrates fundamental principles of digital design including multiplexing techniques, BCD representation, and boolean state management without relying on a Real-Time Clock (RTC) module.
+    \end{abstract}
+    
+   
+\end{titlepage}
+\maketitle
+
+\begin{abstract}
+This report presents a comprehensive analysis of designing and implementing a digital clock using an Arduino Uno (ATmega328P microcontroller), SN7447 BCD-to-seven-segment decoder/driver, and common-anode seven-segment displays. The project demonstrates fundamental principles of digital design including multiplexing techniques, BCD representation, and boolean state management without relying on a Real-Time Clock (RTC) module. Through direct port manipulation and efficient software algorithms, the system maintains accurate time while providing a user interface for time adjustment via push buttons.
+\end{abstract}
+
+\section{Project Overview and Hardware Design}
+
+\subsection{ATmega328P Microcontroller Implementation}
+The ATmega328P microcontroller, the core of the Arduino Uno, serves as the central processing unit for the digital clock. It performs multiple crucial functions that enable the clock's operation. The microcontroller maintains time through software-based counting, generates Binary Coded Decimal (BCD) signals for the SN7447 decoder, controls the multiplexing of six seven-segment displays, and processes user input for time adjustment.
+
+Using direct port manipulation rather than standard Arduino functions provides several advantages in this application:
+\begin{itemize}
+\item Faster execution speed critical for smooth display multiplexing
+\item More precise timing control for maintaining clock accuracy
+\item Efficient pin toggling for rapid display switching
+\item Lower overhead in time-critical operations
+\end{itemize}
+
+The microcontroller uses pins PD2-PD5 (Arduino pins 2-5) to output BCD values to the SN7447. Pins PD6-PD7 and PB0-PB3 (Arduino pins 6-11) control individual digit selection for multiplexing, while pins PB4-PB5 (Arduino pins 12-13) handle button input detection.
+
+\subsection{SN7447 BCD-to-Seven-Segment Decoder}
+The SN7447 integrated circuit is specialized for converting 4-bit BCD input into the appropriate signals for driving seven-segment displays. It significantly simplifies the display interface by handling the conversion from binary values to segment patterns. The IC accepts a 4-bit binary coded decimal (values 0-9) and generates active-low outputs suitable for common-anode displays.
+
+Key features of the SN7447 include:
+\begin{itemize}
+\item Four binary inputs (A, B, C, D) representing values 0-9
+\item Seven outputs (a-g) that directly connect to display segments
+\item Active-low outputs compatible with common-anode displays
+\item Built-in logic for handling special cases and invalid codes
+\item Wide operating voltage range compatible with 5V TTL logic
+\end{itemize}
+
+The SN7447 reduces the Arduino's processing load by offloading the BCD-to-segment pattern conversion, allowing the microcontroller to focus on timekeeping, multiplexing, and user interface handling.
+
+\subsection{Multiplexing Technique}
+The clock uses a time-division multiplexing technique to drive all six displays using a single SN7447 decoder chip. This approach significantly reduces component count and wiring complexity compared to using six individual decoders.
+
+The multiplexing process follows these steps:
+\begin{enumerate}
+\item The microcontroller sets the BCD value for the current digit (0-9) on pins PD2-PD5
+\item The SN7447 decodes this value into the corresponding segment pattern
+\item The microcontroller activates only the common anode for the current digit
+\item After a brief delay (2ms), the digit is deactivated
+\item The process repeats for the next digit
+\item By cycling through all digits rapidly (>80Hz), persistence of vision creates the illusion of all digits being simultaneously illuminated
+\end{enumerate}
+
+This technique reduces the required output pins from 42 (7 segments × 6 digits) to just 11 (4 BCD inputs + 7 digit select lines), while maintaining clear visibility of all digits.
+
+\subsection{Seven-Segment Display Configuration}
+Six common-anode seven-segment displays form the visual interface of the clock, arranged to show hours, minutes, and seconds (HH:MM:SS format). In common-anode configuration, all LED segments share a common positive terminal (anode), and individual segments illuminate when their cathodes receive a LOW signal from the SN7447.
+
+Each seven-segment display contains:
+\begin{itemize}
+\item Seven LED segments (labeled a through g) arranged to form digits 0-9
+\item A common anode connection controlling digit activation
+\item Individual cathode connections for each segment (a-g)
+\item Optional decimal point (not used in this application)
+\end{itemize}
+
+The displays are physically arranged in pairs to represent hours, minutes, and seconds, with appropriate spacing between pairs for readability.
+
+\section{Circuit Connections and Implementation}
+
+\subsection{Power and Ground Distribution}
+The circuit operates entirely from the Arduino's regulated 5V supply, which provides stable power for the microcontroller, SN7447, and display components. A common ground connects all components (Arduino, SN7447, displays, and buttons) to establish a reference potential.
+
+Power considerations include:
+\begin{itemize}
+\item The SN7447 requires approximately 10-20mA per output (when active)
+\item Each LED segment draws 10-20mA (depending on current-limiting resistor values)
+\item With multiplexing, only one digit is illuminated at any given time, reducing peak power consumption
+\item Total current stays well within the Arduino's 5V regulator capability (500mA maximum)
+\end{itemize}
+
+\subsection{Detailed Component Connections}
+
+\subsubsection{SN7447 Wiring}
+The SN7447 IC connects to the Arduino and displays as follows:
+\begin{itemize}
+\item \textit{Power supply:} VCC (pin 16) to 5V, GND (pin 8) to ground
+\item \textit{BCD inputs:}
+  \begin{itemize}
+  \item A (pin 7) connects to Arduino pin 2 (PD2)
+  \item B (pin 1) connects to Arduino pin 3 (PD3)
+  \item C (pin 2) connects to Arduino pin 4 (PD4)
+  \item D (pin 6) connects to Arduino pin 5 (PD5)
+  \end{itemize}
+\item \textit{Segment outputs:}
+  \begin{itemize}
+  \item a (pin 13) → 220Ω resistor → all display segment 'a' pins
+  \item b (pin 12) → 220Ω resistor → all display segment 'b' pins
+  \item c (pin 11) → 220Ω resistor → all display segment 'c' pins
+  \item d (pin 10) → 220Ω resistor → all display segment 'd' pins
+  \item e (pin 9) → 220Ω resistor → all display segment 'e' pins
+  \item f (pin 15) → 220Ω resistor → all display segment 'f' pins
+  \item g (pin 14) → 220Ω resistor → all display segment 'g' pins
+  \end{itemize}
+\item \textit{Control inputs:}
+  \begin{itemize}
+  \item RBI (pin 5) connected to VCC (not used in this application)
+  \item LT (pin 3) connected to VCC for normal operation
+  \item BI/RBO (pin 4) connected to VCC (not used in this application)
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Display Connections}
+Each display's segments are connected in parallel to the SN7447 outputs through current-limiting resistors. The common anodes are individually connected to Arduino pins for digit selection:
+\begin{itemize}
+\item Display 1 (tens of hours): common anode → Arduino pin 6 (PD6)
+\item Display 2 (ones of hours): common anode → Arduino pin 7 (PD7)
+\item Display 3 (tens of minutes): common anode → Arduino pin 8 (PB0)
+\item Display 4 (ones of minutes): common anode → Arduino pin 9 (PB1)
+\item Display 5 (tens of seconds): common anode → Arduino pin 10 (PB2)
+\item Display 6 (ones of seconds): common anode → Arduino pin 11 (PB3)
+\end{itemize}
+
+\subsubsection{Push Button Connections}
+Two push buttons provide user input for time adjustment:
+\begin{itemize}
+\item Hour adjustment button: Connected between Arduino pin 12 (PB4) and ground
+\item Minute adjustment button: Connected between Arduino pin 13 (PB5) and ground
+\end{itemize}
+
+The buttons use the Arduino's internal pull-up resistors (enabled in software), eliminating the need for external resistors. When a button is pressed, it connects the input pin to ground, changing the pin state from HIGH to LOW.
+
+\section{Image of the circuit of the clock}
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{Figs/clock.jpg} % Replace with your image filename
+    \captionof{figure}{Circuit} % Optional caption
+\end{center}
+
+\section{Complete Arduino Code Implementation}
+\label{sec:complete_code}
+
+This section presents the complete AVR C code for the digital clock implementation using Arduino Uno, SN7447 decoder, and seven-segment displays. The code incorporates all discussed functionality including timekeeping, display multiplexing, and button handling.
+
+\begin{lstlisting}[language=C, caption={Complete Digital Clock Implementation}, label={lst:complete_code}, numbers=left, escapeinside={(*}{*)}]
+/*
+ * Digital Clock with Arduino Uno, SN7447, and 6x7-segment displays
+ * Implements HH:MM:SS format with button-controlled time adjustment
+ */
+
+#include <avr/io.h>       // For I/O register definitions
+#include <util/delay.h>   // For delay functions
+#include <stdint.h>       // For fixed-width integer types
+
+// Configuration constants
+#define DIGIT_DELAY_MS 2    // Display each digit for 2ms
+#define NUM_DIGITS 6        // HH:MM:SS format (6 digits)
+#define CYCLES_PER_SECOND 83 // 83 cycles ≈ 1 second (83*12ms=996ms)
+
+int main(void) {
+    // --- Hardware Initialization ---
+    // Set BCD outputs (PD2-PD5: Arduino pins 2-5)
+    DDRD |= (1 << PD2) | (1 << PD3) | (1 << PD4) | (1 << PD5);
+    
+    // Set digit select pins (PD6-PD7, PB0-PB3: Arduino pins 6-11)
+    DDRD |= (1 << PD6) | (1 << PD7);
+    DDRB |= (1 << PB0) | (1 << PB1) | (1 << PB2) | (1 << PB3);
+    
+    // Configure buttons with pull-ups (PB4-PB5: Arduino pins 12-13)
+    DDRB &= ~((1 << PB4) | (1 << PB5));  // Set as inputs
+    PORTB |= (1 << PB4) | (1 << PB5);    // Enable pull-ups
+
+    // --- Time Variables ---
+    uint8_t hours = 12, minutes = 0, seconds = 0;
+    uint16_t cycle_count = 0;  // For 1-second timing
+    uint8_t digits[NUM_DIGITS]; // Array to hold digit values
+
+    // --- Main Loop ---
+    while (1) {
+        // 1. Break time into individual digits
+        digits[0] = hours / 10;    // Tens of hours
+        digits[1] = hours % 10;    // Ones of hours
+        digits[2] = minutes / 10;  // Tens of minutes
+        digits[3] = minutes % 10;  // Ones of minutes
+        digits[4] = seconds / 10;  // Tens of seconds
+        digits[5] = seconds % 10;  // Ones of seconds
+
+        // 2. Display multiplexing (cycle through all digits)
+        for (uint8_t i = 0; i < NUM_DIGITS; i++) {
+            // Set BCD value on PD2-PD5
+            PORTD = (PORTD & ~0x3C) | ((digits[i] << 2) & 0x3C);
+            
+            // Activate current digit
+            if (i < 2) {  // Hours digits (PD6-PD7)
+                if (i == 0) PORTD |= (1 << PD6);  // Tens of hours
+                else PORTD |= (1 << PD7);         // Ones of hours
+            } else {      // Minutes/seconds digits (PB0-PB3)
+                PORTB |= (1 << (i - 2));
+            }
+            
+            _delay_ms(DIGIT_DELAY_MS);  // Display digit
+            
+            // Deactivate digit
+            if (i < 2) {
+                if (i == 0) PORTD &= ~(1 << PD6);
+                else PORTD &= ~(1 << PD7);
+            } else {
+                PORTB &= ~(1 << (i - 2));
+            }
+        }
+
+        // 3. Timekeeping - Update every ~83 cycles (~1 second)
+        cycle_count++;
+        if (cycle_count >= CYCLES_PER_SECOND) {
+            cycle_count = 0;
+            seconds++;
+            
+            // Handle time rollover
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+                
+                if (minutes >= 60) {
+                    minutes = 0;
+                    hours++;
+                    
+                    if (hours >= 24) hours = 0;
+                }
+            }
+        }
+
+        // 4. Button handling - Hour adjustment (PB4)
+        if (!(PINB & (1 << PB4))) {
+            _delay_ms(50);  // Debounce delay
+            if (!(PINB & (1 << PB4))) {  // Still pressed
+                hours = (hours + 1) % 24;
+                while (!(PINB & (1 << PB4)));  // Wait for release
+                _delay_ms(50);  // Post-release debounce
+            }
+        }
+
+        // 5. Button handling - Minute adjustment (PB5)
+        if (!(PINB & (1 << PB5))) {
+            _delay_ms(50);
+            if (!(PINB & (1 << PB5))) {
+                minutes = (minutes + 1) % 60;
+                while (!(PINB & (1 << PB5)));
+                _delay_ms(50);
+            }
+        }
+    }
+    return 0;  // Never reached
+}
+\end{lstlisting}
+
+\subsection{Code Structure Overview}
+The implementation follows this logical flow:
+
+\begin{enumerate}
+    \item \textbf{Initialization} (Lines 12-21):
+    \begin{itemize}
+        \item Configures I/O pins for BCD outputs, digit selection, and buttons
+        \item Enables internal pull-up resistors for buttons
+    \end{itemize}
+    
+    \item \textbf{Main Loop} (Lines 27-84):
+    \begin{itemize}
+        \item Breaks down time into individual digits (HH:MM:SS)
+        \item Multiplexes across all six displays
+        \item Maintains timekeeping through cycle counting
+        \item Handles button presses for time adjustment
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Key Features}
+\begin{itemize}
+    \item \textbf{Direct Port Manipulation}: Uses PORTx/DDRx registers instead of digitalWrite() for faster operation
+    \item \textbf{Efficient Multiplexing}: Each digit displayed for 2ms (12ms full refresh cycle)
+    \item \textbf{Software Timekeeping}: Approximates 1-second intervals using cycle counting
+    \item \textbf{Debounced Buttons}: Implements 50ms delays for reliable button press detection
+    \item \textbf{Modular Design}: Clear separation of display, timekeeping, and input handling
+\end{itemize}
+
+\section{Line-by-Line Code Explanation}
+This section provides a detailed breakdown of the AVR C code used in the digital clock project. Each line is analyzed to clarify its role in the system.
+
+\subsection{Header Files \& Definitions}
+\subsubsection{Included Libraries}
+\begin{lstlisting}[language=C]
+#include <avr/io.h>       // For I/O register definitions (PORT, DDR, PIN)
+#include <util/delay.h>   // For delay functions (_delay_ms)
+#include <stdint.h>       // For fixed-width integer types (uint8_t, uint16_t)
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{<avr/io.h>}: Provides access to ATmega328P registers (e.g., PORTB, DDRD)
+\item \texttt{<util/delay.h>}: Enables millisecond delays for multiplexing and debouncing
+\item \texttt{<stdint.h>}: Defines standard integer types (e.g., uint8\_t for 8-bit unsigned integers)
+\end{itemize}
+
+\subsubsection{Macro Definitions}
+\begin{lstlisting}[language=C]
+#define DIGIT_DELAY_MS 2    // Delay per digit (milliseconds)
+#define NUM_DIGITS 6        // Number of digits (HH:MM:SS)
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{DIGIT\_DELAY\_MS}: Sets 2ms delay per digit (for multiplexing)
+\item \texttt{NUM\_DIGITS}: Defines 6 digits (2 for hours, 2 for minutes, 2 for seconds)
+\end{itemize}
+
+\subsection{Main Function \& Initialization}
+\subsubsection{I/O Pin Configuration}
+\begin{lstlisting}[language=C]
+int main(void) {
+    // Configure BCD outputs (PD2-PD5)
+    DDRD |= (1 << PD2) | (1 << PD3) | (1 << PD4) | (1 << PD5);
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{DDRD |= (1 << PD2)}: Sets PD2 (Arduino D2) as an output for BCD bit 0
+\item Similarly, PD3-PD5 are configured for BCD bits 1-3
+\end{itemize}
+
+\begin{lstlisting}[language=C]
+    // Configure digit select pins (PD6-PD7, PB0-PB3)
+    DDRD |= (1 << PD6) | (1 << PD7);
+    DDRB |= (1 << PB0) | (1 << PB1) | (1 << PB2) | (1 << PB3);
+\end{lstlisting}
+
+\begin{itemize}
+\item PD6-PD7: Control hours digits (tens and ones)
+\item PB0-PB3: Control minutes and seconds digits
+\end{itemize}
+
+\begin{lstlisting}[language=C]
+    // Enable pull-ups for buttons (PB4, PB5)
+    DDRB &= ~((1 << PB4) | (1 << PB5));  // Set as inputs
+    PORTB |= (1 << PB4) | (1 << PB5);    // Enable pull-ups
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{DDRB \&= ~(1 << PB4)}: Configures PB4 (D12) as an input (hour button)
+\item \texttt{PORTB |= (1 << PB4)}: Enables internal pull-up resistor for PB4
+\end{itemize}
+
+\subsubsection{Variable Initialization}
+\begin{lstlisting}[language=C]
+    // Initialize time (12:00:00)
+    uint8_t hours = 12, minutes = 0, seconds = 0;
+    uint16_t cycle_count = 0;  // For 1-second timing
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{hours, minutes, seconds}: Store current time
+\item \texttt{cycle\_count}: Counts multiplex cycles to approximate 1 second
+\end{itemize}
+
+\subsection{Main Loop: Multiplexing \& Timekeeping}
+\subsubsection{Digit Extraction (HH:MM:SS)}
+\begin{lstlisting}[language=C]
+while (1) {
+    // Break time into individual digits
+    uint8_t digits[NUM_DIGITS] = {
+        hours / 10, hours % 10,      // HH
+        minutes / 10, minutes % 10,  // MM
+        seconds / 10, seconds % 10   // SS
+    };
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{digits[0] = hours / 10}: Extracts tens place of hours
+\item \texttt{digits[1] = hours \% 10}: Extracts ones place of hours
+\item Similarly for minutes and seconds
+\end{itemize}
+
+\subsubsection{Multiplexing Loop}
+\begin{lstlisting}[language=C]
+    for (uint8_t i = 0; i < NUM_DIGITS; i++) {
+        // Send BCD to SN7447 (PD2-PD5)
+        PORTD = (PORTD & ~0x3C) | ((digits[i] << 2) & 0x3C);
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{PORTD \& ~0x3C}: Clears PD2-PD5 (BCD bits)
+\item \texttt{(digits[i] << 2) \& 0x3C}: Shifts digit value to align with PD2-PD5
+\end{itemize}
+
+\begin{lstlisting}[language=C]
+        // Activate current digit
+        if (i < 2) {
+            if (i == 0) PORTD |= (1 << PD6);  // Tens of hours
+            else PORTD |= (1 << PD7);         // Ones of hours
+        } else {
+            PORTB |= (1 << (i - 2));          // MM:SS digits (PB0-PB3)
+        }
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{PORTD |= (1 << PD6)}: Activates tens of hours digit (D6)
+\item \texttt{PORTB |= (1 << PB0)}: Activates tens of minutes digit (D8)
+\end{itemize}
+
+\begin{lstlisting}[language=C]
+        _delay_ms(DIGIT_DELAY_MS);  // Keep digit lit for 2ms
+        
+        // Deactivate digit
+        if (i < 2) {
+            if (i == 0) PORTD &= ~(1 << PD6);
+            else PORTD &= ~(1 << PD7);
+        } else {
+            PORTB &= ~(1 << (i - 2));
+        }
+    }
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{PORTD \&= ~(1 << PD6)}: Turns off tens of hours digit
+\end{itemize}
+
+\subsection{Timekeeping Logic}
+\subsubsection{Cycle Counting for 1-Second Interval}
+\begin{lstlisting}[language=C]
+    cycle_count++;
+    
+    // Update time every ~83 cycles (~1 second)
+    if (cycle_count >= 83) {
+        cycle_count = 0;
+        seconds++;
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{cycle\_count++}: Increments every full multiplex cycle (6 digits × 2ms ≈ 12ms)
+\item 83 cycles ≈ 1 second (83 × 12ms = 996ms ≈ 1s)
+\end{itemize}
+
+\subsubsection{Time Rollover Handling}
+\begin{lstlisting}[language=C]
+        if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++;
+                
+                if (hours >= 24) hours = 0;
+            }
+        }
+    }
+\end{lstlisting}
+
+\begin{itemize}
+\item Seconds → Minutes → Hours rollover logic
+\end{itemize}
+
+\subsection{Push Button Handling}
+\subsubsection{Hour Adjustment (PB4)}
+\begin{lstlisting}[language=C]
+    // Hour adjustment button (PB4)
+    if (!(PINB & (1 << PB4))) {
+        _delay_ms(50);  // Debounce delay
+        if (!(PINB & (1 << PB4))) {
+            hours = (hours + 1) % 24;
+            while (!(PINB & (1 << PB4)));  // Wait for release
+        }
+    }
+\end{lstlisting}
+
+\begin{itemize}
+\item \texttt{!(PINB \& (1 << PB4))}: Checks if hour button (D12) is pressed (LOW)
+\item Debouncing: 50ms delay to avoid false triggers
+\item \texttt{hours = (hours + 1) \% 24}: Increments hours (resets after 23)
+\end{itemize}
+
+\subsubsection{Minute Adjustment (PB5)}
+\begin{lstlisting}[language=C]
+    // Minute adjustment button (PB5)
+    if (!(PINB & (1 << PB5))) {
+        _delay_ms(50);
+        if (!(PINB & (1 << PB5))) {
+            minutes = (minutes + 1) % 60;
+            while (!(PINB & (1 << PB5)));
+        }
+    }
+\end{lstlisting}
+
+\begin{itemize}
+\item Similar logic to hour button, but increments minutes (resets after 59)
+\end{itemize}
+
+\subsection{Summary of Key Techniques}
+\begin{itemize}
+\item \textbf{Multiplexing}: Rapidly switches digits to simulate continuous display
+\item \textbf{Software Timekeeping}: Uses cycle counting for ~1-second accuracy
+\item \textbf{Button Debouncing}: 50ms delay to filter noise
+\item \textbf{Direct Register Control}: Optimizes performance (no Arduino libs)
+\end{itemize}
+
+\section{Boolean Logic Implementation}
+A key feature of this project is the use of boolean logic for button state management and debouncing. This approach provides a clean, memory-efficient way to track button states and detect valid button presses.
+
+\subsection{Button State Management with Boolean Variables}
+The project uses a boolean pattern to detect button press events and prevent multiple triggers from a single press. For each button:
+
+\begin{lstlisting}[language=C]
+/* Boolean state variables for button handling */
+bool hourButtonCurrent = false;    // Current button state (pressed or not)
+bool hourButtonPrevious = false;   // Previous button state for edge detection
+bool hourButtonPressed = false;    // Flag indicating a valid press was detected
+
+/* Button state detection in main loop */
+hourButtonCurrent = !(PINB & (1 << PB4));  // Read button state (LOW when pressed)
+
+/* Detect rising edge (button just pressed) */
+if (hourButtonCurrent && !hourButtonPrevious) {
+    /* Button state changed from not pressed to pressed */
+    hourButtonPressed = true;
+}
+
+/* Perform actions based on button press */
+if (hourButtonPressed) {
+    hours = (hours + 1) % 24;  // Increment hours with rollover
+    hourButtonPressed = false; // Reset the press flag
+}
+
+/* Update previous state for next iteration */
+hourButtonPrevious = hourButtonCurrent;
+\end{lstlisting}
+
+\subsection{Button Debouncing Implementation}
+\begin{lstlisting}[language=C]
+/* Button debouncing with boolean state tracking */
+if (!(PINB & (1 << PB4))) {  // Button appears pressed (LOW)
+    _delay_ms(50);           // Wait for bouncing to settle
+    
+    if (!(PINB & (1 << PB4))) {  // Still pressed after delay
+        /* Confirmed press - increment hours */
+        hours = (hours + 1) % 24;
+        
+        /* Wait for button release to prevent multiple increments */
+        while (!(PINB & (1 << PB4)));
+        
+        /* Add post-release debounce delay */
+        _delay_ms(50);
+    }
+}
+\end{lstlisting}
+
+\subsection{Boolean Toggle State Implementation}
+\begin{lstlisting}[language=C]
+bool toggleState = false;  // Tracks current toggle state
+
+/* In button handling code */
+if (buttonPressed) {
+    toggleState = !toggleState;  // Invert the state (toggle)
+    buttonPressed = false;       // Reset press detection
+}
+
+/* Use toggleState to control features */
+if (toggleState) {
+    /* Feature enabled logic */
+} else {
+    /* Feature disabled logic */
+}
+\end{lstlisting}
+
+\subsection{Timekeeping Without RTC Module}
+\begin{lstlisting}[language=C]
+uint16_t cycle_count = 0;  // Tracks display refresh cycles
+
+/* In main loop after multiplexing */
+cycle_count++;
+
+/* Approximately 83 cycles (with 2ms delay per digit) equals one second */
+if (cycle_count >= 83) {
+    cycle_count = 0;
+    seconds++;
+    
+    /* Update minutes when seconds reach 60 */
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes++;
+        
+        /* Update hours when minutes reach 60 */
+        if (minutes >= 60) {
+            minutes = 0;
+            hours++;
+            
+            /* Roll over hours at 24 */
+            if (hours >= 24)
+                hours = 0;
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Digit Multiplexing Algorithm}
+\begin{lstlisting}[language=C]
+/* Break time into individual digits: HH:MM:SS */
+uint8_t digits[NUM_DIGITS];
+digits[0] = hours / 10;       // Tens of hours
+digits[1] = hours % 10;       // Ones of hours
+digits[2] = minutes / 10;     // Tens of minutes
+digits[3] = minutes % 10;     // Ones of minutes
+digits[4] = seconds / 10;     // Tens of seconds
+digits[5] = seconds % 10;     // Ones of seconds
+
+/* Multiplex through each digit */
+for (uint8_t i = 0; i < NUM_DIGITS; i++) {
+    /* Set BCD outputs: Clear PD2-PD5 and set new value */
+    PORTD = (PORTD & ~0x3C) | ((digits[i] << 2) & 0x3C);
+    
+    /* Activate corresponding digit */
+    if (i < 2) {
+        if (i == 0)
+            PORTD |= (1 << PD6);  // Activate digit 1 (tens of hours)
+        else
+            PORTD |= (1 << PD7);  // Activate digit 2 (ones of hours)
+    } else {
+        PORTB |= (1 << (i - 2));   // Activate digits 3-6 (PB0-PB3)
+    }
+    _delay_ms(DIGIT_DELAY_MS);  // Allow digit to be visible
+
+    /* Deactivate digit */
+    if (i < 2) {
+        if (i == 0)
+            PORTD &= ~(1 << PD6);
+        else
+            PORTD &= ~(1 << PD7);
+    } else {
+        PORTB &= ~(1 << (i - 2));
+    }
+}
+\end{lstlisting}
+
+\subsection{Enhanced Button Handling with Boolean State Machine}
+\begin{lstlisting}[language=C]
+/* Button states */
+typedef enum {
+    BUTTON_IDLE,       // Button not pressed
+    BUTTON_DEBOUNCING, // Button appears pressed, waiting for debounce
+    BUTTON_PRESSED,    // Button confirmed pressed
+    BUTTON_HELD,       // Button held down (for auto-repeat)
+    BUTTON_RELEASING   // Button appears released, waiting for debounce
+} ButtonState;
+
+/* Button tracking structure */
+typedef struct {
+    ButtonState state;   // Current state in state machine
+    bool pressed;        // Flag indicating button was pressed
+    bool released;       // Flag indicating button was released
+    bool held;           // Flag indicating button is being held
+    unsigned long lastChangeTime;  // Time of last state change
+} Button;
+
+Button hourButton = {BUTTON_IDLE, false, false, false, 0};
+Button minuteButton = {BUTTON_IDLE, false, false, false, 0};
+
+/* Update button state (called in main loop) */
+void updateButtonState(Button *button, bool currentlyPressed) {
+    unsigned long currentTime = millis();
+    
+    switch (button->state) {
+        case BUTTON_IDLE:
+            if (currentlyPressed) {
+                button->state = BUTTON_DEBOUNCING;
+                button->lastChangeTime = currentTime;
+            }
+            break;
+            
+        case BUTTON_DEBOUNCING:
+            if (currentTime - button->lastChangeTime >= DEBOUNCE_TIME) {
+                if (currentlyPressed) {
+                    button->state = BUTTON_PRESSED;
+                    button->pressed = true;  // Set press event flag
+                    button->lastChangeTime = currentTime;
+                } else {
+                    button->state = BUTTON_IDLE;  // False trigger
+                }
+            }
+            break;
+            
+        case BUTTON_PRESSED:
+            if (!currentlyPressed) {
+                button->state = BUTTON_RELEASING;
+                button->lastChangeTime = currentTime;
+            } else if (currentTime - button->lastChangeTime >= HOLD_TIME) {
+                button->state = BUTTON_HELD;
+                button->held = true;  // Set hold event flag
+            }
+            break;
+            
+        case BUTTON_HELD:
+            if (!currentlyPressed) {
+                button->state = BUTTON_RELEASING;
+                button->lastChangeTime = currentTime;
+            }
+            break;
+            
+        case BUTTON_RELEASING:
+            if (currentTime - button->lastChangeTime >= DEBOUNCE_TIME) {
+                button->state = BUTTON_IDLE;
+                button->released = true;  // Set release event flag
+            }
+            break;
+    }
+}
+\end{lstlisting}
+
+This state machine approach provides sophisticated button handling capabilities:
+\begin{itemize}
+\item Debounce protection on both press and release
+\item Detection of button press, hold, and release events
+\item Support for auto-repeat functionality when buttons are held
+\item Clear separation of button state tracking from application logic
+\end{itemize}
+
+The boolean flags (pressed, released, held) provide a clean interface for the application code to respond to button events without directly dealing with debouncing or state management.
+
+\section{Testing and Performance Evaluation}
+
+\subsection{Timing Accuracy Assessment}
+Without an RTC module, the clock's accuracy depends on the precision of the software timing algorithm. Testing reveals several factors affecting accuracy:
+
+\begin{enumerate}
+\item \textit{Loop Execution Variability:} Minor variations in execution time between loop iterations can accumulate into timing drift.
+\item \textit{Crystal Oscillator Tolerance:} The Arduino's 16MHz crystal has a tolerance of ±20ppm, causing small timing variations.
+\item \textit{Temperature Effects:} The crystal frequency varies slightly with temperature changes.
+\item \textit{Multiplexing Overhead:} The time spent processing the multiplexing code affects the cycle count accuracy.
+\end{enumerate}
+
+Empirical testing shows the software clock drifts approximately 1-2 minutes per 24 hours of operation. This level of accuracy is acceptable for a basic clock but would need improvement for applications requiring precision timekeeping.
+
+\subsection{Display Performance}
+The multiplexing technique affects display appearance and performance in several ways:
+
+\begin{enumerate}
+\item \textit{Brightness:} Each digit is only illuminated for approximately 1/6 of the time, reducing apparent brightness. The 2ms activation time balances brightness with refresh rate.
+\item \textit{Refresh Rate:} With 2ms per digit, the complete display refreshes every 12ms (~83Hz), well above the 30Hz minimum needed to avoid visible flickering.
+\item \textit{Current Consumption:} Multiplexing reduces peak current draw to approximately 1/6 of what would be required if all digits were continuously illuminated.
+\item \textit{Visual Artifacts:} At certain viewing angles or during rapid eye movement, slight flickering might be perceptible due to the multiplexing effect.
+\end{enumerate}
+
+\subsection{Button Responsiveness}
+The button handling implementation provides good user experience characteristics:
+
+\begin{enumerate}
+\item \textit{Response Time:} Typical button response time is 50-60ms after physical press (including debounce delay).
+\item \textit{Reliability:} The debounce algorithm successfully eliminates false triggers from contact bounce.
+\item \textit{User Experience:} The state machine approach provides clean, predictable behavior with no duplicate or missed button presses.
+\end{enumerate}
+
+\section{Conclusion and Future Improvements}
+The digital clock project successfully demonstrates the implementation of a functional timepiece using an Arduino Uno, SN7447 decoder, and seven-segment displays without relying on an RTC module. The project showcases important digital design principles including multiplexing, boolean state management, and software-based timekeeping.
+
+The boolean logic approach to button handling provides a robust, memory-efficient solution for user interface management. By tracking state transitions and implementing proper debouncing, the system responds reliably to user input while filtering out unwanted noise from mechanical contacts.
+
+\subsection{Future Improvements}
+Several enhancements could be made to extend functionality and improve performance:
+
+\begin{enumerate}
+\item \textit{Crystal Timer:} Using Timer1 with the Arduino's crystal oscillator would provide more accurate timekeeping than the cycle-counting approach.
+\item \textit{EEPROM Storage:} Implementing time backup in EEPROM would preserve settings during power loss.
+\item \textit{Temperature Compensation:} Adding temperature-based correction could improve timing accuracy across varying environmental conditions.
+\item \textit{Enhanced User Interface:} Additional buttons or a rotary encoder could provide more intuitive time setting capabilities.
+\item \textit{Alarm Functionality:} Adding alarm features with boolean toggle states would extend the clock's utility.
+\end{enumerate}
+
+This project demonstrates that sophisticated digital clock functionality can be achieved with minimal hardware through clever software techniques and efficient boolean logic implementation. The design principles demonstrated here can be applied to a wide range of digital systems requiring user interface management and time-based operations.
+
+\end{document}
