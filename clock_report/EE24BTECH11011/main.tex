@@ -1,0 +1,165 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+%\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+% \usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{SCIENTIFIC CALCULATOR}
+\author{EE24BTECH11011 - Pranay}
+
+% \maketitle
+% \newpage
+% \bigskip
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+% Define C code style with colors
+\lstdefinestyle{CStyle}{
+    language=C,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!50!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\section{Introduction}
+A digital clock is an essential timekeeping device widely used in various applications. This project aims to develop an Arduino-based digital clock using a 7-segment display, controlled through the 7447 BCD to 7-segment decoder. The design integrates multiplexing techniques to efficiently display time with minimal hardware requirements.
+
+\section{Hardware Components}
+The following components were utilized in this project:
+\begin{itemize}
+    \item Arduino Uno (Microcontroller Unit)
+    \item 7447 BCD to 7-Segment Decoder
+    \item Six 7-Segment Displays
+    \item Push Buttons for Manual Adjustment
+    \item Resistors and Wires for Connections
+    \item External Power Supply (Optional)
+\end{itemize}
+
+\section{Working Mechanism}
+The clock employs multiplexing to control multiple 7-segment displays with fewer microcontroller pins. This is achieved by:
+\begin{itemize}
+    \item Assigning individual enable signals to each display.
+    \item Sending BCD values to the 7447 decoder to illuminate the appropriate segments.
+    \item Rapidly switching between displays to create a seamless visual effect.
+\end{itemize}
+
+\section{System Implementation}
+The digital clock is structured into modular functions to ensure efficient handling of display updates and user inputs.
+
+\subsection{BCD Conversion Module}
+This function encodes a decimal number into BCD format and transmits it to the 7447 decoder.
+
+\begin{lstlisting}[style=CStyle]
+void updateBCD(uint8_t number) {
+    PORTD = (PORTD & 0xF0) | (number & 0x0F);
+}
+\end{lstlisting}
+
+\subsection{Multiplexing Display Module}
+This function cycles through the displays, activating one at a time.
+
+\begin{lstlisting}[style=CStyle]
+void selectDisplay(uint8_t display) {
+    PORTB &= ~(1 << display); // Turn off previous display
+    PORTB |= (1 << display);  // Activate the current display
+}
+\end{lstlisting}
+
+\subsection{Time Display Update}
+The function \texttt{refreshDisplay()} updates the time by extracting and displaying individual digits.
+
+\begin{lstlisting}[style=CStyle]
+void refreshDisplay() {
+    uint8_t digits[6] = {hour/10, hour%10, minute/10, minute%10, second/10, second%10};
+    static uint8_t activeDisplay = 0;
+    updateBCD(digits[activeDisplay]);
+    selectDisplay(activeDisplay);
+    activeDisplay = (activeDisplay + 1) % 6;
+}
+\end{lstlisting}
+
+\subsection{Button Control Module}
+Push buttons allow manual adjustments for hours, minutes, and seconds.
+
+\begin{lstlisting}[style=CStyle]
+void handleButtons() {
+    if (!(PINB & (1 << HOUR_BTN))) {
+        _delay_ms(50);
+        if (!(PINB & (1 << HOUR_BTN))) { hour = (hour + 1) % 24; }
+    }
+    if (!(PINC & (1 << MIN_BTN))) {
+        _delay_ms(50);
+        if (!(PINC & (1 << MIN_BTN))) { minute = (minute + 1) % 60; }
+    }
+    if (!(PINC & (1 << SEC_BTN))) {
+        _delay_ms(50);
+        if (!(PINC & (1 << SEC_BTN))) { second = (second + 1) % 60; }
+    }
+}
+\end{lstlisting}
+
+\section{System Deployment}
+The code was compiled using \textbf{AVR-GCC} and uploaded to the Arduino Uno. The following steps were followed:
+\begin{enumerate}
+    \item Writing and testing the code in an Arduino-compatible IDE.
+    \item Compiling and generating a binary file.
+    \item Uploading the binary to the microcontroller using ArduinoDroid.
+\end{enumerate}
+
+\section{Conclusion}
+This project successfully implemented an Arduino-driven digital clock using a multiplexed 7-segment display. The use of modular code enhances readability and ease of maintenance. Future improvements may include integrating an RTC module for precise timekeeping and incorporating an LCD for better display flexibility.
+
+\end{document}
+
