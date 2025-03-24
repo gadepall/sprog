@@ -1,0 +1,123 @@
+% Main LaTeX File (main.tex)
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{array}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{circuitikz}
+
+\title{\textbf{LAB-REPORT-1}}
+\author{M. SRUJANA}
+
+\begin{document}
+
+\maketitle
+
+\section{Aim :} CLOCK USING AVR.GCC WITHOUT IC'S
+
+\section{Installation :}
+\begin{enumerate}
+    \item In termux: apt install avr-gcc avr-binutils avr-libc avrdude make -y
+\end{enumerate}
+
+\section{Apparatus :}
+\begin{enumerate}
+    \item Breadboard 
+    \item 6 Seven-Segment Displays
+    \item Jumper wires
+    \item Arduino
+    \item Arduino USB Cable 
+\end{enumerate}
+
+\section{Connections :}
+Make the connections as mentioned below:
+\begin{enumerate}
+    \item These connections are for COMMON ANODE.
+    \item Connect the common anode pin of each 7-segment display to +5V through a 220$\Omega$ resistor.
+    \item Connect each segment pin (A to G) of the displays to the corresponding output pins of the Arduino.
+    \item The display will be multiplexed by turning on one digit at a time while updating the corresponding segments.
+\end{enumerate}
+
+% Including Tables
+\input{tables/table1.tex}
+\input{tables/table2.tex}
+
+% Including Figures
+
+\section{Code : }
+\begin{tcolorbox}[colback=green!10, colframe=green!50!black, breakable]
+\begin{verbatim}
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+const uint8_t digit_map[] = {
+    0b00000000, 0b11100100, 0b10010000, 0b11000000, 0b01100100,
+    0b01001000, 0b00001000, 0b11100000, 0b00000000, 0b01000000
+};
+
+volatile uint8_t hours = 1, minutes = 11, seconds = 30;
+uint8_t digits[6];
+
+void update_digits() {
+    digits[0] = hours / 10;
+    digits[1] = hours % 10;
+    digits[2] = minutes / 10;
+    digits[3] = minutes % 10;
+    digits[4] = seconds / 10;
+    digits[5] = seconds % 10;
+}
+
+void update_time() {
+    seconds++;
+    if (seconds >= 60) { seconds = 0; minutes++; }
+    if (minutes >= 60) { minutes = 0; hours++; }
+    if (hours >= 24) { hours = 0; }
+    update_digits();
+}
+
+ISR(TIMER1_COMPA_vect) {
+    update_time();
+}
+
+void display_digit(uint8_t display, uint8_t digit) {
+    PORTB &= ~(0b00011110);
+    PORTC &= ~(0b00000011);
+    PORTD = digit_map[digit];
+    if (digit == 0 || digit == 1 || digit == 7) { PORTB |= (1 << PB0); }
+    else { PORTB &= ~(1 << PB0); }
+    if (display < 4) { PORTB |= (1 << (display + 1)); }
+    else { PORTC |= (1 << (display - 4)); }
+    _delay_ms(2);
+}
+
+int main(void) {
+    DDRD |= 0b11111100;
+    DDRB |= (1 << PB0);
+    DDRB |= (1 << PB1) | (1 << PB2) | (1 << PB3) | (1 << PB4);
+    DDRC |= (1 << PC0) | (1 << PC1);
+    update_digits();
+    TCCR1B |= (1 << WGM12) | (1 << CS12) | (1 << CS10);
+    OCR1A = 15625;
+    TIMSK1 |= (1 << OCIE1A);
+    sei();
+    while (1) {
+        for (uint8_t i = 0; i < 6; i++) {
+            display_digit(i, digits[i]);
+        }
+    }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+\section{Execution : }
+\begin{enumerate}
+    \item To compile main.c file : avr-gcc -mmcu=atmega328p -Os -o main.elf main.c
+    \item To convert main.elf file to main.hex : avr-objcopy -O ihex -R .eeprom main.elf main.hex
+    \item Moving the Compiled File to ArduinoDroid : mv main.hex /sdcard/ArduinoDroid/precompiled
+\end{enumerate}
+
+\end{document}
+
