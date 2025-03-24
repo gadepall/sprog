@@ -1,0 +1,153 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{tfrupee} % Include tfrupee package
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide}
+\usepackage{multicol}
+\newcommand{\brak}[1]{\left( #1 \right)}
+\renewcommand{\thetable}{\arabic{table}}
+
+% Marks the beginning of the document
+\begin{document}
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+\title{Calculator}
+\author{EE24BTECH11017 - Karthik}
+{\let\newpage\relax\maketitle}
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+
+\section{Introduction}
+This report presents the design and implementation of a scientific calculator using an Arduino Uno, a JHD162A LCD display, 16 input buttons, and other supporting components. The calculator is programmed using AVR-GCC on Termux (Debian) and supports various mathematical functions within the constraints of 16 push buttons. The report covers the circuit design, software implementation, and testing results.
+
+
+
+\section{Hardware Components}
+The main components used in this project are listed in Table 
+\input{tables/components}
+
+\section{Circuit Connections and Keypad Interface}
+To optimize space, the circuit connections and keypad functions are presented in Tables below respectively.
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Component} & \textbf{Arduino Pin} \\
+\hline
+LCD RS & D7 \\
+\hline
+LCD E & D6 \\
+\hline
+LCD D4 & D5 \\
+\hline
+LCD D5 & D4 \\
+\hline
+LCD D6 & D3 \\
+\hline
+LCD D7 & D2 \\
+\hline
+Keypad Rows & A0-A3 \\
+\hline
+Keypad Columns & D8-D11 \\
+\hline
+Power (VCC) & 5V \\
+\hline
+Ground (GND) & GND \\
+\hline
+\end{tabular}
+\caption{Circuit Connections}
+\label{tab:connections}
+\end{table}
+
+\vspace{-3mm}
+
+\begin{table}[h!]
+\centering
+\small
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Button} & \textbf{Primary / Alternate Mode Function} \\
+\hline
+0-9 & Numeric Input \\
+\hline
++ & Addition \\
+\hline
+- & Subtraction \\
+\hline
+$\times$ & Multiplication \\
+\hline
+$\div$ & Division \\
+\hline
+= & Compute Result \\
+\hline
+C & Clear Input \\
+\hline
+. & Decimal Point \\
+\hline
+M+ & Store in Memory \\
+\hline
+MR & Recall Memory \\
+\hline
+MC & Clear Memory \\
+\hline
+SIN & $\sin x$ / $\sin^{-1} x$ \\
+\hline
+COS & $\cos x$ / $\cos^{-1} x$ \\
+\hline
+TAN & $\tan x$ / $\tan^{-1} x$ \\
+\hline
+EXP & $e^x$ / $\ln x$ \\
+\hline
+LOG & $\log_{10} x$ / $\log_2 x$ \\
+\hline
+MODE & Toggle Between Standard and Scientific Mode \\
+\hline
+\end{tabular}
+\caption{Keypad Button Functions}
+\label{tab:keypad}
+\end{table}
+
+
+\section{Software Implementation}
+The firmware is written in Embedded C and compiled using AVR-GCC. The core functionalities include:
+\begin{itemize}
+\item Reading ADC values for digit buttons.
+\item Detecting arithmetic operations through digital pins.
+\item Implementing additional functions such as memory storage and recall.
+\item Displaying input and results dynamically on the LCD.
+\item Handling error conditions such as division by zero.
+\end{itemize}
+
+\section{Features}
+\begin{itemize}
+    \item \textbf{Basic Arithmetic}: Addition, subtraction, multiplication, and division.
+    \item \textbf{Scientific Functions}: Trigonometry, logarithms, exponentiation.
+    \item \textbf{Memory Functions}: Store and recall values.
+    \item \textbf{Number Systems}: Convert between HEX, DEC, BIN, and OCT.
+    \item \textbf{Multi-Mode Input}: Normal, Alpha, and Shift functions.
+    \item \textbf{Parentheses Handling}: Supports complex expressions.
+\end{itemize}
+
+\section{Conclusion}
+This project successfully implements a digital calculator using an Arduino microcontroller. By leveraging ADC values and optimizing pin usage, the design maintains hardware simplicity while delivering comprehensive functionality. The use of AVR-GCC enhances efficiency, and future improvements could include higher precision and additional functions.
+
+\end{document}
+
