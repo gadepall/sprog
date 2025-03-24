@@ -34,28 +34,11 @@
 #define EQUALS_BTN_PIN    0  // Arduino pin 8 = PB0
 #define CLEAR_BTN_PIN     1  // Arduino pin 9 = PB1
 
-// Custom math functions to avoid math.h
-float my_abs(float x) {
-    return (x < 0.0f) ? -x : x;
-}
-
-int is_zero(float x) {
-    return my_abs(x) < 0.0001f;
-}
-
-float my_sqrt(float x) {
-    if (x <= 0.0f) return 0.0f;
-    float result = x;
-    for (int i = 0; i < 10; i++) {
-        result = 0.5f * (result + x/result);
-    }
-    return result;
-}
-
-int is_integer(float x) {
-    float diff = x - (int)x;
-    return (my_abs(diff) < 0.0001f);
-}
+// Custom math functions to replace math.h
+float my_abs(float x);
+int is_zero(float x);
+int is_integer(float x);
+float my_sqrt(float x);
 
 // Function prototypes
 void setup_timer(void);
@@ -75,32 +58,53 @@ int get_precedence(char op);
 int is_operator(char c);
 
 float compute_sin_cos(float x, float* sin_val, float* cos_val);
-float compute_asin(float x);
-float compute_acos(float x);
-float compute_atan(float x);
 float compute_exp(float x);
 float compute_ln(float x);
 float compute_log10(float x);
 float compute_power(float base, float exponent);
+float compute_asin(float x);
+float compute_acos(float x);
+float compute_atan(float x);
 
 // Global variables
 volatile uint32_t milliseconds = 0;
 uint8_t current_digit = 0;      // Current selected digit (0-9)
-uint8_t decimal_point_mode = 0; // 0=digits, 1=decimal point
-uint8_t current_operation = 0;  // 0=+, 1=-, 2=*, 3=/
-int8_t current_function = 0;    // Function index (see function_names array)
+uint8_t current_operation = 0;  // 0=+, 1=-, 2=*, 3=/, 4=^
+int8_t current_function = 0;    // 0=sin, 1=cos, 2=tan, 3=xÂ², 4=e^x, 5=ln, 6=log, 7=e, 8=., 9=sinâ»Â¹, 10=cosâ»Â¹, 11=tanâ»Â¹, 12=Ï€
 uint32_t last_button_time = 0;
-uint32_t digit_button_press_time = 0;
 uint8_t input_mode = 0;         // 0=digit, 1=operation, 2=function
 uint8_t parenthesis_depth = 0;
+uint8_t decimal_entered = 0;    // Flag to prevent multiple decimal points
 
 char expression[MAX_EXPR_LEN] = {0};
 uint8_t expr_index = 0;
 
-const char* operation_symbols = "+-*/";
-const char* function_names[] = {"sin", "cos", "tan", "sin^-1", "cos^-1", "tan^-1", 
-                               "x^2", "e^x", "^", "ln", "log", "e", "pi", "."};
-const uint8_t function_count = 14; // Number of available functions
+const char* operation_symbols = "+-*/^";
+const char* function_names[] = {"sin", "cos", "tan", "x^2", "e^x", "ln", "log", "e", ".", "sin^-1", "cos^-1", "tan^-1", "pi"};
+
+// Custom math functions implementation
+float my_abs(float x) {
+    return (x < 0.0f) ? -x : x;
+}
+
+int is_zero(float x) {
+    return my_abs(x) < 0.0001f;
+}
+
+int is_integer(float x) {
+    float diff = x - (int)x;
+    return (my_abs(diff) < 0.0001f);
+}
+
+float my_sqrt(float x) {
+    if (x <= 0.0f) return 0.0f;
+    float result = x;
+    // Newton's method
+    for (int i = 0; i < 10; i++) {
+        result = 0.5f * (result + x/result);
+    }
+    return result;
+}
 
 int main(void) {
     // Initialize hardware
@@ -113,7 +117,7 @@ int main(void) {
     
     // Display startup message
     lcd_clear();
-    lcd_string("Calculator");
+    lcd_string("Scientific Calc");
     _delay_ms(1000);
     lcd_clear();
     lcd_string("0");
@@ -121,34 +125,12 @@ int main(void) {
     while(1) {
         // Check if enough time has passed since last button press (debouncing)
         if (milliseconds - last_button_time > DEBOUNCE_DELAY) {
-            // Check digit button (cycles through 0-9 and decimal point)
+            // Check digit button (cycles through 0-9)
             if (!(PINC & (1 << DIGIT_BTN_PIN))) {
-                // Track how long button is pressed for decimal point toggle
-                if (digit_button_press_time == 0) {
-                    digit_button_press_time = milliseconds;
-                }
-                
-                // Long press (over 1 second) toggles decimal point mode
-                if (milliseconds - digit_button_press_time > 1000) {
-                    decimal_point_mode = !decimal_point_mode;
-                    digit_button_press_time = milliseconds; // Reset to prevent multiple toggles
-                    input_mode = 0;
-                    update_display();
-                } 
-                else {
-                    // Regular press cycles through digits
-                    if (!decimal_point_mode) {
-                        current_digit = (current_digit + 1) % 10;
-                    }
-                    input_mode = 0;
-                    update_display();
-                }
-                
+                current_digit = (current_digit + 1) % 10;
+                input_mode = 0;
+                update_display();
                 last_button_time = milliseconds;
-            } 
-            else {
-                // Button released, reset press timer
-                digit_button_press_time = 0;
             }
             
             // Check open parenthesis button
@@ -169,17 +151,17 @@ int main(void) {
                 last_button_time = milliseconds;
             }
             
-            // Check operation button (cycles through +, -, *, /)
+            // Check operation button (cycles through +, -, *, /, ^)
             if (!(PINC & (1 << OP_BTN_PIN))) {
-                current_operation = (current_operation + 1) % 4;
+                current_operation = (current_operation + 1) % 5; // Now includes ^ operator
                 input_mode = 1;
                 update_display();
                 last_button_time = milliseconds;
             }
             
-            // Check function button (cycles through functions)
+            // Check function button (cycles through all functions)
             if (!(PINC & (1 << FUNC_BTN_PIN))) {
-                current_function = (current_function + 1) % function_count;
+                current_function = (current_function + 1) % 13; // Increased number of functions
                 input_mode = 2;
                 update_display();
                 last_button_time = milliseconds;
@@ -188,16 +170,11 @@ int main(void) {
             // Check set button - commits current input to expression
             if (!(PIND & (1 << SET_BTN_PIN))) {
                 if (input_mode == 0) {
-                    // Add current digit or decimal point
-                    if (decimal_point_mode) {
-                        append_to_expression(".");
-                        decimal_point_mode = 0; // Reset after use
-                    } else {
-                        char digit_str[2];
-                        digit_str[0] = '0' + current_digit;
-                        digit_str[1] = '\0';
-                        append_to_expression(digit_str);
-                    }
+                    // Add current digit
+                    char digit_str[2];
+                    digit_str[0] = '0' + current_digit;
+                    digit_str[1] = '\0';
+                    append_to_expression(digit_str);
                 }
                 else if (input_mode == 1) {
                     // Add operation
@@ -207,20 +184,25 @@ int main(void) {
                     append_to_expression(op_str);
                 }
                 else if (input_mode == 2) {
-                    // Add function
-                    if (current_function == 11) { // e constant
-                        append_to_expression("2.718");
-                    } 
-                    else if (current_function == 12) { // pi
-                        append_to_expression("3.142");
-                    }
-                    else if (current_function == 13) { // decimal point
-                        append_to_expression(".");
-                    }
-                    else {
-                        append_to_expression(function_names[current_function]);
-                        append_to_expression("(");
-                        parenthesis_depth++;
+                    // Add function or special value
+                    switch (current_function) {
+                        case 7: // e
+                            append_to_expression("2.71828");
+                            break;
+                        case 8: // decimal point
+                            if (!decimal_entered) {
+                                append_to_expression(".");
+                                decimal_entered = 1;
+                            }
+                            break;
+                        case 12: // Ï€
+                            append_to_expression("3.14159");
+                            break;
+                        default: // All other functions
+                            append_to_expression(function_names[current_function]);
+                            append_to_expression("(");
+                            parenthesis_depth++;
+                            break;
                     }
                 }
                 
@@ -257,9 +239,10 @@ int main(void) {
                 
                 lcd_string(result_str);
                 
-                // Reset for next expression but keep result as current number
+                // Reset for next expression
                 expr_index = 0;
                 expression[0] = '\0';
+                decimal_entered = 0;
                 
                 last_button_time = milliseconds;
             }
@@ -435,12 +418,8 @@ void update_display(void) {
     lcd_position(1, 0);
     switch(input_mode) {
         case 0: // Digit mode
-            if (decimal_point_mode) {
-                lcd_string("Decimal point");
-            } else {
-                sprintf(buffer, "Digit: %d", current_digit);
-                lcd_string(buffer);
-            }
+            sprintf(buffer, "Digit: %d", current_digit);
+            lcd_string(buffer);
             break;
         case 1: // Operation mode
             sprintf(buffer, "Op: %c", operation_symbols[current_operation]);
@@ -454,8 +433,7 @@ void update_display(void) {
     
     // Show parenthesis depth if any are open
     if (parenthesis_depth > 0) {
-        int remaining_space = 16 - strlen(buffer);
-        lcd_position(1, 16 - 4);
+        lcd_position(1, 10);
         sprintf(buffer, "P:%d", parenthesis_depth);
         lcd_string(buffer);
     }
@@ -467,11 +445,23 @@ void append_to_expression(const char* str) {
         expression[expr_index++] = *str++;
     }
     expression[expr_index] = '\0';
+    
+    // Reset decimal flag if a non-decimal character is entered
+    if (strcmp(str, ".") != 0) {
+        if (strchr(str, '.') == NULL) {
+            decimal_entered = 0;
+        }
+    }
 }
 
 // Backspace: remove last character or function from expression
 void backspace_expression(void) {
     if (expr_index > 0) {
+        // Check if we're removing a decimal point
+        if (expression[expr_index - 1] == '.') {
+            decimal_entered = 0;
+        }
+        
         // Check if last character is closing parenthesis
         if (expression[expr_index - 1] == ')') {
             parenthesis_depth++;
@@ -481,14 +471,23 @@ void backspace_expression(void) {
             parenthesis_depth--;
             
             // Check if there's a function name before the parenthesis
-            for (int i = 0; i < function_count; i++) {
-                int func_len = strlen(function_names[i]);
+            const char* func_names[] = {"sin", "cos", "tan", "ln", "log", "sin^-1", "cos^-1", "tan^-1"};
+            for (int i = 0; i < 8; i++) {
+                int func_len = strlen(func_names[i]);
                 if (expr_index >= func_len + 1 && 
-                    strncmp(&expression[expr_index - func_len - 1], function_names[i], func_len) == 0) {
+                    strncmp(&expression[expr_index - func_len - 1], func_names[i], func_len) == 0) {
                     // Remove the whole function name
                     expr_index -= func_len;
                     break;
                 }
+            }
+            
+            // Check for x^2 and e^x separately
+            if (expr_index >= 4 && strncmp(&expression[expr_index - 4], "x^2", 3) == 0) {
+                expr_index -= 3;
+            }
+            else if (expr_index >= 4 && strncmp(&expression[expr_index - 4], "e^x", 3) == 0) {
+                expr_index -= 3;
             }
         }
         
@@ -517,12 +516,12 @@ int get_precedence(char op) {
         case 's':     // sin
         case 'c':     // cos
         case 't':     // tan
+        case 'l':     // ln
+        case 'g':     // log
         case 'a':     // asin
         case 'b':     // acos
         case 'd':     // atan
-        case 'l':     // ln
-        case 'g':     // log
-        case 'q':     // square
+        case 'q':     // x^2
         case 'e':     // e^x
             return 4;  // Highest precedence for functions
         default:
@@ -554,7 +553,7 @@ float evaluate_expression(void) {
         
         // Parse numbers
         if (isdigit(expr_copy[i]) || (expr_copy[i] == '.' && i+1 < strlen(expr_copy) && isdigit(expr_copy[i+1]))) {
-            float number = 0.0f;
+            float number = 0.0;
             int decimal_places = 0;
             int decimal_point = 0;
             
@@ -582,58 +581,53 @@ float evaluate_expression(void) {
         }
         
         // Parse functions
-        // Regular trig functions
-        if (strncmp(&expr_copy[i], "sin(", 4) == 0 && expr_copy[i+3] != '^') {
-            operator_stack[operator_stack_top++] = 's';
-            i += 3; // Skip to opening parenthesis
-            continue;
-        }
-        if (strncmp(&expr_copy[i], "cos(", 4) == 0 && expr_copy[i+3] != '^') {
-            operator_stack[operator_stack_top++] = 'c';
-            i += 3;
-            continue;
-        }
-        if (strncmp(&expr_copy[i], "tan(", 4) == 0 && expr_copy[i+3] != '^') {
-            operator_stack[operator_stack_top++] = 't';
-            i += 3;
-            continue;
-        }
-        
-        // Inverse trig functions
-        if (strncmp(&expr_copy[i], "sin^-1(", 7) == 0) {
+        if (strncmp(&expr_copy[i], "sin^-1", 6) == 0 || strncmp(&expr_copy[i], "asin", 4) == 0) {
             operator_stack[operator_stack_top++] = 'a'; // asin
-            i += 6;
+            i += (expr_copy[i] == 'a') ? 4 : 6;
             continue;
         }
-        if (strncmp(&expr_copy[i], "cos^-1(", 7) == 0) {
+        if (strncmp(&expr_copy[i], "cos^-1", 6) == 0 || strncmp(&expr_copy[i], "acos", 4) == 0) {
             operator_stack[operator_stack_top++] = 'b'; // acos
-            i += 6;
+            i += (expr_copy[i] == 'a') ? 4 : 6;
             continue;
         }
-        if (strncmp(&expr_copy[i], "tan^-1(", 7) == 0) {
+        if (strncmp(&expr_copy[i], "tan^-1", 6) == 0 || strncmp(&expr_copy[i], "atan", 4) == 0) {
             operator_stack[operator_stack_top++] = 'd'; // atan
-            i += 6;
+            i += (expr_copy[i] == 'a') ? 4 : 6;
             continue;
         }
-        
-        // Other functions
-        if (strncmp(&expr_copy[i], "x^2(", 4) == 0) {
-            operator_stack[operator_stack_top++] = 'q'; // square
+        if (strncmp(&expr_copy[i], "sin", 3) == 0) {
+            operator_stack[operator_stack_top++] = 's'; // sin
             i += 3;
             continue;
         }
-        if (strncmp(&expr_copy[i], "e^x(", 4) == 0) {
-            operator_stack[operator_stack_top++] = 'e'; // e^x
+        if (strncmp(&expr_copy[i], "cos", 3) == 0) {
+            operator_stack[operator_stack_top++] = 'c'; // cos
             i += 3;
             continue;
         }
-        if (strncmp(&expr_copy[i], "ln(", 3) == 0) {
+        if (strncmp(&expr_copy[i], "tan", 3) == 0) {
+            operator_stack[operator_stack_top++] = 't'; // tan
+            i += 3;
+            continue;
+        }
+        if (strncmp(&expr_copy[i], "ln", 2) == 0) {
             operator_stack[operator_stack_top++] = 'l'; // ln
             i += 2;
             continue;
         }
-        if (strncmp(&expr_copy[i], "log(", 4) == 0) {
-            operator_stack[operator_stack_top++] = 'g'; // log10
+        if (strncmp(&expr_copy[i], "log", 3) == 0) {
+            operator_stack[operator_stack_top++] = 'g'; // log
+            i += 3;
+            continue;
+        }
+        if (strncmp(&expr_copy[i], "x^2", 3) == 0) {
+            operator_stack[operator_stack_top++] = 'q'; // square
+            i += 3;
+            continue;
+        }
+        if (strncmp(&expr_copy[i], "e^x", 3) == 0) {
+            operator_stack[operator_stack_top++] = 'e'; // e^x
             i += 3;
             continue;
         }
@@ -650,16 +644,14 @@ float evaluate_expression(void) {
             while (operator_stack_top > 0 && operator_stack[operator_stack_top - 1] != '(') {
                 char op = operator_stack[--operator_stack_top];
                 
-                // Apply unary function operators
-                if (op == 's' || op == 'c' || op == 't' || op == 'a' || 
-                    op == 'b' || op == 'd' || op == 'l' || op == 'g' || 
-                    op == 'q' || op == 'e') {
+                // Apply function operators
+                if (op == 's' || op == 'c' || op == 't' || op == 'l' || op == 'g' || 
+                    op == 'a' || op == 'b' || op == 'd' || op == 'q' || op == 'e') {
                     
                     float arg = value_stack[--value_stack_top];
                     float result = 0.0f;
                     
-                    // Apply the appropriate function
-                    switch(op) {
+                    switch (op) {
                         case 's': { // sin
                             float sin_val, cos_val;
                             compute_sin_cos(arg, &sin_val, &cos_val);
@@ -678,29 +670,29 @@ float evaluate_expression(void) {
                             if (!is_zero(cos_val)) {
                                 result = sin_val / cos_val;
                             } else {
-                                result = 99999.0f; // Overflow
+                                result = 99999.0f; // Undefined
                             }
                             break;
                         }
-                        case 'a': // asin
-                            result = compute_asin(arg);
-                            break;
-                        case 'b': // acos
-                            result = compute_acos(arg);
-                            break;
-                        case 'd': // atan
-                            result = compute_atan(arg);
-                            break;
-                        case 'l': // ln
+                        case 'l': // ln (natural log)
                             result = compute_ln(arg);
                             break;
-                        case 'g': // log10
+                        case 'g': // log (base 10)
                             result = compute_log10(arg);
                             break;
-                        case 'q': // x^2
+                        case 'a': // asin (sin^-1)
+                            result = compute_asin(arg);
+                            break;
+                        case 'b': // acos (cos^-1)
+                            result = compute_acos(arg);
+                            break;
+                        case 'd': // atan (tan^-1)
+                            result = compute_atan(arg);
+                            break;
+                        case 'q': // x^2 (square)
                             result = arg * arg;
                             break;
-                        case 'e': // e^x
+                        case 'e': // e^x (exponential)
                             result = compute_exp(arg);
                             break;
                     }
@@ -721,10 +713,12 @@ float evaluate_expression(void) {
                             if (!is_zero(b)) {
                                 result = a / b;
                             } else {
-                                result = 99999.0f; // Overflow
+                                result = 99999.0f; // Represent infinity
                             }
                             break;
-                        case '^': result = compute_power(a, b); break;
+                        case '^': 
+                            result = compute_power(a, b);
+                            break;
                     }
                     
                     value_stack[value_stack_top++] = result;
@@ -742,7 +736,7 @@ float evaluate_expression(void) {
         
         // Parse operators
         if (is_operator(expr_copy[i])) {
-            // Handle right-associative ^ operator
+            // Pop operators with higher or equal precedence, except for right-associative ^ operator
             while (operator_stack_top > 0 && 
                    operator_stack[operator_stack_top - 1] != '(' &&
                    ((expr_copy[i] != '^' && 
@@ -752,26 +746,29 @@ float evaluate_expression(void) {
                 
                 char op = operator_stack[--operator_stack_top];
                 
-                // Apply binary operators
-                float b = value_stack[--value_stack_top];
-                float a = value_stack[--value_stack_top];
-                float result = 0.0f;
-                
-                switch (op) {
-                    case '+': result = a + b; break;
-                    case '-': result = a - b; break;
-                    case '*': result = a * b; break;
-                    case '/': 
-                        if (!is_zero(b)) {
-                            result = a / b;
-                        } else {
-                            result = 99999.0f; // Overflow
-                        }
-                        break;
-                    case '^': result = compute_power(a, b); break;
+                if (value_stack_top >= 2) { // Ensure we have enough operands
+                    float b = value_stack[--value_stack_top];
+                    float a = value_stack[--value_stack_top];
+                    float result = 0.0f;
+                    
+                    switch (op) {
+                        case '+': result = a + b; break;
+                        case '-': result = a - b; break;
+                        case '*': result = a * b; break;
+                        case '/': 
+                            if (!is_zero(b)) {
+                                result = a / b;
+                            } else {
+                                result = 99999.0f; // Represent infinity
+                            }
+                            break;
+                        case '^': 
+                            result = compute_power(a, b);
+                            break;
+                    }
+                    
+                    value_stack[value_stack_top++] = result;
                 }
-                
-                value_stack[value_stack_top++] = result;
             }
             
             // Push the current operator
@@ -788,43 +785,104 @@ float evaluate_expression(void) {
     while (operator_stack_top > 0) {
         char op = operator_stack[--operator_stack_top];
         
-        // Apply binary operators
-        if (op != '(' && value_stack_top >= 2) {
-            float b = value_stack[--value_stack_top];
-            float a = value_stack[--value_stack_top];
-            float result = 0.0f;
+        // Handle function operators
+        if (op == 's' || op == 'c' || op == 't' || op == 'l' || op == 'g' || 
+            op == 'a' || op == 'b' || op == 'd' || op == 'q' || op == 'e') {
             
-            switch (op) {
-                case '+': result = a + b; break;
-                case '-': result = a - b; break;
-                case '*': result = a * b; break;
-                case '/': 
-                    if (!is_zero(b)) {
-                        result = a / b;
-                    } else {
-                        result = 99999.0f; // Overflow
+            if (value_stack_top >= 1) { // Ensure we have an operand
+                float arg = value_stack[--value_stack_top];
+                float result = 0.0f;
+                
+                switch (op) {
+                    case 's': { // sin
+                        float sin_val, cos_val;
+                        compute_sin_cos(arg, &sin_val, &cos_val);
+                        result = sin_val;
+                        break;
                     }
-                    break;
-                case '^': result = compute_power(a, b); break;
+                    case 'c': { // cos
+                        float sin_val, cos_val;
+                        compute_sin_cos(arg, &sin_val, &cos_val);
+                        result = cos_val;
+                        break;
+                    }
+                    case 't': { // tan
+                        float sin_val, cos_val;
+                        compute_sin_cos(arg, &sin_val, &cos_val);
+                        if (!is_zero(cos_val)) {
+                            result = sin_val / cos_val;
+                        } else {
+                            result = 99999.0f; // Undefined
+                        }
+                        break;
+                    }
+                    case 'l': // ln (natural log)
+                        result = compute_ln(arg);
+                        break;
+                    case 'g': // log (base 10)
+                        result = compute_log10(arg);
+                        break;
+                    case 'a': // asin (sin^-1)
+                        result = compute_asin(arg);
+                        break;
+                    case 'b': // acos (cos^-1)
+                        result = compute_acos(arg);
+                        break;
+                    case 'd': // atan (tan^-1)
+                        result = compute_atan(arg);
+                        break;
+                    case 'q': // x^2 (square)
+                        result = arg * arg;
+                        break;
+                    case 'e': // e^x (exponential)
+                        result = compute_exp(arg);
+                        break;
+                }
+                
+                value_stack[value_stack_top++] = result;
             }
-            
-            value_stack[value_stack_top++] = result;
+        }
+        // Handle binary operators
+        else if (op != '(') { // Skip any remaining open parentheses
+            if (value_stack_top >= 2) { // Ensure we have enough operands
+                float b = value_stack[--value_stack_top];
+                float a = value_stack[--value_stack_top];
+                float result = 0.0f;
+                
+                switch (op) {
+                    case '+': result = a + b; break;
+                    case '-': result = a - b; break;
+                    case '*': result = a * b; break;
+                    case '/': 
+                        if (!is_zero(b)) {
+                            result = a / b;
+                        } else {
+                            result = 99999.0f; // Represent infinity
+                        }
+                        break;
+                    case '^': 
+                        result = compute_power(a, b);
+                        break;
+                }
+                
+                value_stack[value_stack_top++] = result;
+            }
         }
     }
     
     // Final result should be on top of value stack
-    return (value_stack_top > 0) ? value_stack[0] : 0.0f;
+    return (value_stack_top > 0) ? value_stack[value_stack_top - 1] : 0;
 }
 
 // Implementation of mathematical functions using Euler's method
 float compute_sin_cos(float x, float* sin_val, float* cos_val) {
     float s = 0.0f;  // sin(0)
     float c = 1.0f;  // cos(0)
-    float h = 0.00001f; // smaller step size for better accuracy
+    float h = 0.0001f; // smaller step size for better accuracy
     
-    // Normalize x to [0, 2π)
-    while(x >= 2*PI) x -= 2*PI;
-    while(x < 0) x += 2*PI;
+    // Normalize x to [0, 2Ï€)
+    while (x >= 2*PI) x -= 2*PI;
+    while (x < 0) x += 2*PI;
     
     for (float t = 0.0f; t < x; t += h) {
         float s_new = s + h * c;
@@ -838,115 +896,18 @@ float compute_sin_cos(float x, float* sin_val, float* cos_val) {
     return s;
 }
 
-// Implementation of arc sine using numerical methods
-float compute_asin(float x) {
-    // Check bounds (asin only defined for [-1, 1])
-    if (x < -1.0f) x = -1.0f;
-    if (x > 1.0f) x = 1.0f;
-    
-    // Use Newton's method to solve sin(y) = x for y
-    float y = x; // Initial guess
-    float h = 0.0001f;
-    
-    for (int i = 0; i < 50; i++) { // Maximum 50 iterations
-        float sin_y, cos_y;
-        compute_sin_cos(y, &sin_y, &cos_y);
-        
-        // sin(y) - x should be 0
-        float error = sin_y - x;
-        if (my_abs(error) < 0.0001f) break;
-        
-        // Update using Newton's method: y = y - sin(y) - x / cos(y)
-        if (!is_zero(cos_y)) {
-            y = y - error / cos_y;
-        }
-    }
-    
-    return y;
-}
-
-// Implementation of arc cosine using asin
-float compute_acos(float x) {
-    return PI/2 - compute_asin(x);
-}
-
-// Implementation of arc tangent using numerical methods
-float compute_atan(float x) {
-    // Special cases
-    if (is_zero(x)) return 0.0f;
-    if (x > 0 && my_abs(x - 1.0f) < 0.0001f) return PI/4;
-    if (x < 0 && my_abs(x + 1.0f) < 0.0001f) return -PI/4;
-    
-    // Use Newton's method to solve tan(y) = x for y
-    float y = x / (1.0f + my_sqrt(1.0f + x*x)); // Initial guess
-    
-    for (int i = 0; i < 50; i++) { // Maximum 50 iterations
-        float sin_y, cos_y;
-        compute_sin_cos(y, &sin_y, &cos_y);
-        
-        float tan_y = 0.0f;
-        if (!is_zero(cos_y)) {
-            tan_y = sin_y / cos_y;
-        } else {
-            continue; // Avoid division by zero
-        }
-        
-        // tan(y) - x should be 0
-        float error = tan_y - x;
-        if (my_abs(error) < 0.0001f) break;
-        
-        // Update using Newton's method: y = y - (tan(y) - x) / (1 + tan(y)^2)
-        y = y - error / (1.0f + tan_y * tan_y);
-    }
-    
-    return y;
-}
-
-// Implementation of natural logarithm using numerical integration
-float compute_ln(float x) {
-    // Check domain
-    if (x <= 0.0f) return -99999.0f; // Error value
-    
-    // ln(x) = ∫ (1/t) dt from 1 to x
-    float result = 0.0f;
-    float h = 0.001f; // Step size for integration
-    
-    if (x >= 1.0f) {
-        // Integrate from 1 to x
-        for (float t = 1.0f; t < x; t += h) {
-            result += h / t;
-        }
-    } else {
-        // For x < 1, use ln(x) = -ln(1/x)
-        for (float t = x; t < 1.0f; t += h) {
-            result -= h / t;
-        }
-    }
-    
-    return result;
-}
-
-// Base-10 logarithm using ln
-float compute_log10(float x) {
-    // log10(x) = ln(x) / ln(10)
-    return compute_ln(x) / compute_ln(10.0f);
-}
-
-// Exponential function using Euler's method
 float compute_exp(float x) {
-    float result = 1.0f;  // e^0 = 1
-    float h = 0.01f;      // Step size
+    float result = 1.0f;  // e^0
+    float h = 0.01f;      // step size
     
-    // Solve ODE: dy/dx = y with y(0) = 1
     if (x >= 0) {
         for (float t = 0.0f; t < x; t += h) {
             result += h * result;
         }
     } else {
-        // For negative x, use e^(-x) = 1/e^x
         x = -x;
         for (float t = 0.0f; t < x; t += h) {
-            result += h * result;
+            result -= h * result;
         }
         result = 1.0f / result;
     }
@@ -954,32 +915,111 @@ float compute_exp(float x) {
     return result;
 }
 
-// Power function a^b using Euler's method
-float compute_power(float base, float exponent) {
-    // Special cases
-    if (is_zero(exponent)) return 1.0f;
-    if (is_zero(base)) return 0.0f;
+float compute_ln(float x) {
+    if (x <= 0) return -99999.0f; // Error value for ln(negative)
     
-    // For integer exponents, use multiplication (more accurate)
-    if (is_integer(exponent)) {
-        int exp_int = (int)exponent;
-        float result = 1.0f;
-        
-        if (exp_int >= 0) {
-            for (int i = 0; i < exp_int; i++) {
-                result *= base;
-            }
-        } else {
-            for (int i = 0; i < -exp_int; i++) {
-                result *= base;
-            }
-            result = 1.0f / result;
+    float result = 0.0f;  // ln(1)
+    float h = 0.001f;     // step size
+    float current = 1.0f;
+    
+    if (x > 1.0f) {
+        while (current < x) {
+            result += h * (1.0f / current);
+            current += h * current;
         }
-        
-        return result;
+    } else { // 0 < x < 1
+        while (current > x) {
+            current -= h * current;
+            result -= h * (1.0f / current);
+        }
     }
     
-    // For non-integer exponents, use a^b = e^(b*ln(a))
+    return result;
+}
+
+float compute_log10(float x) {
+    // log10(x) = ln(x) / ln(10)
+    return compute_ln(x) / compute_ln(10.0f);
+}
+
+float compute_power(float base, float exponent) {
+    // Special cases
+    if (exponent == 0.0f) return 1.0f;
+    if (base == 0.0f) return 0.0f;
+    
+    // Integer exponents - use direct multiplication for better accuracy
+    if (is_integer(exponent)) {
+        if (exponent > 0) {
+            float result = 1.0f;
+            for(int i = 0; i < (int)exponent; i++) {
+                result *= base;
+            }
+            return result;
+        } else {
+            float result = 1.0f;
+            for(int i = 0; i < (int)-exponent; i++) {
+                result *= base;
+            }
+            return 1.0f / result;
+        }
+    }
+    
+    // For fractional exponents: a^b = e^(b*ln(a))
     return compute_exp(exponent * compute_ln(base));
+}
+
+// Inverse trigonometric functions - implemented using numerical methods
+
+float compute_asin(float x) {
+    // Make sure x is in valid range [-1, 1]
+    if (x < -1.0f) x = -1.0f;
+    if (x > 1.0f) x = 1.0f;
+    
+    // Special cases
+    if (x == 0.0f) return 0.0f;
+    if (x == 1.0f) return PI/2;
+    if (x == -1.0f) return -PI/2;
+    
+    // Binary search between -Ï€/2 and Ï€/2
+    float low = -PI/2;
+    float high = PI/2;
+    float mid, sin_mid, cos_mid;
+    
+    for (int i = 0; i < 20; i++) { // 20 iterations for precision
+        mid = (low + high) / 2;
+        compute_sin_cos(mid, &sin_mid, &cos_mid);
+        
+        if (sin_mid < x) {
+            low = mid;
+        } else {
+            high = mid;
+        }
+    }
+    
+    return (low + high) / 2;
+}
+
+float compute_acos(float x) {
+    // acos(x) = Ï€/2 - asin(x)
+    return PI/2 - compute_asin(x);
+}
+
+float compute_atan(float x) {
+    // For small x, atan(x) â‰ˆ x
+    if (-0.1f < x && x < 0.1f) return x;
+    
+    // Use identity: atan(x) = Ï€/2 - atan(1/x) for |x| > 1
+    if (x > 1.0f) return PI/2 - compute_atan(1.0f/x);
+    if (x < -1.0f) return -PI/2 - compute_atan(1.0f/x);
+    
+    // For -1 â‰¤ x â‰¤ 1, use numerical integration of 1/(1+tÂ²) from 0 to x
+    float result = 0.0f;
+    float h = 0.001f; // step size
+    
+    for (float t = 0.0f; t < my_abs(x); t += h) {
+        result += h / (1.0f + t*t);
+    }
+    
+    return (x >= 0) ? result : -result;
 }
 
