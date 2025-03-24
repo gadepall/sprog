@@ -70,7 +70,7 @@
 
 
 \section{Introduction}
-This project implements a digital clock using an AVR microcontroller (e.g., ATmega328P) with a single SN7447 BCD-to-7-segment decoder. The clock displays hours, minutes, and seconds on six multiplexed 7-segment displays. Time is maintained in Binary Coded Decimal (BCD) format and updated every second using a Timer1 compare match interrupt.
+This project implements a digital clock using an Arduino Uno with a single SN7447 BCD-to-7-segment decoder. The clock displays hours, minutes, and seconds on six multiplexed 7-segment displays. Time is maintained in Binary Coded Decimal (BCD) format and updated every second using a Timer1 compare match interrupt.
 
 \section{Aim}
 \begin{itemize}[noitemsep]
@@ -82,7 +82,7 @@ This project implements a digital clock using an AVR microcontroller (e.g., ATme
 
 \section{Components Required}
 \begin{itemize}[noitemsep]
-    \item AVR Microcontroller (e.g., ATmega328P)
+    \item Arduino Uno
     \item SN7447 BCD-to-7-segment decoder
     \item 6 common anode (or cathode, as required) 7-segment displays
     \item Current-limiting resistors (typically \SI{220}{\ohm} per segment)
@@ -200,12 +200,12 @@ The project firmware is divided into two main modules:
 \end{itemize}
 
 \section{Code Explanation}
-The following section explains the main parts of the digital clock code implemented on an AVR microcontroller.
+The following section explains the main parts of the digital clock code implemented on an Arduino Uno.
 
 \subsection{Preprocessor Directives and Includes}
 \begin{itemize}[noitemsep]
     \item \texttt{\#define F\_CPU 16000000UL}: Sets the CPU clock frequency to 16\,MHz. This definition is required by the delay routines from \texttt{<util/delay.h>}.
-    \item \texttt{\#include <avr/io.h>}: Includes the definitions for the input/output registers specific to the AVR microcontroller.
+    \item \texttt{\#include <avr/io.h>}: Includes the definitions for the input/output registers specific to the Arduino Uno.
     \item \texttt{\#include <avr/interrupt.h>}: Provides the interrupt handling functions and macros.
     \item \texttt{\#include <util/delay.h>}: Enables the use of \texttt{\_delay\_ms()} for creating precise delays.
 \end{itemize}
