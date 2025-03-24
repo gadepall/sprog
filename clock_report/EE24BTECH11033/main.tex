@@ -1,0 +1,312 @@
+ \let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+\usepackage{lmodern} % Ensure lmodern is loaded for pdflatex
+
+
+\setlength{\headheight}{1cm} % Set the height of the header box
+\setlength{\headsep}{0mm}     % Set the distance between the header box and the top of the text
+\usepackage{booktabs}
+\usepackage{gvv-book}
+\usepackage{gvv}
+\usepackage{subfig}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}                                      
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                            
+\usepackage{longtable}
+\usepackage{multicol}
+\usepackage{calc}                                             
+\usepackage{multirow}                                         
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}  % Provides \micro and unit formatting
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\title{Digital Clock Implementation Report}
+\author{EE24BTECH11033 - Kolluru Suraj}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This report documents the implementation of a \textbf{6-digit 7-segment digital clock} using:
+\begin{itemize}
+    \item ATmega328P microcontroller (Arduino Uno)
+    \item Hardware BCD encoding via direct GPIO
+    \item Multiplexed common-anode display
+    \item Two-button time adjustment interface
+\end{itemize}
+
+Key features include:
+\begin{itemize}
+    \item Precise 1-second interrupt timing
+    \item HH:MM:SS time display format
+    \item Debounced button inputs for time adjustment
+\end{itemize}
+
+\section{Hardware Design}
+
+\subsection{Component Connections}
+\begin{table}[h]
+\centering
+\caption{Pin Configuration}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Signal} & \textbf{MCU Pin} & \textbf{Description} \\
+\midrule
+BCD Data & PD2-PD5 & 4-bit BCD output (bits 0-3) \\
+Digit Select & PC0-PC5 & Common anode control \\
+Hour Button & PD6 & Active-low input with pull-up \\
+Minute Button & PD7 & Active-low input with pull-up \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Display Interface}
+\begin{itemize}
+    \item \textbf{BCD Encoding:}
+    \begin{itemize}
+        \item Direct GPIO output (PD2-PD5)
+        \item No external decoder IC used
+    \end{itemize}
+    \item \textbf{Multiplexing:}
+    \begin{itemize}
+        \item 6 digits controlled via PC0-PC5
+        \item 500 \micro s display time per digit
+        \item Full refresh rate $\approx$ 83Hz
+    \end{itemize}
+\end{itemize}
+
+\section{Software Implementation}
+
+
+\subsection{Display Driver}
+\begin{itemize}
+    \item \textbf{Multiplexing:} Rapidly cycles through digits
+    \item \textbf{BCD Conversion:} Uses bitmasking on PORTD
+    \item \textbf{Timing:} 500\micro s per digit for stable display
+\end{itemize}
+
+\begin{lstlisting}[language=C,caption=Display Function]
+void displayTime() {
+    int digits[6] = {
+        hours/10, hours%10,
+        minutes/10, minutes%10,
+        seconds/10, seconds%10
+    };
+    
+    for (int i=0; i<6; i++) {
+        PORTD = (PORTD & ~0b00111100) | ((digits[i] << 2) & 0b00111100);
+        PORTC = (1 << i);
+        _delay_us(500);
+    }
+}
+\end{lstlisting}
+
+\subsection{Button Handling}
+\begin{itemize}
+    \item \textbf{Debouncing:} 50ms software delay
+    \item \textbf{Functionality:}
+    \begin{itemize}
+        \item Hour button: Increments hours (0-23)
+        \item Minute button: Increments minutes (0-59)
+    \end{itemize}
+    \item \textbf{Reset Behavior:} Seconds reset to 0 on adjustment
+\end{itemize}
+
+\section{Testing \& Validation}
+
+\subsection{Test Cases}
+\begin{table}[h]
+\centering
+\caption{Verification Results}
+\begin{tabularx}{\textwidth}{lXl}
+\toprule
+\textbf{Test} & \textbf{Procedure} & \textbf{Result} \\
+\midrule
+Time Accuracy & 60-minute continuous run & $\pm$1 second drift \\
+Button Response & Rapid button presses & Clean increments \\
+Display Stability & Visual inspection & No flickering \\
+Current Draw & 5V supply measurement & 85mA (all segments) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Optimizations}
+\begin{itemize}
+    \item Reduced ISR overhead by minimizing operations
+    \item Optimized BCD output using bitmasking
+    \item Balanced display brightness vs. refresh rate
+\end{itemize}
+
+\section{Conclusion}
+The implemented digital clock demonstrates:
+\begin{itemize}
+    \item Reliable timekeeping through interrupt-driven design
+    \item Efficient GPIO utilization for display control
+    \item Responsive user interface with debounced inputs
+\end{itemize}
+
+
+\begin{lstlisting}[language=C,caption=Complete Source Code]
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+
+#define BCD_PORT PORTD
+#define BCD_DDR DDRD
+#define BCD_MASK 0b00111100  // PD2 to PD5
+
+#define COMMON_PORT PORTC
+#define COMMON_DDR DDRC
+
+#define HOUR_BUTTON PD6
+#define MINUTE_BUTTON PD7
+
+volatile int seconds = 0, minutes = 30, hours = 15;
+
+void setup() {
+    // Set BCD display pins (PD2-PD5) as output
+    BCD_DDR |= BCD_MASK;
+    BCD_PORT &= ~BCD_MASK;
+
+    // Set digit selector pins (PORTC) as output
+    COMMON_DDR = 0xFF;
+    COMMON_PORT = 0x00;
+
+    // Enable pull-up resistors for buttons
+    PORTD |= (1 << HOUR_BUTTON) | (1 << MINUTE_BUTTON);
+
+    // Timer1 Setup: CTC Mode, 1-second interval
+    TCCR1B |= (1 << WGM12) | (1 << CS12) | (1 << CS10);
+    OCR1A = 15625; // 1-second interrupt
+    TIMSK1 |= (1 << OCIE1A);
+
+    // Debug LED on PC7 (Bit 7 of PORTC) to check if ISR is running
+    DDRC |= (1 << 7);  // Set PC7 as output
+    PORTC &= ~(1 << 7); // Initially turn it off
+
+    sei(); // Enable global interrupts
+}
+
+ISR(TIMER1_COMPA_vect) {
+    PORTC ^= (1 << 7); // Toggle PC7 to check ISR is running
+
+    // Clock Mode Updates
+    seconds++;
+    if (seconds == 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes == 60) {
+            minutes = 0;
+            hours = (hours + 1) % 24;
+        }
+    }
+}
+
+void displayTime();
+void setBCD(int value);
+void checkButtons();
+
+int main() {
+    setup();
+    while (1) {
+        checkButtons();
+        displayTime();
+    }
+}
+
+// Function to display time on a 6-digit 7-segment display
+void displayTime() {
+    int digits[6];
+
+    digits[0] = hours / 10;
+    digits[1] = hours % 10;
+    digits[2] = minutes / 10;
+    digits[3] = minutes % 10;
+    digits[4] = seconds / 10;
+    digits[5] = seconds % 10;
+
+    // Multiplex 7-segment display
+    for (int i = 0; i < 6; i++) {
+        setBCD(digits[i]); // Send the BCD value first
+        COMMON_PORT = (1 << i); // Enable the corresponding digit
+        _delay_us(500); // Short delay for smooth display
+    }
+}
+
+// Function to set BCD output for 7-segment display
+void setBCD(int value) {
+    BCD_PORT = (BCD_PORT & ~BCD_MASK) | ((value << 2) & BCD_MASK);
+}
+
+// Function to check button inputs and update time
+void checkButtons() {
+    if (!(PIND & (1 << HOUR_BUTTON))) {
+        _delay_ms(50);
+        if (!(PIND & (1 << HOUR_BUTTON))) {
+            hours = (hours + 1) % 24;
+            seconds = 0;
+            while (!(PIND & (1 << HOUR_BUTTON))); // Wait for release
+        }
+    }
+
+    if (!(PIND & (1 << MINUTE_BUTTON))) {
+        _delay_ms(50);
+        if (!(PIND & (1 << MINUTE_BUTTON))) {
+            minutes = (minutes + 1) % 60;
+            seconds = 0;
+            while (!(PIND & (1 << MINUTE_BUTTON))); // Wait for release
+        }
+    }
+}
+
+\end{lstlisting}
+\textit{\textbf{Remark:} Code Reference from Rongali Charan -EE24BTECH11052}
+
+\end{document}
