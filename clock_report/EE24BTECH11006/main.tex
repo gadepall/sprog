@@ -1,6 +1,6 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage{graphicx,amsmath,amssymb,listings,xcolor,tikz,caption,float}
-\usepackage{hyperref}
+
 \title{Development of an Arduino-Powered Digital Clock with Timer Capability}
 \author{Arnav M - EE24BTECH11006}
 \date{\today}
@@ -49,7 +49,7 @@ The Arduino outputs BCD signals via digital pins PD2 through PD5, directing them
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[scale=0.4]
+\begin{tikzpicture}[scale=0.7]
   [
     scale=1,
     >=stealth,
@@ -187,7 +187,6 @@ Boundary conditions, such as exceeding 24 hours or 60 minutes, are automatically
 
 \section{Conclusion}
 This project successfully implements a digital clock with an integrated timer, leveraging a 7447 BCD decoder and multiplexed display control. Timer interrupts ensure precise timekeeping, and push buttons facilitate user interaction. The system efficiently switches between clock and timer modes while providing visual feedback through blinking when the timer completes. The project serves as an excellent demonstration of embedded system design principles.
-The code is available in the following git hub link:
-\url{https://github.com/arnavmahishi/EE1003/tree/main/hardware/clock}
+
 \end{document}
 .

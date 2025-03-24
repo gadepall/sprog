@@ -1,0 +1,117 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+
+\title{AVR Calculator Application Report}
+\author{Arnav Mahishi- EE24BTECH11006}
+\date{\today}
+
+% Fancy header setup
+\pagestyle{fancy}
+\fancyhead[L]{AVR Calculator Report}
+\fancyhead[R]{Your Name}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    This report outlines the design and functionality of a sophisticated calculator application implemented using an AVR microcontroller and GCC. The application performs basic arithmetic operations such as addition, subtraction, multiplication, and division, as well as advanced functions such as inverse trigonometric operations, logarithms, and trigonometric calculations. The project demonstrates key concepts in embedded systems programming, including hardware interfacing, user input processing, and advanced mathematical computations on an AVR-based microcontroller.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+The AVR-based calculator application was developed using the AVR microcontroller platform and GCC toolchain to provide users with a versatile calculator capable of performing both basic and advanced mathematical operations. This project showcases the ability to integrate advanced mathematical functions such as inverse trigonometric functions (arcsin, arccos, arctan), trigonometric functions (sin, cos, tan), and logarithmic operations (ln, log) into an embedded system.
+
+The purpose of this report is to provide an overview of the project, including the design choices, the implementation of various mathematical operations, the hardware setup, and the interaction between the user and the system. 
+
+\section{System Requirements}
+To run this AVR-based calculator, the following hardware and software setup is required:
+\begin{itemize}
+    \item \textbf{AVR Microcontroller:} Any AVR-based microcontroller (e.g., ATmega328P).
+    \item \textbf{Development Environment:} GCC for AVR, AVRDUDE for programming, and a suitable text editor or IDE.
+    \item \textbf{Input Devices:} Pushbuttons or switches for numeric and operational input.
+    \item \textbf{Display:} 7-segment display, LCD, or similar output display for showing the result.
+    \item \textbf{Mathematical Libraries:} Libraries for trigonometric and logarithmic functions, which are implemented using the AVR's floating-point math capabilities.
+\end{itemize}
+
+\section{Features and Functionalities}
+The calculator offers several key features:
+\begin{itemize}
+    \item \textbf{Basic Arithmetic Operations:} Addition, subtraction, multiplication, and division.
+    \item \textbf{Advanced Trigonometric Functions:} Sin, Cos, Tan, and their inverses (arcsin, arccos, arctan).
+    \item \textbf{Logarithmic Functions:} Natural logarithm (ln) and base-10 logarithm (log).
+    \item \textbf{User Input:} Users enter numbers and operations via switches or buttons.
+    \item \textbf{Output Display:} Results are displayed on a 7-segment display or an LCD screen.
+    \item \textbf{Error Handling:} Error messages are displayed in case of invalid inputs or mathematical errors, such as division by zero or invalid operations in trigonometric calculations.
+\end{itemize}
+
+\section{Code Structure Overview}
+The code structure for the AVR calculator is organized into several modules to handle initialization, input, calculations, and display. Key modules include:
+\begin{itemize}
+    \item \textbf{Initialization:} This sets up the I/O pins for input and output, configures interrupts for button presses, and prepares the display.
+    \item \textbf{Input Handling:} Button presses are captured and mapped to numeric values or operators, including advanced operations like trigonometric and logarithmic functions.
+    \item \textbf{Arithmetic and Advanced Operations:} Functions to handle basic operations, as well as advanced operations like trigonometry and logarithms.
+    \item \textbf{Display Logic:} The result is displayed on a 7-segment or LCD display. The display updates as calculations are performed.
+    \item \textbf{Error Handling:} he system catches mathematical errors (e.g., division by zero, out-of-range values for inverse trig functions) and displays appropriate error messages.
+\end{itemize}
+
+\section{Detailed Description of the Code}
+\subsection{Initialization}
+The system is initialized by configuring the microcontroller's input/output ports for reading button presses and displaying the results. Timers are set up to handle input debouncing and to manage the refresh rates for the display. This initialization ensures that the system is prepared to receive inputs and perform calculations.
+
+\subsection{Input Handling}
+The user interacts with the calculator via physical buttons or switches, which are connected to the microcontroller's input pins. These buttons correspond to digits, operators (like +, -, *, /), and advanced mathematical functions (e.g., sin, cos, log). The program uses polling or interrupts to detect button presses and map the input to appropriate operations. The numeric values and operators are stored for further processing.
+
+\subsection{Arithmetic and Advanced Operations}
+The core functions of the calculator handle the following operations:
+\begin{itemize}
+    \item \textbf{Basic Arithmetic Operations:} 
+    - Addition: Adds two numbers.
+    - Subtraction: Subtracts one number from another.
+    - Multiplication: Multiplies two numbers.
+    - Division: Divides one number by another, with checks for division by zero.
+
+    \item \textbf{Trigonometric Functions:} 
+    - Sine, cosine, and tangent functions are implemented based on the microcontroller’s math libraries, providing the ability to compute these values for a given angle (in radians).
+    
+    \item \textbf{Inverse Trigonometric Functions:} 
+    - Arcsine (asin), arccosine (acos), and arctangent (atan) functions allow the calculation of angles based on the sine, cosine, and tangent values, respectively. Error handling ensures that input values are valid for inverse trigonometric calculations (e.g., -1 to 1 for arcsin and arccos).
+    
+    \item \textbf{Logarithmic Functions:} 
+    - The calculator supports natural logarithms (ln) and base-10 logarithms (log). These operations are performed using the AVR's math library, which supports floating-point operations for these advanced calculations.
+\end{itemize}
+
+\subsection{Display Logic}
+The results of the arithmetic and advanced operations are displayed on a 7-segment display or an LCD screen. The program uses a lookup table or direct control of the display's segments to show numbers and letters (e.g., "Error" in case of invalid operations). The display is updated after every operation, and in cases of complex calculations (such as trigonometric or logarithmic results), it formats the output to fit the display constraints.
+
+\subsection{Error Handling}
+The system includes robust error handling to manage edge cases:
+\begin{itemize}
+    \item Division by zero: The calculator checks for division by zero and displays an error message.
+    \item Invalid values for inverse trigonometric functions: The arcsin and arccos functions handle input values outside the valid range of -1 to 1.
+    \item Logarithm of non-positive values: The ln and log functions check for invalid input (log of 0 or negative numbers) and display an error message if needed.
+\end{itemize}
+
+\section{GitHub Repository}
+For access to the full code and further documentation, visit the project's GitHub repository:
+\url{https://github.com/arnavmahishi/EE1003/tree/main/hardware/calculator}
+
+
+\section{Conclusion}
+This AVR calculator project demonstrates the integration of basic and advanced mathematical operations on an embedded system. By using an AVR microcontroller, the project efficiently handles user input, performs arithmetic and trigonometric calculations, and displays results on a hardware interface. The inclusion of advanced functions like inverse trigonometry and logarithms enhances the functionality and versatility of the calculator.
+
+\section{Future Improvements}
+While the project is functional, several improvements could be made:
+\begin{itemize}
+    \item \textbf{Graphical Output:} Using a graphical LCD to display more complex results and potentially allow for graphical representations of functions.
+    \item \textbf{Memory Function:} Implementing memory storage to hold previous results for use in subsequent calculations.
+    \item \textbf{Enhanced User Interface:} Adding more intuitive navigation
+\end{itemize}
+
+\end{document}
+
