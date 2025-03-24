@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Components Required}{2}{section.2}%
+\contentsline {section}{\numberline {3}Wiring the Circuit}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Connections of 7447}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Connections to seven segment display}{2}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}connections to Arduino}{3}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Programming the Arduino}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}overview}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}code}{3}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Implementation}{6}{section.5}%
+\contentsline {subsection}{\numberline {5.1}How Multiplexing Works}{6}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Testing and Calibration}{6}{section.6}%

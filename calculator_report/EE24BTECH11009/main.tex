@@ -1,0 +1,238 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{float}
+
+\geometry{a4paper, margin=1in}
+
+% Custom colors
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Listing style
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    language=C
+}
+
+\lstset{style=mystyle}
+
+\title{AVR Scientific Calculator Project Report}
+\author{Mokshith Kumar Reddy}
+
+\begin{document}
+{\let\newpage\relax\maketitle}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and floats
+
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+\tableofcontents
+\newpage
+
+\section{Introductions}
+This report consists of the data how to make a scientific calculator(can handle algebraic, trigonometric, logarithmic functions) from the components shown below.
+\section{Components Required}
+\begin{itemize}
+\item Arduino Uno/Nano
+\item LCD-Display
+\item Push Buttons
+\item Breadboard and Wires
+\end{itemize}
+
+\section{Hardware Design}
+
+\subsection{Component Connections}
+
+\begin{table}[H]
+\centering
+\caption{Hardware Connections}
+\label{tab:connections}
+\begin{tabular}{llll}
+\toprule
+\textbf{Component} & \textbf{MCU Pin} & \textbf{Arduino Pin} & \textbf{Function} \\
+\midrule
+LCD RS & PD0 & D0 & Register Select \\
+LCD E & PD1 & D1 & Enable \\
+LCD D4-D7 & PD2-PD5 & D2-D5 & Data Bus \\
+Keypad ROW1 & PD6 & D6 & Row 1 \\
+Keypad ROW2 & PD7 & D7 & Row 2 \\
+Keypad ROW3 & PB0 & D8 & Row 3 \\
+Keypad ROW4 & PB1 & D9 & Row 4 \\
+Keypad COL1 & PB2 & D10 & Column 1 \\
+Keypad COL2 & PB3 & D11 & Column 2 \\
+Keypad COL3 & PB4 & D12 & Column 3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\subsection{Matrix Scanning}
+Here we are implementing the matrix method keyboard scanning the 12 different push buttons using only 7 ports as follows, we arrange the buttons in the matrix form of $4\times3$ and we connect every lower wire of buttons in a row and every upper wire of buttons in the column is connected so if we enable a button a unique set of signal is given to Arduino. So now we need conserve the ports.
+\section{Software Implementation}
+
+\subsection{Main Program Structure}
+
+\begin{lstlisting}[caption=Main Program Loop, label=lst:main]
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+
+int main(void) {
+    // Initialize hardware
+    DDRD = 0xFF;  // Set PORTD as outputs
+    DDRB = 0x03;  // Set PB0-PB1 as outputs
+    
+    // Initialize LCD
+    LCD_Init();
+    LCD_Message("Calculator Ready");
+    
+    while(1) {
+        // Check mode buttons
+        if (!(PINC & (1<<PC2))) toggleTrigMode();
+        if (!(PINC & (1<<PC3))) calculateResult();
+        
+        // Handle keypad input
+        char key = getKeyPressed();
+        if (key != '\0') {
+            handleKeyPress(key);
+            _delay_ms(300);  // Debounce delay
+        }
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{Keypad Scanning}
+
+\begin{lstlisting}[caption=Keypad Scanning Function, label=lst:keypad]
+const char keys[4][3] = {
+    {'1','2','3'},
+    {'4','5','6'},
+    {'7','8','9'},
+    {'A','0','C'}
+};
+
+char getKeyPressed() {
+    for (uint8_t row = 0; row < 4; row++) {
+        // Activate current row
+        switch(row) {
+            case 0: PORTD &= ~(1<<ROW1); break;
+            case 1: PORTD &= ~(1<<ROW2); break;
+            case 2: PORTB &= ~(1<<ROW3); break;
+            case 3: PORTB &= ~(1<<ROW4); break;
+        }
+        _delay_us(10);
+        
+        // Check columns
+        if (!(PINB & (1<<COL1))) return keys[row][0];
+        if (!(PINB & (1<<COL2))) return keys[row][1];
+        if (!(PINB & (1<<COL3))) return keys[row][2];
+        
+        // Deactivate row
+        switch(row) {
+            case 0: PORTD |= (1<<ROW1); break;
+            case 1: PORTD |= (1<<ROW2); break;
+            case 2: PORTB |= (1<<ROW3); break;
+            case 3: PORTB |= (1<<ROW4); break;
+        }
+    }
+    return '\0';  // No key pressed
+}
+\end{lstlisting}
+
+\subsection{LCD Interface}
+
+\begin{lstlisting}[caption=LCD Initialization, label=lst:lcd]
+void LCD_Init() {
+    _delay_ms(50);
+    SendNibble(0x03);
+    _delay_ms(5);
+    SendNibble(0x03);
+    _delay_us(100);
+    SendNibble(0x02);  // 4-bit mode
+    
+    LCD_Cmd(0x28);  // 2 lines, 5x8 matrix
+    LCD_Cmd(0x0C);  // Display on, cursor off
+    LCD_Cmd(0x06);  // Increment cursor
+    LCD_Cmd(0x01);  // Clear display
+    _delay_ms(2);
+}
+
+void LCD_Char(uint8_t data) {
+    PORTD |= (1<<LCD_RS);  // Set to data mode
+    SendByte(data);
+}
+
+void LCD_Message(const char *text) {
+    while(*text) LCD_Char(*text++);
+}
+\end{lstlisting}
+
+\subsection{Mathematical Operations}
+
+\begin{lstlisting}[caption=Trigonometric Functions, label=lst:trig]
+float sin_euler(float x) {
+    x = x * PI / 180;  // Convert to radians
+    float term = x, sum = x;
+    
+    for(int n = 3; n < 15; n += 2) {
+        term *= -x*x/(n*(n-1));
+        sum += term;
+    }
+    return sum;
+}
+
+float cos_euler(float x) {
+    x = x * PI / 180;  // Convert to radians
+    float term = 1, sum = 1;
+    
+    for(int n = 2; n < 15; n += 2) {
+        term *= -x*x/(n*(n-1));
+        sum += term;
+    }
+    return sum;
+}
+\end{lstlisting}
+
+\section{Conclusion}
+The AVR scientific calculator project successfully demonstrates:
+Efficient keypad scanning using matrix techniques
+, Clear output on LCD display, Accurate mathematical computations
+and  Responsive user interface
+
+Future enhancements could include:
+\begin{itemize}
+\item Floating-point optimization
+\item Additional scientific functions
+\item Graphical display capabilities
+\end{itemize}
+
+\end{document}
