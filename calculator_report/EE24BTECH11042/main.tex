@@ -1,0 +1,53 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{\textbf{LAB-REPORT-2}}
+\author{M . SRUJANA \\EE24BTECH11042}
+\begin{document}
+
+\maketitle
+
+\section{Aim :} Scientific Calculator Using AVR-GCC
+\section{Installation :}
+\begin{enumerate}
+    \item In termux: apt install avr-gcc avr-binutils avr-libc avrdude make -y
+\end{enumerate}
+\section{Apparatus:}
+\begin{itemize}
+    \item Arduino Uno
+    \item JHD162A LCD display
+    \item push buttons
+    \item 2k$\Omega$, 15k$\Omega$,  resistors
+    \item Jumper wires
+    \item Breadboard
+\end{itemize}
+\section{Connections :}
+Make the connections as mentioned below:
+\input{table.tex}
+
+\section{LOGIC :}
+\begin{itemize}
+    \item Basic arithmetic operations (addition, subtraction, multiplication, division)
+    \item Trigonometric functions (sin, cos, tan) using differential equations
+    \item Logarithmic and exponential functions 
+\end{itemize}
+
+
+\textit{\textbf{Remark:} Code sourced from Akshara EE24BTECH11003}
+\section{Limitations and Observations}  
+During the experiment, it was observed that the resistance of certain components, particularly the resistors used in the LCD and button circuits, varied with temperature. As a result, the output of the scientific calculator exhibited slight fluctuations under different environmental conditions. This variation affected the accuracy of calculations, particularly in prolonged usage. To mitigate this issue, using temperature-stable resistors or compensating for resistance variations in software could be considered.  
+\section{Execution : }
+\begin{enumerate}
+    \item To compile main.c file : avr-gcc -mmcu=atmega328p -Os -o main.elf main.c
+    \item To convert main.elf file to main.hex : avr-objcopy -O ihex -R .eeprom main.elf main.hex
+    \item Moving the Compiled File to ArduinoDroid : mv main.hex /sdcard/ArduinoDroid/precompiled
+\end{enumerate}
+\end{document}
