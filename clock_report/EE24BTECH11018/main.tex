@@ -1,0 +1,366 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{hyperref}
+
+\lstset{
+  language=C,
+  backgroundcolor=\color{black!5},
+  basicstyle=\small\ttfamily,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!50!black},
+  stringstyle=\color{red},
+  breaklines=true,
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single
+}
+
+\title{Arduino Digital Clock:\\ Implementation and Analysis}
+\author{Durgi Swaraj Sharma - EE24BTECH11018}
+\begin{document}
+
+\maketitle\author
+
+\begin{abstract}
+This report details the implementation of an Arduino-based digital clock that displays time in hours, minutes, and seconds format. The clock features multiplexed seven-segment displays controlled through a 7447 BCD decoder, with user inputs for time adjustment through pushbuttons. We discuss the hardware configuration, software architecture focusing on time-keeping, display multiplexing, and button debouncing techniques. The implementation emphasizes efficient port manipulation for optimal display refresh rates while maintaining minimal component count.
+\end{abstract}
+
+\section{Introduction}
+
+The digital clock project implements a functional timekeeping device with the following key features:
+
+\begin{itemize}
+    \item 12-hour time format display (hours, minutes, seconds)
+    \item Multiplexed 6-digit seven-segment display system
+    \item Single 7447 BCD-to-seven-segment decoder
+    \item Button controls for:
+    \begin{itemize}
+        \item Pausing/resuming time
+        \item Adjusting hours, minutes, and seconds
+    \end{itemize}
+    \item Efficient display refresh through direct port manipulation
+    \item Timer-based 1Hz clock with automatic time increment
+\end{itemize}
+
+The implementation employs basic embedded programming techniques including direct register manipulation, interrupt handling, and software debouncing, all optimized for the AVR microcontroller environment.
+
+\section{Hardware Components and Circuit Design}
+
+\subsection{Components List}
+
+\begin{itemize}
+    \item Arduino Uno R3 (ATmega328P microcontroller)
+    \item Six 7-segment displays (common anode)
+    \item 7447 BCD-to-seven-segment decoder
+    \item Four push buttons for input
+    \item Resistors (10k$\Omega$ pull-up resistors for buttons, 220$\Omega$ current limiting resistors for displays)
+    \item Breadboard and connecting wires
+\end{itemize}
+
+\subsection{Circuit Connections}
+
+The circuit employs multiplexing to minimize component count:
+
+\subsubsection{7447 Decoder Connection}
+\begin{itemize}
+    \item BCD inputs (A, B, C, D) - Arduino digital pins 2-5 (PORTD 2-5)
+    \item Each 7-segment display segment input (a-g) connected in parallel to the corresponding 7447 outputs
+    \item Current-limiting resistors (220$\Omega$) between the 7447 outputs and display segments
+\end{itemize}
+
+\subsubsection{Display Connections}
+\begin{itemize}
+    \item Display common anodes connected to Arduino pins 8-13 (PORTB 0-5)
+    \item The six displays represent (left to right):
+    \begin{itemize}
+        \item Hours tens digit (Display 0)
+        \item Hours ones digit (Display 1)
+        \item Minutes tens digit (Display 2)
+        \item Minutes ones digit (Display 3)
+        \item Seconds tens digit (Display 4)
+        \item Seconds ones digit (Display 5)
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Button Connections}
+\begin{itemize}
+    \item Four buttons connected to Arduino analog pins A0-A3 (PORTC 0-3):
+    \begin{itemize}
+        \item A0: Pause/resume button
+        \item A1: Increment seconds button
+        \item A2: Increment minutes button
+        \item A3: Increment hours button
+    \end{itemize}
+    \item Internal pull-up resistors enabled via PORTC
+\end{itemize}
+
+\section{Software Architecture}
+
+\subsection{Code Organization}
+
+The software is structured into several logical components:
+
+\begin{itemize}
+    \item \textbf{Timer Initialization}: Configuration of Timer1 for 1Hz interrupts
+    \item \textbf{Time Management}: Incrementation of hours, minutes, and seconds
+    \item \textbf{Display Control}: Multiplexing of displays with BCD conversion
+    \item \textbf{Input Handling}: Button detection and debouncing
+    \item \textbf{Main Loop}: Time-to-digit conversion and display refresh
+\end{itemize}
+
+\subsection{Key Data Structures}
+
+\begin{itemize}
+    \item \textbf{Time Variables}: Three volatile variables for hours, minutes, and seconds
+    \item \textbf{BCD Lookup Table}: Conversion from decimal digits to BCD values
+    \item \textbf{Digit Array}: Six-element array for storing separated digits
+    \item \textbf{State Variables}: Tracks clock running state and button press history
+\end{itemize}
+
+\section{Time Management Implementation}
+
+\subsection{Timer Configuration}
+
+The clock uses Timer1 in CTC (Clear Timer on Compare Match) mode to generate precise 1-second interrupts:
+
+\begin{lstlisting}
+void init_timer(void) {
+    TCCR1A = 0;
+    TCCR1B = (1 << WGM12) | (1 << CS12) | (1 << CS10);
+    OCR1A = 15624;
+    TIMSK1 |= (1 << OCIE1A);
+}
+\end{lstlisting}
+
+The timer is configured to generate an interrupt every 1 second with a 16MHz clock frequency:
+\begin{itemize}
+    \item Prescaler of 1024 (CS12 | CS10)
+    \item Compare value of 15624 ($\frac{16,000,000}{1024} \times 1s - 1 = 15624$)
+\end{itemize}
+
+\subsection{Time Increment Logic}
+
+The timer interrupt service routine (ISR) increments the time values with proper rollover handling:
+
+\begin{lstlisting}
+ISR(TIMER1_COMPA_vect) {
+    if(clock_running) {
+        seconds++;
+        if(seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if(minutes >= 60) {
+                minutes = 0;
+                hours = (hours % 12) + 1;
+            }
+        }
+    }
+}
+\end{lstlisting}
+
+The time increment follows standard rollover rules:
+\begin{itemize}
+    \item Seconds: 0-59, rolls over to 0 and increments minutes
+    \item Minutes: 0-59, rolls over to 0 and increments hours
+    \item Hours: 1-12 (12-hour format), rolls over from 12 to 1
+\end{itemize}
+
+The \texttt{clock\_running} flag enables pausing of the clock when needed.
+
+\section{Display Multiplexing System}
+
+\subsection{BCD Conversion}
+
+The display uses a 7447 BCD-to-seven-segment decoder, requiring BCD input:
+
+\begin{lstlisting}
+const uint8_t bcd_lookup[10] = {
+    0b0000, 0b0001, 0b0010, 0b0011, 0b0100,
+    0b0101, 0b0110, 0b0111, 0b1000, 0b1001
+};
+\end{lstlisting}
+
+This lookup table provides the 4-bit BCD representation for each decimal digit.
+
+\subsection{Multiplexing Implementation}
+
+The display multiplexing function selectively activates one display at a time while setting the appropriate BCD value:
+
+\begin{lstlisting}
+void display_digit(uint8_t display, uint8_t digit) {
+    // Turn off all displays
+    PORTB &= ~0b00111111;
+    
+    // Set BCD value
+    PORTD = (PORTD & 0b11000011) | ((bcd_lookup[digit] << 2) & 0b00111100);
+    
+    // Enable selected display
+    PORTB |= (1 << display);
+}
+\end{lstlisting}
+
+Key aspects of the multiplexing technique:
+\begin{itemize}
+    \item All displays are turned off before any change to prevent ghosting
+    \item BCD data is set on PORTD pins 2-5 using masks to preserve other bits
+    \item Only the desired display is activated via PORTB
+\end{itemize}
+
+This approach enables using a single 7447 decoder for all six digits, significantly reducing component count.
+
+\section{Button Input Handling}
+
+\subsection{Button Debouncing}
+
+The implementation includes an effective debouncing algorithm:
+
+\begin{lstlisting}
+void check_buttons(void) {
+    static uint8_t last_state = 0xFF;
+    uint8_t current_state = PINC & 0x0F;
+    uint8_t pressed = last_state & ~current_state;
+
+    if(pressed) {
+        // Debounce delay
+        _delay_ms(50);
+        current_state = PINC & 0x0F;
+        pressed = last_state & ~current_state;
+    }
+    
+    // Process button actions...
+    
+    last_state = current_state;
+}
+\end{lstlisting}
+
+The debouncing strategy:
+\begin{itemize}
+    \item Tracks previous button state to detect transitions
+    \item Detects button press using bitwise operations
+    \item Adds a short delay and re-samples to verify the button press
+    \item Only processes verified button presses
+\end{itemize}
+
+\subsection{Time Adjustment Functions}
+
+Each button provides a specific time adjustment function:
+
+\begin{lstlisting}
+// Inside check_buttons()
+if(pressed & 0x01) { // A0: Toggle clock
+    clock_running ^= 1;
+}
+if(pressed & 0x02) { // A1: Inc seconds
+    seconds = (seconds + 1) % 60;
+}
+if(pressed & 0x04) { // A2: Inc minutes
+    minutes = (minutes + 1) % 60;
+}
+if(pressed & 0x08) { // A3: Inc hours
+    hours = (hours % 12) + 1;
+}
+\end{lstlisting}
+
+The button functions provide a simple yet complete interface for clock adjustment:
+\begin{itemize}
+    \item A0 toggles between running and paused states (for setting time)
+    \item A1-A3 provide increment functions for each time component
+    \item Each increment function handles proper range limiting
+\end{itemize}
+
+\section{Main Program Loop}
+
+The main loop handles digit calculation and display updates:
+
+\begin{lstlisting}
+int main(void) {
+    init_ports();
+    init_timer();
+    sei();
+
+    uint8_t digits[6];
+    
+    while(1) {
+        check_buttons();
+
+        // Calculate display digits
+        digits[0] = hours / 10;
+        digits[1] = hours % 10;
+        digits[2] = minutes / 10;
+        digits[3] = minutes % 10;
+        digits[4] = seconds / 10;
+        digits[5] = seconds % 10;
+
+        // Update displays
+        for(uint8_t i = 0; i < 6; i++) {
+            display_digit(i, digits[i]);
+            _delay_us(1000);
+        }
+    }
+    
+    return 0;
+}
+\end{lstlisting}
+
+This approach ensures:
+\begin{itemize}
+    \item Regular checking of button inputs
+    \item Time-to-digit conversion for all 6 displays
+    \item Rapid cycling through displays for persistence of vision
+    \item Consistent refresh rate with controlled timing
+\end{itemize}
+
+\section{Optimizations}
+
+\subsection{Port Manipulation}
+
+The implementation uses direct port manipulation rather than Arduino functions like \texttt{digitalWrite()}:
+
+\begin{lstlisting}
+PORTB &= ~0b00111111; // Clear display enable bits
+PORTB |= (1 << display); // Set specific display bit
+\end{lstlisting}
+
+Benefits of this approach:
+\begin{itemize}
+    \item Much faster execution (5-10× faster than \texttt{digitalWrite()})
+    \item Predictable timing for multiplexing
+    \item Atomic operations for display control
+\end{itemize}
+
+\subsection{BCD Lookup Table}
+
+The BCD conversion uses a pre-calculated lookup table rather than computing BCD values on-the-fly:
+
+\begin{lstlisting}
+const uint8_t bcd_lookup[10] = {0b0000, 0b0001, ...};
+\end{lstlisting}
+
+This optimization:
+\begin{itemize}
+    \item Reduces computation time in the display loop
+    \item Ensures constant-time BCD conversion regardless of digit value
+    \item Uses program memory rather than RAM for constant data
+\end{itemize}
+
+\section{Conclusion}
+
+The Arduino digital clock project demonstrates efficient implementation of a multiplexed display system with button-controlled time adjustment. Key achievements include:
+
+\begin{itemize}
+    \item Efficient multiplexing with a single BCD decoder for six displays
+    \item Precise timekeeping using timer interrupts
+    \item Effective button debouncing for reliable user input
+    \item Optimized port manipulation for rapid display updates
+    \item 12-hour time format with proper rollover handling
+\end{itemize}
+
+This project provides practical insights into multiplexing, emphasizing hardware-software integration, timekeeping mechanisms, and user interface design in resource-constrained environments.
+
+\end{document}
+
