@@ -1,0 +1,7 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}Hardware Implementation}{3}{section.2}%
+\contentsline {section}{\numberline {3}Software Implementation}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Hardware Driver}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Parser algorithm}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Calculator}{4}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Codes}{5}{subsection.3.4}%
