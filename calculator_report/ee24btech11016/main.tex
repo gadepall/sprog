@@ -1,0 +1,102 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{float}
+\title{\textbf{Scientific Calculator using Arduino}}
+\author{DHWANITH M DODDAHUNDI\\EE24BTECH11016}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+
+
+\section{Introduction}
+A scientific calculator is an essential tool for performing complex mathematical operations such as trigonometry, logarithms, exponentiation, and numerical methods. This project implements a scientific calculator using an Arduino board, a 16x2 LCD display, and a button matrix. The calculator is designed to evaluate expressions efficiently and accurately using numerical methods like the **CORDIC algorithm** for trigonometric functions and the **Runge-Kutta 4th order method (RK4)** for logarithms and exponentiation.
+
+\section{Components}
+This section briefly describes the components used in the project.
+
+\subsection{Arduino Board}
+The Arduino acts as the central processing unit, handling input from the button matrix, performing calculations, and displaying results on the LCD.
+
+\subsection{16x2 LCD Display}
+The 16x2 LCD display is used to show the input expression and the computed result. It operates in 4-bit mode to save I/O pins.
+
+\subsection{Button Matrix}
+A **4x5 button matrix** is used for input. It operates in two modes:
+\begin{itemize}
+    \item \textbf{Normal Mode}: Directly enters numbers and basic operations.
+    \item \textbf{Shift Mode}: Activates advanced functions like trigonometry and logarithms.
+\end{itemize}
+
+\subsection{Push Button for Shift Mode}
+A dedicated shift button enables alternate functions for each key.
+
+\subsection{Resistors and Wires}
+Resistors ensure proper signal transmission, while jumper wires connect the components.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \hline
+        LCD Pin & RS  & EN  & D4  & D5  & D6  & D7  & V0 (Contrast) \\ \hline
+        Arduino & 12  & 11  & 5  & 4  & 3  & 2  & Potentiometer \\ \hline
+    \end{tabular}
+    \caption{LCD to Arduino Connections}
+\end{table}
+
+The RW pin is connected to GND, and the A/K backlight pins are connected to 5V/GND.
+
+\subsection{7447 to 7-Segment Display Connections}
+The 7-segment display is connected through the 7447 BCD decoder according to the following mapping:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+        \hline
+        7447 Pin & $\bar{a}$ & $\bar{b}$ & $\bar{c}$ & $\bar{d}$ & $\bar{e}$ & $\bar{f}$ & $\bar{g}$ \\ \hline
+        7-Segment & a & b & c & d & e & f & g \\ \hline
+    \end{tabular}
+    \caption{7447 to 7-Segment Display Mapping}
+\end{table}
+
+The remaining pins of the 7447 which are connected to the Arduino are as follows:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        7447 Pin & D & C & B & A \\ \hline
+        Arduino Pin & 5 & 4 & 3 & 2 \\ \hline
+    \end{tabular}
+    \caption{7447 to Arduino Pin Mapping}
+\end{table}
+
+\subsection{Push Button Connections}
+The calculator has multiple push buttons assigned to various functions. The table below shows the Arduino connections:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Button Function & Arduino Pin \\ \hline
+        Number/Input Buttons & 6, 7, 8, 9, 10, A0, A1, A2, A3, A4 \\ \hline
+        Shift Button & A5 \\ \hline
+        Extra Mode Button & 13 \\ \hline
+    \end{tabular}
+    \caption{Push Button Connections}
+\end{table}
+\section{Experimental Results}
+The calculator was tested for accuracy and response time. The output was compared against standard scientific calculators, showing minimal error. The system successfully executed all planned operations within the given hardware limitations.
+
+\section{Conclusion}
+This project successfully demonstrates the design and implementation of a scientific calculator using an Arduino Uno and AVR-GCC. The system performs mathematical operations efficiently while mintaining simplicity in user interaction. Future improvements can include an expanded function set and memory storage for calculations.
+
+\end{document}
