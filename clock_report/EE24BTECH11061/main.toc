@@ -1,0 +1,11 @@
+\contentsline {section}{\textbf {Digital Clock}}{2}{section*.2}%
+\contentsline {subsection}{Design Objectives}{2}{section*.3}%
+\contentsline {subsection}{Hardware Components}{2}{section*.4}%
+\contentsline {subsection}{Connection Details}{2}{section*.5}%
+\contentsline {subsubsection}{BCD Input Connections}{2}{section*.6}%
+\contentsline {subsubsection}{7-Segment Display Controls}{2}{section*.7}%
+\contentsline {subsubsection}{Display Selection}{3}{section*.8}%
+\contentsline {subsection}{User Interface}{3}{section*.9}%
+\contentsline {subsection}{Testing and Validation}{3}{section*.10}%
+\contentsline {subsubsection}{Functional Testing}{3}{section*.11}%
+\contentsline {subsubsection}{Reliability Testing}{4}{section*.12}%
