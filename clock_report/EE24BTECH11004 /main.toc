@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {I}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {II}Components Used}{2}{section.2}%
+\contentsline {section}{\numberline {III}Circuit setup}{2}{section.3}%
+\contentsline {subsection}{\numberline {\mbox {III-A}}7 Segment Display}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {\mbox {III-B}}7447 IC}{2}{subsection.3.2}%
+\contentsline {subsection}{\numberline {\mbox {III-C}}7447 Connections}{2}{subsection.3.3}%
+\contentsline {subsection}{\numberline {\mbox {III-D}}Segment Connections}{3}{subsection.3.4}%
+\contentsline {subsection}{\numberline {\mbox {III-E}}Common Anode Connections}{3}{subsection.3.5}%
+\contentsline {section}{\numberline {IV}Working Principle}{4}{section.4}%
+\contentsline {section}{\numberline {V}Code Implementation}{4}{section.5}%
+\contentsline {section}{\numberline {VI}Results}{6}{section.6}%
+\contentsline {subsection}{\numberline {\mbox {VI-A}}Clock Mode}{6}{subsection.6.1}%
+\contentsline {subsection}{\numberline {\mbox {VI-B}}Timer Mode}{6}{subsection.6.2}%
+\contentsline {subsection}{\numberline {\mbox {VI-C}}Stopwatch Mode}{7}{subsection.6.3}%
+\contentsline {subsection}{\numberline {\mbox {VI-D}}Display Performance}{7}{subsection.6.4}%
+\contentsline {subsection}{\numberline {\mbox {VI-E}}Interrupt Service Routine (ISR) Validation}{7}{subsection.6.5}%
+\contentsline {subsection}{\numberline {\mbox {VI-F}}Button Response and Debouncing}{7}{subsection.6.6}%
+\contentsline {subsection}{\numberline {\mbox {VI-G}}Overall Evaluation}{7}{subsection.6.7}%
+\contentsline {section}{\numberline {VII}Conclusion}{7}{section.7}%
+\contentsline {section}{\numberline {VIII}References}{7}{section.8}%
