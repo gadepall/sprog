@@ -1,0 +1,147 @@
+\documentclass[12pt]{article}
+\usepackage{background}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{circuitikz}
+\usepackage[justification=centering]{caption}
+\lstset{
+  language=Python,
+  backgroundcolor=\color{black!5},   % light gray background
+  basicstyle=\ttfamily\small,         % Monospaced font for code
+  breaklines=true,                    % Line wrapping
+  keywordstyle=\color{blue},           % Keywords in blue
+  commentstyle=\color{green},         % Comments in green
+  stringstyle=\color{red},            % Strings in red
+  identifierstyle=\color{black},      % Identifiers in black
+  morekeywords={def,class}, 
+           % Function and class names in bold
+  morekeywords={import, as},      % Add extra keywords to be highlighted
+                      % Space between line numbers and code
+  frame=single,                       % Single line frame around the code
+  rulecolor=\color{black},            % Frame color
+  tabsize=4,                          % Number of spaces per tab
+  showstringspaces=false              % Don't underline spaces in strings
+}
+\backgroundsetup{
+  scale=0.5,
+  color=black,
+  opacity=0,  % Reduce opacity further (e.g., 0.05)
+  angle=0,
+  position=current page.center,
+  vshift=-5cm,
+  hshift=0cm,
+  contents={\includegraphics[width=\paperwidth, height=\paperheight]{figs/logo.jpg}}
+}
+
+
+% Fix section numbering
+\setcounter{secnumdepth}{0}
+
+\begin{document}
+\begin{titlepage}
+    \centering
+    {\Huge \bfseries  Digital Clock Project \par}
+    \vspace{1cm}
+    \includegraphics[width=5cm]{figs/logo.jpg} % Replace with your logo file
+    \vspace{1cm}
+    
+    {\Large \bfseries Project Report \par}
+    \vspace{0.5cm}
+    
+    {\large EE1003: Scientific Programming \par}
+    \vspace{2cm}
+    \begin{tabular}{ll}
+    \textbf{S. Rohith Sai} & \textbf{EE24BTECH11061}  \end{tabular}
+\vspace{1cm}
+\end{titlepage}
+\newpage
+\tableofcontents
+\newpage
+
+\section{\textbf{Digital Clock}}
+\subsection{Design Objectives}
+The digital clock displays time accurately in 24-hour format (HH:MM:SS).
+
+\subsection{Hardware Components}
+The digital clock implementation utilizes the following components:
+
+\begin{itemize}
+    \item \textbf{Microcontroller:} AVR microcontroller for processing, time calculations, and display control
+    \item \textbf{7447 BCD-to-Seven-Segment Decoder:} Converts Binary Coded Decimal (BCD) inputs to drive seven-segment displays
+    \item \textbf{Six 7-Segment Displays:} Shows hours, minutes, and seconds in 24-hour format (HH:MM:SS)
+    \item \textbf{Multiplexing Circuit:} Controls all six displays using a single set of segment outputs
+\end{itemize}
+
+\subsection{Connection Details}
+\subsubsection{BCD Input Connections}
+\begin{itemize}
+    \item 7447 Input A (Pin 7) $\rightarrow$ AVR Pin D2
+    \item 7447 Input B (Pin 1) $\rightarrow$ AVR Pin D3
+    \item 7447 Input C (Pin 2) $\rightarrow$ AVR Pin D4
+    \item 7447 Input D (Pin 6) $\rightarrow$ AVR Pin D5
+\end{itemize}
+    
+\subsubsection{7-Segment Display Controls}
+\begin{itemize}
+    \item Segment 'a' (Pin 13) $\rightarrow$ Connected to segment 'a' of all displays
+    \item Segment 'b' (Pin 12) $\rightarrow$ Connected to segment 'b' of all displays
+    \item Segment 'c' (Pin 11) $\rightarrow$ Connected to segment 'c' of all displays
+    \item Segment 'd' (Pin 10) $\rightarrow$ Connected to segment 'd' of all displays
+    \item Segment 'e' (Pin 9) $\rightarrow$ Connected to segment 'e' of all displays
+    \item Segment 'f' (Pin 15) $\rightarrow$ Connected to segment 'f' of all displays
+    \item Segment 'g' (Pin 14) $\rightarrow$ Connected to segment 'g' of all displays
+\end{itemize}
+    
+\subsubsection{Display Selection}
+\begin{itemize}
+    \item Tens of Hours (TH) $\rightarrow$ AVR Pin D6
+    \item Units of Hours (UH) $\rightarrow$ AVR Pin D7
+    \item Tens of Minutes (TM) $\rightarrow$ AVR Pin D8
+    \item Units of Minutes (UM) $\rightarrow$ AVR Pin D9
+    \item Tens of Seconds (TS) $\rightarrow$ AVR Pin D10
+    \item Units of Seconds (US) $\rightarrow$ AVR Pin D11
+\end{itemize}
+
+The multiplexing technique activates only one display at a time. Persistence of vision makes it appear as if all displays are simultaneously illuminated, reducing required microcontroller pins while maintaining display quality.
+
+\subsection{User Interface}
+The digital clock incorporates buttons connected to the AVR microcontroller's analog input pins:
+
+\begin{itemize}
+    \item \textbf{A0 (PC0):} Increase Hours (H+)
+    \item \textbf{A1 (PC1):} Decrease Hours (H-)
+    \item \textbf{A2 (PC2):} Increase Minutes (M+)
+    \item \textbf{A3 (PC3):} Decrease Minutes (M-)
+    \item \textbf{A4 (PC4):} Reset Clock (00:00:00)
+    \item \textbf{A5 (PC5):} Start/Stop Clock
+\end{itemize}
+
+All buttons use software debouncing and pull-up resistors for reliable operation.
+
+\subsection{Testing and Validation}
+\subsubsection{Functional Testing}
+\begin{itemize}
+    \item \textbf{Time Accuracy:} Long-term tests against reference clock
+    \item \textbf{Button Response:} Verification of reliable debounced operation
+    \item \textbf{Display Quality:} Assessment of readability and refresh rate
+    \item \textbf{Edge Case Handling:} Testing time rollover at 24-hour boundaries
+\end{itemize}
+
+\subsubsection{Reliability Testing}
+\begin{itemize}
+    \item \textbf{Long-term Operation:} Continuous running for extended periods
+    \item \textbf{Button Durability:} Repeated button press testing
+    \item \textbf{Power Cycle:} Multiple power-on/power-off cycles to ensure consistent operation
+\end{itemize}
+
+\textbf{Note}\\
+I modified \textbf{J. Kedarananda's (EE24BTECH11030)} code according to my connections and button functions.
+\end{document}
