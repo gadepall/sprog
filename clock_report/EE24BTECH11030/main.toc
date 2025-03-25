@@ -1,0 +1,13 @@
+\contentsline {section}{\numberline {1}Introduction : }{2}{section.1}%
+\contentsline {section}{\numberline {2}Hardware Components : }{2}{section.2}%
+\contentsline {section}{\numberline {3}Circuit Connections : }{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}BCD Inputs for 7447 Decoder}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Seven-Segment Display (SSD) Common Pins for Multiplexing}{3}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Hardware Setup : }{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Components Used}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Circuit Connections}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Circuit Setup Steps}{4}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Pin Labelling}{4}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Final Setup : }{5}{section.5}%
+\contentsline {section}{\numberline {6}Working Principle : }{6}{section.6}%
+\contentsline {section}{\numberline {7}Conclusion : }{7}{section.7}%
