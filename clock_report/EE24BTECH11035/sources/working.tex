@@ -1,0 +1,50 @@
+
+
+\subsection{Initialization of I/O and Timer}
+The ATmega328P microcontroller initializes the required I/O pins and configures Timer1 for interrupt-driven time updates.
+
+\begin{itemize}
+    \item The BCD pins (A, B, C, D) are configured as outputs to send data to the 7447 decoder.
+    \item The common anodes of the six seven-segment displays are connected to separate Arduino analog pins.
+    \item Timer1 is configured to trigger an interrupt every 1 second to increment time.
+\end{itemize}
+
+\subsection{Displaying Time Using Multiplexing}
+The clock utilizes multiplexing to drive six seven-segment displays efficiently while minimizing the number of required I/O pins.
+
+\begin{enumerate}
+    \item The digits for hours, minutes, and seconds are extracted from the stored time values using bitwise operations.
+    \item The appropriate BCD values are sent to the 7447 decoder.
+    \item Only one display is activated at a time using the corresponding common anode pin.
+    \item A short delay ensures proper visibility before switching to the next digit.
+    \item This rapid switching occurs continuously, giving the illusion that all digits are displayed simultaneously.
+\end{enumerate}
+
+\subsection{Time Keeping and Increment Logic}
+The microcontroller stores time values in BCD format, ensuring efficient calculations and display updates.
+
+\begin{itemize}
+    \item The seconds value increments every time the Timer1 interrupt triggers.
+    \item If seconds reach 60, they reset to 00, and the minutes value increments.
+    \item If minutes reach 60, they reset to 00, and the hours value increments.
+    \item If hours reach 24, they reset to 00, completing a full-day cycle.
+\end{itemize}
+
+\subsection{Timer1 Interrupt for Precise Timing}
+Timer1 is configured in **Clear Timer on Compare Match (CTC) Mode** to generate precise 1-second interrupts.
+
+\begin{enumerate}
+    \item The Timer1 interrupt is triggered every second using a compare match value calculated for a 16MHz clock.
+    \item When the interrupt occurs, the seconds counter increments.
+    \item If a carry-over condition is met, minutes and hours are updated accordingly.
+    \item The updated time values are sent to the display in the next iteration.
+\end{enumerate}
+
+\subsection{Main Loop Execution}
+The `main()` function continuously updates the display while the Timer1 interrupt manages time increments in the background.
+
+\begin{itemize}
+    \item The main loop does not block execution with delays, ensuring smooth operation.
+    \item Display updates occur independently of the timekeeping logic, preventing flickering or lag.
+    \item The system can be expanded to include additional functionality, such as setting the time using push buttons.
+\end{itemize}
