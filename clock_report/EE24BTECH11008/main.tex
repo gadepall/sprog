@@ -1,0 +1,93 @@
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass[journal]{IEEEtran}
+\usepackage[a5paper, margin=10mm, onecolumn]{geometry}
+
+\setlength{\headheight}{1cm} % Set header height
+\setlength{\headsep}{0mm}     % Set space between header and text
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{lscape}
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+\setlength{\intextsep}{10pt} % Space between text and figures
+
+\numberwithin{equation}{enumi}
+\numberwithin{figure}{enumi}
+\renewcommand{\thetable}{\theenumi}
+
+% Document start
+\begin{document}
+\bibliographystyle{IEEEtran}
+
+\title{Implementation of a Digital Time Display System}
+\author{EE24BTECH11008-Aslin Garvasis}
+
+{\let\newpage\relax\maketitle}
+
+\section*{Overview}
+This project focuses on the development of a digital time display system using an ATmega328P microcontroller. The system supports three functionalities: clock, stopwatch, and countdown timer. Time management is handled via Timer1 interrupts, and user input is managed through push-button switches. The output is displayed on a multiplexed seven-segment display.
+
+\section*{Components Used}
+The project utilizes the following hardware components:
+\begin{itemize}
+    \item ATmega328P microcontroller
+    \item Six seven-segment common-anode displays
+    \item Three push buttons for mode selection
+    \item Resistors and interconnecting wires
+\end{itemize}
+
+\section*{Software Implementation}
+The firmware is developed in C using AVR-GCC libraries, following a structured programming approach:
+
+\subsection{System Initialization}
+The setup function configures the microcontroller’s GPIO pins and initializes Timer1 to generate periodic interrupts for timekeeping. Additionally, internal pull-up resistors are enabled for the buttons.
+
+\subsection{Timer Interrupt Handling}
+A dedicated Timer1 interrupt service routine (ISR) executes every second to update time values across different modes and handle day transitions where necessary.
+
+\subsection{Mode Control}
+User input is processed through three buttons, each corresponding to a specific functionality:
+\begin{itemize}
+    \item Button 1: Activates standard clock mode
+    \item Button 2: Starts or resets the stopwatch mode
+    \item Button 3: Initiates or resets the countdown timer mode
+\end{itemize}
+
+\subsection{Multiplexing of Seven-Segment Display}
+To efficiently utilize microcontroller pins, display multiplexing is implemented, allowing one digit to be displayed at a time while cycling through the digits at high speed to create a continuous display effect.
+
+\section*{Results and Analysis}
+The system was successfully built and tested. It accurately updates and displays time across all three operational modes. The multiplexing technique ensures efficient power consumption and GPIO utilization.
+
+\section*{Potential Enhancements}
+Future improvements could include:
+\begin{itemize}
+    \item Integration of an RTC (Real-Time Clock) module for enhanced accuracy
+    \item Adding an alarm function
+    \item Implementing an OLED display for better readability and additional features
+\end{itemize}
+
+\section*{Conclusion}
+This project successfully demonstrates the implementation of a digital clock, stopwatch, and timer using an ATmega328P microcontroller. By leveraging Timer1 interrupts, the system achieves precise timekeeping, and multiplexing minimizes hardware complexity.
+
+\section*{References}
+This assignment was developed with reference to open-source AVR-GCC documentation and discussions with peers, including contributions from Dhawal (EE24BTECH11015).
+
+\end{document}
+
+
