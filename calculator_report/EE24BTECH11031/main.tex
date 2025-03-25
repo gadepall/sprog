@@ -1,0 +1,180 @@
+%iffalse
+\let\negmedspace\undefined
+\let\negthickspace\undefined
+\documentclass{article}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{txfonts}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{gensymb}
+\usepackage{comment}
+\usepackage[breaklinks=true]{hyperref}
+\usepackage{tkz-euclide} 
+\usepackage{listings}
+\usepackage{gvv}                                        
+\def\inputGnumericTable{}                                 
+\usepackage[latin1]{inputenc}                                
+\usepackage{color}                                            
+\usepackage{array}                                             
+\usepackage{longtable}                                       
+\usepackage{calc}                                             
+\usepackage{multirow}                                          
+\usepackage{hhline}                                           
+\usepackage{ifthen}                                           
+\usepackage{lscape}
+\usepackage{multicol}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{problem}{Problem}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{example}{Example}[section]
+\newtheorem{definition}[problem]{Definition}
+\newcommand{\BEQA}{\begin{eqnarray}}
+\newcommand{\EEQA}{\end{eqnarray}}
+\newcommand{\define}{\stackrel{\triangle}{=}}
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}
+\begin{document}
+
+\bibliographystyle{IEEEtran}
+\vspace{3cm}
+
+\title{Calculator Project Report}
+\author{EE24BTECH11031-Jashwanth.Medamoni}
+\date{}
+\maketitle
+\bigskip
+
+\renewcommand{\thefigure}{\theenumi}
+\renewcommand{\thetable}{\theenumi}
+
+\section{Project Overview}
+This project presents the design and implementation of an advanced scientific calculator using the Arduino Uno. It supports basic arithmetic, trigonometric, logarithmic, and exponential functions, alongside complex expressions with operator precedence. User input is managed through push buttons, while a JHD162A LCD display presents the results. A recursive descent parser ensures accurate and efficient expression evaluation.
+
+\section{Project Objectives}
+\begin{itemize}[noitemsep]
+    \item Develop a versatile calculator that handles:
+    \begin{itemize}[noitemsep]
+        \item Arithmetic: \texttt{+}, \texttt{-}, \texttt{*}, \texttt{/}, \texttt{\textasciicircum}
+        \item Trigonometric: \texttt{sin}, \texttt{cos}, \texttt{tan} (degrees)
+        \item Inverse Trigonometry: \texttt{asin}, \texttt{acos}, \texttt{atan} (degrees)
+        \item Logarithmic/Exponential: \texttt{ln}, \texttt{log}, \texttt{exp}
+        \item Miscellaneous: \texttt{sqrt}, \texttt{abs}, \texttt{\%}
+    \end{itemize}
+    \item Implement a recursive descent parser with operator precedence and parentheses support.
+    \item Deliver real-time results on an LCD display.
+    \item Optimize Arduino Uno's resource usage for smooth performance.
+\end{itemize}
+
+\section{Required Components}
+\begin{itemize}[noitemsep]
+    \item Arduino Uno microcontroller
+    \item JHD162A 16x2 LCD display
+    \item 14 Push buttons:
+    \begin{itemize}[noitemsep]
+        \item 10 for digits (0--9)
+        \item Clear button (\texttt{C}) and Enter button (\texttt{=})
+        \item Arithmetic Shift (Shift-A) and Scientific Shift (Shift-S) buttons
+    \end{itemize}
+    \item Wires and breadboard for circuit assembly
+\end{itemize}
+
+\section{Hardware Configuration}
+\subsection{Connections}
+\subsubsection{LCD Display}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+	\textbf{LCD Pin}  & \textbf{Arduino pin} & \textbf{Notes} \\ \hline
+RS             &  D8 (PB0)           & LOW: Command; HIGH: Data \\ \hline
+E              &  D9 (PB1)           & Latches data \\ \hline
+D4             &  D10 (PB2)          & 4-bit interface \\ \hline
+D5             &  D11 (PB3)          & 4-bit interface \\ \hline
+D6              & D12 (PB4)          & 4-bit interface \\ \hline
+D7               & D13 (PB5)          & 4-bit interface \\ \hline
+\end{tabular}
+\end{center}
+Additional connections: VSS (GND), VDD (+5V), VO (potentiometer for contrast), RW (GND), A (+5V backlight), K (GND).
+
+\subsubsection{ Button Connections}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Button}       & \textbf{Arduino Pin} & \textbf{Notes} \\ \hline
+Digits 0--5             & D2, D3, D4, D5, D6, D7   & Active-low; internal pull-ups \\ \hline
+Digits 6--9            & A0, A1, A2, A3           & Digital inputs; pull-ups enabled \\ \hline
+Clear (\texttt{C})               & A4                      & Resets expression \\ \hline
+Enter (\texttt{=})         & A5                      & Triggers computation \\ \hline
+Extra Button 1     & (Assign as needed)      & \\ \hline
+Extra Button 2       & (Assign as needed)      & \\ \hline
+\end{tabular}
+\end{center}
+\textbf{Note:} The extra two push buttons can be used for further functions or for shift modes if needed.
+
+\subsubsection{Shift Connections}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Button}                        & \textbf{Arduino Pin} & \textbf{Notes} \\ \hline
+Arithmetic Shift (Shift-A)     & D0 (PD0)               & Repurposed from serial RX \\ \hline
+Scientific Shift (Shift-S)        & D1 (PD1)               & Repurposed from serial TX \\ \hline
+\end{tabular}
+\end{center}
+
+\section{System Configuration}
+\subsection{LCD and Button Setup}
+The LCD operates in 4-bit mode, with data lines connected to digital pins D8 through D13 on the Arduino. Push buttons are linked to pins D2-D7 and A0-A5, using internal pull-ups for active-low detection.
+
+\subsection{Power Supply}
+The system runs on 5V DC, drawn from USB or an external power source connected to the Arduino.
+
+\section{Software Architecture}
+The software follows a modular design, comprising:
+\begin{enumerate}[label=\alph*)]
+    \item \textbf{Input Management}: Reads button presses with debouncing to ensure reliable detection.
+    \item \textbf{User Interface (UI)}: Updates the LCD dynamically with expressions, modes, and results.
+    \item \textbf{Expression Parser}: Implements recursive descent parsing with operator precedence and function handling.
+\end{enumerate}
+
+\section{Modes of Operation}
+The calculator supports two operational modes:
+\begin{itemize}[noitemsep]
+    \item \textbf{Arithmetic Mode}: Handles basic operations and parentheses.
+    \item \textbf{Scientific Mode}: Supports trigonometric, inverse trigonometric, logarithmic, and exponential functions.
+\end{itemize}
+Mode switching is achieved using Shift-A and Shift-S buttons, with navigation through additional button presses.
+
+\section{Error Handling Mechanisms}
+The system detects and handles errors such as:
+\begin{itemize}[noitemsep]
+    \item Division by zero
+    \item Mismatched parentheses
+    \item Domain errors (e.g., \texttt{sqrt(-1)})
+    \item Invalid mode selections
+\end{itemize}
+
+\section{Performance and Limitations}
+\begin{itemize}[noitemsep]
+    \item \textbf{Voltage}: Operates on 5V
+    \item \textbf{Precision}: Displays results up to 4 decimal places
+    \item \textbf{Expression Length}: Supports up to 64 characters
+    \item \textbf{Speed}: Basic operations complete within 10ms, complex calculations take ~200ms
+\end{itemize}
+
+\section{Code Breakdown}
+The code consists of separate modules for LCD control, button handling, expression evaluation, and shift mode management. The main loop continuously monitors inputs and updates the display accordingly.
+
+\section{AVR GCC}
+The firmware is compiled using \textbf{AVR GCC}, which is part of the AVR toolchain. AVR GCC provides code optimization for both size and speed, making it ideal for resource-constrained systems like the \textit{Arduino Uno}. It supports inline assembly for performance-critical sections, enhancing execution speed. Additionally, it integrates seamlessly with \texttt{avr-libc} for standard C functions and \texttt{avrdude} for flashing the compiled code to the microcontroller.
+
+
+\end{document}
+
