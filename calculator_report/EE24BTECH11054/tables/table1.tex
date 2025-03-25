@@ -1,0 +1,23 @@
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{|c|c|l|}
+        \hline
+        \textbf{Pin} & \textbf{Connection} & \textbf{Description} \\
+        \hline
+        VSS  & GND & Ground \\
+        VDD  & 5V  & Power Supply \\
+        V0   & 10k Potentiometer (middle pin) & Contrast Adjustment \\
+        RS   & D2  & Register Select \\
+        RW   & GND & Read/Write (set to Write) \\
+        E    & D3  & Enable \\
+        D4   & D4  & Data Bit 4 \\
+        D5   & D5  & Data Bit 5 \\
+        D6   & D6  & Data Bit 6 \\
+        D7   & D7  & Data Bit 7 \\
+        A (LED+) & 5V with a Resistor & Backlight Power \\
+        K (LED-) & GND & Backlight Ground \\
+        \hline
+    \end{tabular}
+    \label{tab:lcd_pins}
+\end{table}
