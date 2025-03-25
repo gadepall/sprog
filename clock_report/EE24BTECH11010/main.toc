@@ -1,0 +1,17 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Components Used}{2}{section.2}%
+\contentsline {section}{\numberline {3}Clock Display and Connections}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Connections}{3}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Interface Between Arduino and 7447 IC}{3}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Multiplexing and Common Anode Control}{3}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Push Button Controls}{3}{subsubsection.3.1.3}%
+\contentsline {section}{\numberline {4}Working Principle}{3}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Time Representation and Display Mechanism}{3}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Multiplexing Technique for Display Control}{3}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Timekeeping Mechanism}{4}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Push Button Functionality}{4}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Modes of Operation}{4}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Power Management and Efficiency}{4}{subsection.4.6}%
+\contentsline {section}{\numberline {5}Conclusion}{4}{section.5}%
+\contentsline {section}{\numberline {6}Full Source Code}{5}{section.6}%
+\contentsline {section}{\numberline {7}Full Source Code}{5}{section.7}%
